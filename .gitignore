@@ -1,0 +1,101 @@
+# Local settings and credentials
+.vscode/
+.vs/
+.codex/
+.agents/
+.env
+.env.*
+!.env.example
+/integrations/lichess-bot/config.yml
+/integrations/lichess-bot/config.yaml
+
+# Build products and installed dependencies (keep runtime NNUE .bin files)
+*.exe
+*.dll
+*.o
+*.obj
+*.pdb
+*.ilk
+*.a
+*.lib
+*.py[cod]
+__pycache__/
+.venv/
+venv/
+python_packages/
+target/
+node_modules/
+*.log
+*.tmp
+gmon*.out
+*.gcda
+*.gcno
+*.profraw
+*.profdata
+Thumbs.db
+.DS_Store
+
+# Large training inputs and generated training runs; keep scripts and src/
+/training/nnue/data/
+/training/nnue/checkpoints/
+/training/nnue/*_benchmark_raw.csv
+/training/tuning/data/
+/training/tuning/texel_runs/
+/training/tuning/spsa_work/
+/training/tuning/search_spsa_work/
+/training/tuning/texel_games*.txt
+/training/tuning/compiler_optimization/build_*/
+
+# Generated games, reviews, diagnostics, and profiles
+/testing/results/
+/testing/runtime/profiles/
+/testing/puzzles/lichess/data/
+/testing/puzzles/lichess/diagnostics/
+/testing/puzzles/lichess/results/
+/analysis/game_review/reviews/
+/analysis/game_review/vendor/
+/analysis/game_review/vendor_runtime/
+/integrations/lichess-bot/games/
+/integrations/lichess-bot/lichess_bot_auto_logs/
+
+# Downloaded test engines and tools; keep the project launch/analysis scripts
+/testing/tools/blunder/
+/testing/tools/carballo/
+/testing/tools/ccrl_engines/
+/testing/tools/cutechess/
+/testing/tools/our_engine/
+/testing/tools/stockfish/
+
+# Tablebase data only: retain Fathom/probing source and setup documentation
+*.rtbw
+*.rtbz
+*.rtbm
+
+# Raw opening databases; retain the runtime book, suites and preparation tools
+/openings/data/lichess/broadcast_database/
+
+# Legacy duplicates and disposable resources
+/archive/
+
+# Keep the final accepted source snapshot of each existing major version.
+# Other snapshots remain on disk. Add an exception when retaining a new release.
+# Major directories remain traversable so the source exceptions work.
+/engines/versions/misc/
+/engines/versions/v1/*
+!/engines/versions/v1/source_1.7.1/
+/engines/versions/v2/*
+!/engines/versions/v2/source_2.3/
+/engines/versions/v3/*
+!/engines/versions/v3/source_3.5/
+/engines/versions/v4/*
+!/engines/versions/v4/source_4.1/
+/engines/versions/v5/*
+!/engines/versions/v5/source_5.7/
+/engines/versions/v6/*
+!/engines/versions/v6/source_6.4/
+/engines/versions/v7/*
+!/engines/versions/v7/source_7.3/
+/engines/versions/v8/*
+!/engines/versions/v8/source_8.3/
+
+/integrations/lichess-bot/
