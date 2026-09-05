@@ -4,17 +4,23 @@
 [`lichess-org/chess-openings`](https://github.com/lichess-org/chess-openings)
 repository. It is retained so the generated engine data can be reproduced.
 
+Install Python and `python-chess` first. Stockfish must be installed separately
+for weighting, and the current Zebrafish executable must be built. Raw
+broadcast downloads are excluded from Git. Some script defaults still refer
+to the old workspace; pass explicit input, output, and engine paths (see
+`--help`) when regenerating data.
+
 Regenerate the files from the repository root with:
 
 ```powershell
-& .\lichess-bot\.venv\bin\python.exe .\opening_data\build_lichess_book.py `
-    --source .\opening_data\lichess-chess-openings `
-    --book .\opening_data\OpeningBook.tsv `
-    --names .\opening_data\OpeningNames.tsv
+python .\openings\data\lichess\build_lichess_book.py `
+    --source .\openings\data\lichess\lichess-chess-openings `
+    --book .\openings\data\lichess\OpeningBook.tsv `
+    --names .\openings\data\lichess\OpeningNames.tsv
 ```
 
 `OpeningBook.tsv` contains one unique position/move pair per row. The `weight`
-column is currently `1` for every move, so selection is uniform among the
+column in the unweighted generated file is `1` for every move, so selection is uniform among the
 available moves. Changing positive integer weights changes the relative move
 probabilities without rebuilding the C engine. `OpeningNames.tsv` separately
 contains the ECO/name classification for each named position.
@@ -43,9 +49,14 @@ an opponent plays it.
 Run the default six-worker analysis and install the result with:
 
 ```powershell
-& .\lichess-bot\.venv\bin\python.exe .\opening_data\weight_opening_book.py `
+python .\openings\data\lichess\weight_opening_book.py `
+    --input .\openings\data\lichess\OpeningBook.tsv `
+    --output .\openings\data\lichess\OpeningBookWeighted.tsv `
+    --cache .\openings\data\lichess\opening_evaluations.json `
+    --engine .\engine\current\chess.exe `
+    --stockfish C:\path\to\stockfish.exe `
     --workers 6 `
-    --install .\engine_versions\OpeningBook.tsv
+    --install .\openings\book\OpeningBook.tsv
 ```
 
 The defaults use Stockfish depth 14 and engine depth 8. Analysis is cached by
@@ -57,7 +68,7 @@ cache. Run with `--help` for every option.
 
 ## Broadcast-game extension
 
-`broadcast_database/` contains the August 2025 through July 2026 monthly files
+The local `broadcast_database/` used for the installed book contained the August 2025 through July 2026 monthly files
 from the official Lichess broadcast database. The 384,608 downloaded games are
 licensed CC BY-SA 4.0; 357,538 valid standard games were accepted. Malformed,
 incomplete, non-standard, and incorrectly labelled Chess960 records were
@@ -77,5 +88,8 @@ zero-weight moves. Of those rejections, 444 are rare lines that fell at least
 absolute evaluation guard. Rebuild its raw candidates with:
 
 ```powershell
-& .\lichess-bot\.venv\bin\python.exe .\opening_data\extend_book_from_pgn.py
+python .\openings\data\lichess\extend_book_from_pgn.py `
+    --database .\openings\data\lichess\broadcast_database `
+    --base-book .\openings\data\lichess\OpeningBookWeighted.tsv `
+    --output .\openings\data\lichess\OpeningBookExtendedRaw.tsv
 ```

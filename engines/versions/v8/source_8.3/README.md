@@ -1,4 +1,27 @@
-# Minimal C Chess — 8.3
+# Zebrafish 8.3 — historical source snapshot
+
+This directory preserves accepted version **8.3**. The current release is
+8.3; see the [repository README](../../../../README.md) for current setup and
+[development ratings](../../../ELO_HISTORY.md) for version-specific evidence.
+Only source is retained here. Executables, local experiment data, and older
+intermediate snapshots mentioned below are not included.
+
+## Using this snapshot
+
+This snapshot retains its original source layout and internal version labels.
+Older build scripts and resource paths can depend on the original workspace;
+they are not the current release's supported build entry point. For playing
+or analysis, build `engine/current/` using the root instructions. Rebuilding a
+historical version requires checking its includes and resource paths, linking
+Fathom if it uses Syzygy, and supplying matching NNUE weights if applicable.
+For 8.3, the matching weights are in `engine/current/nnue-8.3.bin`.
+
+## Archived development notes
+
+The following notes are historical records, including references to earlier
+accepted builds and experiments. Commands using `engine_versions`, `tuning`,
+or `run_tournament.ps1` refer to the old workspace, not fresh-checkout paths.
+
 
 Accepted Engine 8.3 keeps Engine 8.2's search and user-selectable classical
 evaluation, and replaces the default network with the full-data plain

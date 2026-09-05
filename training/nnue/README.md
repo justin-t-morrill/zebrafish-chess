@@ -1,12 +1,19 @@
-# NNUE baseline
+# Zebrafish NNUE training
 
-This is the first step of Bullet's recommended progression: a dual-perspective
-`(768 -> 128) x 2 -> 1` network with SCReLU. It intentionally avoids king
-buckets and extra layers until the baseline has been tested.
+The current accepted 8.3 network is the plain dual-perspective
+`(768 -> 256) x 2 -> 1` SCReLU model. Its exported weights are included as
+`engine/current/nnue-8.3.bin`; training is not required to run the engine.
+The trainer supports plain hidden sizes 128, 256, and 512, plus experimental
+`king10` models at 128 and 256. King-bucket candidates were not accepted for 8.3.
+
+Run the examples below from `training/nnue/`. Install Rust and the GPU toolchain
+required by the Bullet `rocm` dependency in Cargo.toml, plus Python dependencies
+used by your data preparation scripts. Data, checkpoints, downloaded Python
+packages, and Cargo build output are excluded from Git.
 
 ## Data
 
-The existing Engine 5.0 Texel corpus is a good bootstrap dataset: it contains
+The historical Engine 5.0 Texel bootstrap corpus (not included) contained
 6,867,145 qsearch leaf positions from 64,000 self-play games, including scores,
 results, and game-level splits. Convert its CSV to Bullet text with:
 
@@ -45,11 +52,26 @@ setoption name EvalFile value C:\path\to\quantised.bin
 ```
 
 Until a network loads successfully, the engine continues using its classical
-evaluation. The initial implementation refreshes accumulators from the board;
-incremental updates and SIMD belong after scalar output is cross-checked.
+evaluation. The current engine includes incremental accumulator updates.
 
 The optional fourth argument is Bullet's game-result (WDL) blend. `0.0` trains
 entirely on the qsearch score, while `1.0` trains entirely on the final game
 result. This corpus defaults to `0.0`: its qsearch labels are substantially
 cleaner teachers than outcomes from only 64,000 self-play games. Test a small
 nonzero blend only after the score-only baseline is competitive.
+
+## Trainer arguments
+
+The positional arguments are training file, validation file, batches per
+superbatch, WDL blend, hidden size, checkpoint tag, and architecture.
+For example, using your prepared data files:
+
+```powershell
+cargo run --release -- data/train.data data/validation.data 337 0.0 256 experiment plain
+```
+
+Adjust the batch count to your dataset; 337 describes the earlier bootstrap
+split, not the full 8.3 dataset. Tags may contain letters, digits, and hyphens.
+The default hidden size is still 128, so specify 256 for the accepted model's
+architecture. This example does not reproduce the accepted weights without the
+original data and training conditions.

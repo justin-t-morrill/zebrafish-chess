@@ -1,3 +1,7 @@
+> Vendored upstream opening-name dataset. The text below describes the upstream
+> project; Zebrafish integration and regeneration instructions are in
+> [the parent README](../README.md).
+
 Chess opening names
 ===================
 

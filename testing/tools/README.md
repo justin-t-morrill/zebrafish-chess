@@ -1,90 +1,61 @@
-# Reference engine tournament suite
+# Zebrafish tournament tools
 
-This folder contains official open-source UCI releases and Cute Chess 1.5.1.
-Run paired-opening matches from PowerShell:
+This directory contains match launchers and result-analysis scripts. Cute Chess,
+Stockfish, Blunder, Carballo, and other downloaded engine binaries are excluded
+from Git. Install the required tools into the paths used by the selected script
+before running it. See `SOURCES-AND-LICENSES.md` for recorded upstream sources.
+Carballo requires Java; the launchers require PowerShell.
 
-```powershell
-.\run_tournament.ps1 -Opponent Stockfish1320 -Games 100 -TimeControl "10+0.1"
-.\run_tournament.ps1 -Opponent Stockfish1800 -Games 300 -TimeControl "10+0.1"
-.\run_tournament.ps1 -Opponent Blunder -Games 200 -TimeControl "30+0.3"
-.\run_tournament.ps1 -Opponent Gauntlet -Games 100 -TimeControl "10+0.1" `
-    -Concurrency 6 -EngineVersion 1.5
-```
+## Prepare engine binaries
 
-Limit a gauntlet to selected opponents while retaining its combined summary:
-
-```powershell
-.\run_tournament.ps1 -Opponent Gauntlet `
-    -GauntletOpponents @("Stockfish1750", "Stockfish1800", "Stockfish1850") `
-    -EngineVersion 2.0 -Games 2000 -TimeControl "10+0.1" -Concurrency 6
-```
-
-`Games` is the number played against each selected opponent. Leaving out
-`GauntletOpponents` runs the original full nine-opponent gauntlet.
-
-For candidate-versus-accepted testing, the faster version runner keeps both UCI
-engines alive instead of launching a process for every move:
+Build the current engine with `engine/current/build.ps1` from the repository
+root. The version launchers resolve numbered executables under
+`engines/versions/v<major>/<version>.exe`; source snapshots alone are not enough.
+For the current 8.3 build, copy the generated executable and matching network:
 
 ```powershell
-.\run_version_tournament.ps1 -EngineA 1.3_history -EngineB 1.3 `
-    -Games 1000 -TimeControl "1+0.1" -Concurrency 4
+Copy-Item .\engine\current\chess.exe .\engines\versions\v8\8.3.exe
+Copy-Item .\engine\current\nnue-8.3.bin .\engines\versions\v8\nnue-8.3.bin
 ```
 
-Every opening is played twice with colors reversed. Version matches default to
-the draw-reducing `openings\8mvs_+90_+99.epd` suite, while reference-engine
-gauntlets default to the broader 34,700-position `openings\8moves_v3.epd`
-suite. Both launchers accept `-OpeningFile` to select another suite and
-`-Concurrency`; the gauntlet
-defaults to six parallel games on this 8-core system and accepts
-`-EngineVersion` to select any preserved UCI build (default: 1.7.1). The
-repeatable `-GauntletOpponents` list selects a smaller calibration ladder.
-For version 1.0 it automatically selects the interface-only `1.0_uci.exe`
-compatibility build while retaining the original 1.0 search and evaluation.
-The engine's UCI move overhead is explicitly set to zero for these local
-matches; the lag reserves used by the GUI and Lichess are not applied.
-PGNs, Cute Chess logs, W/D/L, p-values, confidence intervals, and Elo differences
-are written or printed after each match. After a gauntlet finishes, it also
-prints one consolidated table containing every opponent's W/D/L, score rate,
-Elo difference and interval, two-sided p-value, likelihood of superiority, and
-exact decisive-game p-value, followed by the overall game and score totals.
+Historical versions require their own builds and matching runtime resources.
+The retained releases are 1.7.1, 2.3, 3.5, 4.1, 5.7, 6.4, 7.3, and 8.3.
 
-Available opponents:
+## Reference matches
 
-- `Stockfish1320`, `Stockfish1600`, `Stockfish1750`, `Stockfish1800`,
-  `Stockfish1850`, `Stockfish2000`, `Stockfish2100`, `Stockfish2200`,
-  `Stockfish2300`, `Stockfish2400`, `Stockfish2500`, `Stockfish2600`,
-  `Stockfish2700`, `Stockfish2800`, `Stockfish2900`, `Stockfish3000`, and
-  `Stockfish3100`: Stockfish 18's official
-  limited-strength profiles. The 1750/1800/1850 profiles provide a tighter
-  calibration ladder around the engine's estimated strength. `UCI_Elo`
-  is a useful calibration control, but is not guaranteed to equal a rating on
-  Lichess or another pool.
-- `StockfishFull`: unrestricted Stockfish 18; likely too strong for calibration.
-- `Blunder`: independent native UCI engine, version 8.5.5.
-- `Carballo`: independent Java UCI engine, version 1.8. Java 11+ is required.
-- `Gauntlet`: runs all seven limited Stockfish profiles, Blunder, and Carballo.
-
-For the current engine, run 200-400 games against each of Stockfish1750,
-Stockfish1800, and Stockfish1850. Treat the resulting Elo as specific to this
-hardware, time control, opening set, and match configuration.
-
-For Engine 3.2's six-hour calibration run, use 1,000 games each against
-Stockfish2100, Stockfish2200, Stockfish2300, and Stockfish2400 at 10+0.1 with
-concurrency 6. The final summary inverse-variance weights the implied rating
-from every numeric Stockfish profile and prints a combined statistical
-  interval. Profile-label calibration error is systematic and is not included in
-  that interval.
-
-For a preliminary human-comparable blitz calibration of Engine 6.0, run 20
-paired-opening games per opponent across the 2500--3100 Stockfish ladder at
-120+1. The combined report identifies the closest profiles; use those profiles
-for the larger overnight run:
+Run from the repository root after installing the external tools:
 
 ```powershell
-.\run_tournament.ps1 -Opponent Gauntlet `
-    -GauntletOpponents @("Stockfish2500", "Stockfish2600", "Stockfish2700", `
-        "Stockfish2800", "Stockfish2900", "Stockfish3000", "Stockfish3100") `
-    -EngineVersion 6.0 -Games 20 -TimeControl "120+1" -Concurrency 6
+.\testing\tools\run_tournament.ps1 -Opponent Blunder `
+    -EngineVersion 8.3 -Games 200 -TimeControl "30+0.3" -Concurrency 1
 ```
 
-See `SOURCES-AND-LICENSES.md` for upstream projects and licenses.
+Always specify `-EngineVersion`: the script's historical default is 1.7.1.
+`-Opponent` supports Blunder, Carballo, StockfishFull, the numeric Stockfish
+profiles listed in the script's parameter block, and Gauntlet. Use
+`-GauntletOpponents` to select a subset. `-Games` is per opponent and must be
+even for paired colors. Set thread counts and concurrency to suit your machine.
+
+## Version comparisons
+
+After building both versions:
+
+```powershell
+.\testing\tools\run_version_tournament.ps1 -EngineA 8.3 -EngineB 7.3 `
+    -Games 1000 -TimeControl "1+0.1" -Concurrency 1
+```
+
+`run_version_sprt.ps1` provides sequential acceptance testing. Use each
+script's parameter block for its supported options. Opening suites live under
+`openings/suites/`; `-OpeningFile` overrides the default. Results are generated
+under `testing/results/` and excluded from Git.
+
+## Interpreting results
+
+Paired colors reduce opening bias. Match Elo differences and their intervals
+apply to the tested settings; limited-strength Stockfish profile labels are not
+guaranteed to match human ratings. For the current 8.3 estimate and the direct
+CCRL calibration conditions, consult `engines/ELO_HISTORY.md` from the root.
+The recorded estimate is about 3110 on the CCRL Blitz scale with 8 threads,
+with approximately ±60 practical uncertainty; it is a local estimate, not an
+official listing.
