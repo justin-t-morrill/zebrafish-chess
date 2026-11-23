@@ -20,7 +20,11 @@ param(
     [double]$Alpha = 0.05,
     [ValidateRange(0.0001, 0.4999)]
     [double]$Beta = 0.05,
-    [string]$OpeningFile = "openings\suites\8mvs_+90_+99.epd"
+    [string]$OpeningFile = "openings\suites\8mvs_+90_+99.epd",
+    [string]$BinaryA = "",
+    [string]$BinaryB = "",
+    [switch]$SearchOnly,
+    [switch]$Preview
 )
 
 $ErrorActionPreference = "Stop"
@@ -37,21 +41,26 @@ foreach ($name in @($EngineA, $EngineB)) {
 . (Join-Path $PSScriptRoot "project_paths.ps1")
 $suite = $PSScriptRoot
 $root = Get-ChessProjectRoot
-$cute = (Get-ChildItem (Join-Path $suite "cutechess") -Recurse `
+$cute = (Get-ChildItem (Join-Path $suite "cutechess") -Recurse -ErrorAction SilentlyContinue `
          -Filter "cutechess-cli.exe" | Select-Object -First 1).FullName
-function Resolve-TournamentEngine([string]$name) {
-    return Get-EngineVersionPath $name
+if (-not $cute) {
+    $cute = (Get-Command cutechess-cli.exe -ErrorAction SilentlyContinue).Source
 }
 
-$engineAPath = Resolve-TournamentEngine $EngineA
-$engineBPath = Resolve-TournamentEngine $EngineB
+$engineAPath = if ($BinaryA) { $BinaryA } else { Get-EngineVersionPath $EngineA }
+$engineBPath = if ($BinaryB) { $BinaryB } else { Get-EngineVersionPath $EngineB }
 $openings = if ([System.IO.Path]::IsPathRooted($OpeningFile)) {
     $OpeningFile
 } else {
     Join-Path $root $OpeningFile
 }
 $results = Get-TestResultDirectory "sprt" $EngineA
-foreach ($required in @($cute, $engineAPath, $engineBPath, $openings)) {
+$requiredFiles = @($openings)
+if (-not $Preview) {
+    if (-not $cute) { throw "Install cutechess-cli.exe in testing/tools/cutechess or on PATH." }
+    $requiredFiles += $engineAPath, $engineBPath
+}
+foreach ($required in $requiredFiles) {
     if (-not $required -or -not (Test-Path -LiteralPath $required)) {
         throw "Required SPRT file is missing: $required"
     }
@@ -71,6 +80,7 @@ if ($nameA -eq $nameB -and ($EvalFileA -or $EvalFileB)) {
     $nameA = "Engine $EngineA [$labelA]"
     $nameB = "Engine $EngineB [$labelB]"
 }
+# Each round repeats its opening with colors swapped. MaxGames counts both games.
 $sprt = "elo0=$Elo0", "elo1=$Elo1", "alpha=$Alpha", "beta=$Beta"
 $engineAOptions = @("option.Move Overhead=0")
 $engineBOptions = @("option.Move Overhead=0")
@@ -84,12 +94,13 @@ if ($EvalFileB) {
     $resolvedEvalB = (Resolve-Path -LiteralPath $EvalFileB).Path
     $engineBOptions += "option.EvalFile=$resolvedEvalB"
 }
-$arguments = @(
-    "-engine", "name=$nameA", "cmd=$engineAPath", "arg=--uci", "proto=uci",
-        $engineAOptions,
-    "-engine", "name=$nameB", "cmd=$engineBPath", "arg=--uci", "proto=uci",
-        $engineBOptions,
-    "-each", "tc=$TimeControl",
+$arguments = @("-engine", "name=$nameA", "cmd=$engineAPath", "arg=--uci", "proto=uci") + $engineAOptions
+$arguments += @("-engine", "name=$nameB", "cmd=$engineBPath", "arg=--uci", "proto=uci") + $engineBOptions
+$arguments += "-each", "tc=$TimeControl"
+if ($SearchOnly) {
+    $arguments += "option.Hash=64", "option.OwnBook=false", "option.SyzygyProbeLimit=0"
+}
+$arguments += @(
     "-openings", "file=$openings", "format=epd", "order=random", "policy=round",
     "-rounds", [string]($MaxGames / 2), "-games", "2", "-repeat",
     "-sprt", $sprt[0], $sprt[1], $sprt[2], $sprt[3],
@@ -101,6 +112,10 @@ Write-Host "SPRT: $nameA vs $nameB at $TimeControl, concurrency $Concurrency, th
 Write-Host "H0 <= $Elo0 Elo; H1 >= $Elo1 Elo; alpha=$Alpha beta=$Beta; maximum $MaxGames games"
 Write-Host "PGN: $pgn"
 Write-Host "Log: $log"
+if ($Preview) {
+    $arguments
+    return
+}
 $savedPreference = $ErrorActionPreference
 $ErrorActionPreference = "Continue"
 try {

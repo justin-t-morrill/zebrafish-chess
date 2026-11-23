@@ -116,7 +116,7 @@ static void uci_print_iteration(const SearchResult *result,
 }
 
 static void uci_execute_go(Position *position, const char *command,
-                           int move_overhead_ms, atomic_bool *stop) {
+                           int move_overhead_ms, double received, atomic_bool *stop) {
     long requested_depth = uci_value_after(command, "depth",
                                            DEFAULT_MAX_ENGINE_DEPTH);
     if (requested_depth < 1) requested_depth = 1;
@@ -128,7 +128,10 @@ static void uci_execute_go(Position *position, const char *command,
         position->side_to_move == WHITE ? "wtime" : "btime", -1);
     long increment = uci_value_after(command,
         position->side_to_move == WHITE ? "winc" : "binc", 0);
-    double budget;
+    SearchBudget budget = fixed_search_budget(10.0);
+#ifndef ADAPTIVE_TIME
+    (void)received;
+#endif
     Move restricted_root_move = encode_move(0, 0, MOVE_QUIET);
     bool restrict_root = strstr(command, " searchmoves ") != NULL;
     if (restrict_root &&
@@ -140,29 +143,44 @@ static void uci_execute_go(Position *position, const char *command,
     if (strstr(command, " infinite") || strstr(command, " ponder")) {
         /* The asynchronous loop, rather than an arbitrary ten-second
          * fallback, owns termination for UCI infinite/ponder searches. */
-        budget = 365.0 * 24.0 * 60.0 * 60.0;
+        budget.hard = 365.0 * 24.0 * 60.0 * 60.0;
     } else if (movetime >= 0) {
-        budget = (double)(movetime - move_overhead_ms) / 1000.0;
+        budget.hard = (double)(movetime - move_overhead_ms) / 1000.0;
     } else if (requested_nodes >= 0) {
         /* The node limit, rather than this generous deadline, normally ends
          * analysis. The deadline remains a safety net for pathological input. */
-        budget = 365.0 * 24.0 * 60.0 * 60.0;
+        budget.hard = 365.0 * 24.0 * 60.0 * 60.0;
     } else if (remaining >= 0) {
         double safe_remaining = (double)(remaining - move_overhead_ms) / 1000.0;
-        double safe_increment = (double)(increment - move_overhead_ms) / 1000.0;
-        if (safe_remaining < 0.001) safe_remaining = 0.001;
-        if (safe_increment < 0.0) safe_increment = 0.0;
-        budget = engine_time_budget(safe_remaining, safe_increment);
-        if (budget > safe_remaining) budget = safe_remaining;
-    } else {
-        budget = 10.0;
+        double safe_increment = ((double)increment - move_overhead_ms) / 1000.0;
+#ifdef ADAPTIVE_TIME
+        if (!restrict_root) {
+            budget = game_clock_budget(safe_remaining, safe_increment,
+                                       uci_value_after(command, "movestogo", 0), received);
+        } else
+#endif
+        {
+            if (safe_remaining < 0.001) safe_remaining = 0.001;
+            if (safe_increment < 0.0) safe_increment = 0.0;
+            budget.hard = engine_time_budget(safe_remaining, safe_increment);
+            if (budget.hard > safe_remaining) budget.hard = safe_remaining;
+        }
     }
-    if (budget < 0.001) budget = 0.001;
+    if (budget.base < 0.0 && budget.hard < 0.001) budget.hard = 0.001;
 
     MoveList legal;
     generate_legal_moves(position, &legal);
     if (legal.count == 0 || search_draw(position)) {
         printf("bestmove 0000\n");
+        fflush(stdout);
+        return;
+    }
+    /* Under a live clock there is nothing to decide with only one legal move.
+     * With an exhausted budget, return a legal move before doing any setup. */
+    if (clock_requires_immediate_move(budget, legal.count)) {
+        char coordinate[6];
+        move_to_string(legal.moves[0], coordinate);
+        printf("bestmove %s\n", coordinate);
         fflush(stdout);
         return;
     }
@@ -195,6 +213,7 @@ typedef struct {
     Position position;
     char command[2048];
     int move_overhead_ms;
+    double received;
     atomic_bool stop;
     HANDLE thread;
 } UciSearchTask;
@@ -202,7 +221,7 @@ typedef struct {
 static DWORD WINAPI uci_search_thread_main(LPVOID parameter) {
     UciSearchTask *task = (UciSearchTask *)parameter;
     uci_execute_go(&task->position, task->command,
-                   task->move_overhead_ms, &task->stop);
+                   task->move_overhead_ms, task->received, &task->stop);
     return 0;
 }
 
@@ -217,16 +236,18 @@ static void uci_finish_search(UciSearchTask *task, bool request_stop) {
 
 static void uci_start_search(UciSearchTask *task, const Position *position,
                              const char *command, int move_overhead_ms) {
+    double received = timer_seconds();
     uci_finish_search(task, true);
     task->position = *position;
     snprintf(task->command, sizeof(task->command), "%s", command);
     task->move_overhead_ms = move_overhead_ms;
+    task->received = received;
     atomic_store_explicit(&task->stop, false, memory_order_relaxed);
     task->thread = CreateThread(NULL, 0, uci_search_thread_main,
                                 task, 0, NULL);
     if (!task->thread)
         uci_execute_go(&task->position, task->command,
-                       task->move_overhead_ms, &task->stop);
+                       task->move_overhead_ms, task->received, &task->stop);
 }
 #endif
 
@@ -374,12 +395,12 @@ static int run_uci_loop(const char *program) {
             (void)uci_set_position(&position, line);
         } else if (strncmp(line, "go", 2) == 0 &&
                    (line[2] == '\0' || isspace((unsigned char)line[2]))) {
-            #ifdef _WIN32
+#ifdef _WIN32
             uci_start_search(&search_task, &position, line, move_overhead_ms);
-            #else
+#else
             atomic_bool stop = ATOMIC_VAR_INIT(false);
-            uci_execute_go(&position, line, move_overhead_ms, &stop);
-            #endif
+            uci_execute_go(&position, line, move_overhead_ms, timer_seconds(), &stop);
+#endif
         } else if (strcmp(line, "quit") == 0) {
 #ifdef _WIN32
             uci_finish_search(&search_task, true);

@@ -278,15 +278,21 @@ static void gui_engine_move(HWND window) {
     Move move;
     Color mover = gui.position.side_to_move;
     generate_legal_moves(&gui.position, &legal);
-    /* Compute normal clock allocation first, then reserve GUI overhead once.
-     * Subtracting it independently from both clock and increment magnifies the
-     * reserve through the time-management formula. */
+    /* Only the live GUI clock can fund extra time on a difficult move. */
     bool selected_current = strcmp(gui.engine_version, ENGINE_VERSION) == 0;
     if (selected_current) {
-        double budget = gui.unlimited_clock[mover] ? 86400.0 :
-            engine_time_budget(gui_clock_value(mover),
-                               gui.increment_seconds[mover]) -
-            gui.lag_reserve_seconds;
+        SearchBudget budget = fixed_search_budget(86400.0);
+        if (!gui.unlimited_clock[mover]) {
+            double remaining = gui_clock_value(mover);
+#ifdef ADAPTIVE_TIME
+            double reserve = gui.lag_reserve_seconds;
+            budget = game_clock_budget(remaining - reserve, gui.increment_seconds[mover] - reserve,
+                                       0, timer_seconds());
+#else
+            budget.hard = engine_time_budget(remaining, gui.increment_seconds[mover]) -
+                          gui.lag_reserve_seconds;
+#endif
+        }
         if (!choose_bot_move_with_budget(&gui.position, &legal, BOT_ENGINE,
                                          gui.max_depth, budget, &move))
             return;

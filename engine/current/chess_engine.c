@@ -2203,6 +2203,52 @@ typedef struct {
     int partial_root_depth;
 } SearchResult;
 
+/* A negative soft target selects the existing fixed-budget search. Clocked
+ * games also carry the time at which the frontend received the clock. */
+typedef struct {
+    double hard;
+    double base;
+    double started;
+} SearchBudget;
+
+static SearchBudget fixed_search_budget(double seconds) {
+    return (SearchBudget){.hard = seconds, .base = -1.0};
+}
+
+static bool clock_requires_immediate_move(SearchBudget budget, int legal_count) {
+    return budget.base >= 0.0 &&
+           (legal_count == 1 || timer_seconds() >= budget.started + budget.hard);
+}
+
+#ifdef ADAPTIVE_TIME
+/* Both inputs are seconds available after the frontend's overhead reserve.
+ * The next increment is earned only after the move leaves the engine. */
+static SearchBudget game_clock_budget(double remaining, double increment,
+                                      long moves_to_go, double started) {
+    if (remaining < 0.0) remaining = 0.0;
+    if (increment < 0.0) increment = 0.0;
+    long horizon = moves_to_go > 0 ? moves_to_go : 20;
+    double base = remaining / horizon + increment / 2.0;
+    double hard = 2.5 * base;
+    if (hard > 0.8 * remaining) hard = 0.8 * remaining;
+    return (SearchBudget){.hard = hard, .base = base, .started = started};
+}
+#endif
+
+/* After each completed depth choose whether to spend one more iteration.
+ * Estimate its cost at twice the last iteration (including aspiration retries).
+ * Stop if the nearer of the two projected finishing times is the current one. */
+static bool stop_after_iteration(double base, int depth, int streak, int score_change,
+                                 double elapsed, double last_iteration) {
+    double target = base;
+    if (depth >= 2 && (streak == 1 || score_change <= -40))
+        target = 1.6 * base;
+    else if (streak >= 3 && abs(score_change) <= 15)
+        target = 0.7 * base;
+    return elapsed >= target ||
+           (depth >= 2 && elapsed + last_iteration >= target);
+}
+
 /* Optional analysis-only observer. It receives a snapshot after each fully
  * completed iterative-deepening pass and cannot alter search state. */
 typedef void (*SearchIterationCallback)(const SearchResult *result,
@@ -2331,9 +2377,7 @@ static int complete_display_pv(const Position *root, Move first_move,
  * whose entire subtree completed may replace the old PV move only after that
  * old PV move also completed at depth N and the new score is higher. The
  * interrupted subtree is never used. */
-/* Iterative deepening always leaves a result from the last completed depth, so
- * an expired clock never discards all useful work from the search. */
-static SearchResult search_worker(const Position *p, double time_budget,
+static SearchResult search_worker(const Position *p, SearchBudget budget,
                                   int max_depth, int helper_id,
                                   double common_deadline,
                                   atomic_bool *shared_stop,
@@ -2344,7 +2388,7 @@ static SearchResult search_worker(const Position *p, double time_budget,
                                   Move restricted_root_move) {
     SearchResult result;
     memset(&result, 0, sizeof(result));
-    result.allocated_seconds = time_budget;
+    result.allocated_seconds = budget.hard;
     result.move = encode_move(0, 0, MOVE_QUIET);
     result.root_side = p->side_to_move;
     (void)tt_ensure_initialized();
@@ -2405,9 +2449,7 @@ static SearchResult search_worker(const Position *p, double time_budget,
     SearchContext ctx;
     memset(&ctx, 0, sizeof(ctx));
     ctx.start_time = timer_seconds();
-    if (time_budget < 0.0) time_budget = 0.0;
-    ctx.deadline = common_deadline > 0.0 ? common_deadline
-                                        : ctx.start_time + time_budget;
+    ctx.deadline = common_deadline;
     ctx.shared_stop = shared_stop;
     ctx.node_limit = node_limit;
     ctx.allow_tablebase = helper_id == 0;
@@ -2415,6 +2457,9 @@ static SearchResult search_worker(const Position *p, double time_budget,
     if (max_depth < 1) max_depth = 1;
     if (max_depth > MAX_SEARCH_PLY - 1) max_depth = MAX_SEARCH_PLY - 1;
 
+    bool manage_clock = budget.base >= 0.0 && helper_id == 0;
+    int best_move_streak = 0;
+    double iteration_start = ctx.start_time;
     for (int depth = 1; depth <= max_depth; ++depth) {
         if (search_time_expired(&ctx, true)) break;
 
@@ -2567,6 +2612,9 @@ static SearchResult search_worker(const Position *p, double time_budget,
             root[i].has_previous_score = true;
         }
 
+        int score_change = depth > 1 ? best_score - result.score : 0;
+        if (manage_clock)
+            best_move_streak = depth > 1 && best_move == result.move ? best_move_streak + 1 : 1;
         result.move = best_move;
         result.score = best_score;
         result.depth = depth;
@@ -2603,6 +2651,13 @@ static SearchResult search_worker(const Position *p, double time_budget,
          * still find a defense that postpones or escapes the apparent mate. */
         if (result.score > MATE_SCORE - MAX_SEARCH_PLY)
             break;
+        if (manage_clock) {
+            double now = timer_seconds();
+            if (stop_after_iteration(budget.base, depth, best_move_streak, score_change,
+                                     now - budget.started, now - iteration_start))
+                break;
+            iteration_start = now;
+        }
     }
 
     result.stats = ctx.stats;
@@ -2616,7 +2671,7 @@ static int search_thread_count = 1;
 
 typedef struct {
     Position position;
-    double budget;
+    SearchBudget budget;
     int max_depth;
     int helper_id;
     double deadline;
@@ -2757,7 +2812,7 @@ static void lazy_smp_pool_shutdown(void) {}
 #endif
 
 static SearchResult search_best_move_controlled(const Position *p,
-                                                double time_budget,
+                                                SearchBudget budget,
                                                 int max_depth,
                                                 atomic_bool *external_stop,
                                                 uint64_t node_limit,
@@ -2776,15 +2831,15 @@ static SearchResult search_best_move_controlled(const Position *p,
     atomic_bool local_stop = ATOMIC_VAR_INIT(false);
     atomic_bool *stop = external_stop ? external_stop : &local_stop;
     double start = timer_seconds();
-    if (time_budget < 0.0) time_budget = 0.0;
-    double deadline = start + time_budget;
+    if (budget.hard < 0.0) budget.hard = 0.0;
+    double deadline = (budget.base >= 0.0 ? budget.started : start) + budget.hard;
 
 #ifdef _WIN32
     if (!lazy_smp_pool_ensure(count)) count = 1;
 #endif
     for (int i = 0; i < count; ++i) {
         workers[i].position = *p;
-        workers[i].budget = time_budget;
+        workers[i].budget = budget;
         workers[i].max_depth = max_depth;
         workers[i].helper_id = i;
         workers[i].deadline = deadline;
@@ -2827,12 +2882,12 @@ static SearchResult search_best_move_controlled(const Position *p,
     return result;
 }
 
-static SearchResult search_best_move(const Position *p, double time_budget,
-                                     int max_depth) {
-    atomic_bool stop = ATOMIC_VAR_INIT(false);
-    return search_best_move_controlled(p, time_budget, max_depth, &stop, 0,
-                                       NULL, NULL, false,
-                                       encode_move(0, 0, MOVE_QUIET));
+static SearchResult search_with_budget(const Position *p, SearchBudget budget, int max_depth) {
+    return search_best_move_controlled(p, budget, max_depth, NULL, 0, NULL, NULL, false, 0);
+}
+
+static SearchResult search_best_move(const Position *p, double time_budget, int max_depth) {
+    return search_with_budget(p, fixed_search_budget(time_budget), max_depth);
 }
 
 /* Display scores using the conventional fixed perspective: positive values

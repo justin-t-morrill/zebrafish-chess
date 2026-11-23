@@ -101,6 +101,9 @@ static void tournament_restore_history(Position *position, const char *text) {
 
 static int run_engine_worker(int argc, char **argv) {
     if (argc != 7) return 2;
+#ifdef ADAPTIVE_TIME
+    double started = timer_seconds();
+#endif
     Position position;
     char error[128];
     if (!parse_fen(&position, argv[2], error, sizeof(error))) return 3;
@@ -113,9 +116,15 @@ static int run_engine_worker(int argc, char **argv) {
     if (legal.count == 0) return 4;
 
     Move move;
-    if (!choose_opening_book_move(&position, &legal, &move)) {
-        SearchResult search = search_best_move(
-            &position, engine_time_budget(base, increment), depth);
+#ifdef ADAPTIVE_TIME
+    SearchBudget budget = game_clock_budget(base, increment, 0, started);
+#else
+    SearchBudget budget = fixed_search_budget(engine_time_budget(base, increment));
+#endif
+    if (clock_requires_immediate_move(budget, legal.count)) {
+        move = legal.moves[0];
+    } else if (!choose_opening_book_move(&position, &legal, &move)) {
+        SearchResult search = search_with_budget(&position, budget, depth);
         if (!search.found) return 5;
         move = search.move;
     }

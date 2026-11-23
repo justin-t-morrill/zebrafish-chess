@@ -218,10 +218,19 @@ static bool save_pgn_file(const char *filename, const GameRecord *g,
 /* A monotonic timer is preferred so system-clock corrections do not distort
  * engine search limits or perft measurements. */
 static double timer_seconds(void) {
+#if defined(ADAPTIVE_TIME) && defined(_WIN32)
+    /* A desktop clock synchronization must not move a deadline. Windows
+     * provides the same performance-counter frequency to every search thread. */
+    LARGE_INTEGER frequency, counter;
+    QueryPerformanceFrequency(&frequency);
+    QueryPerformanceCounter(&counter);
+    return (double)counter.QuadPart / (double)frequency.QuadPart;
+#else
     struct timespec ts;
     if (timespec_get(&ts, TIME_UTC) == TIME_UTC)
         return (double)ts.tv_sec + (double)ts.tv_nsec / 1000000000.0;
     return (double)clock() / (double)CLOCKS_PER_SEC;
+#endif
 }
 
 

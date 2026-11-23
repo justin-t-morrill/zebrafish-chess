@@ -366,7 +366,7 @@ static bool print_game_result(const Position *p, const MoveList *legal) {
 static bool choose_bot_move_with_budget(const Position *p,
                                         const MoveList *legal,
                                         BotKind bot, int max_engine_depth,
-                                        double budget, Move *out) {
+                                        SearchBudget budget, Move *out) {
     if (legal->count <= 0) return false;
 
     if (bot == BOT_RANDOM) {
@@ -374,6 +374,10 @@ static bool choose_bot_move_with_budget(const Position *p,
         return true;
     }
 
+    if (clock_requires_immediate_move(budget, legal->count)) {
+        *out = legal->moves[0];
+        return true;
+    }
     if (choose_opening_book_move(p, legal, out)) {
         char text[6];
         move_to_string(*out, text);
@@ -381,8 +385,8 @@ static bool choose_bot_move_with_budget(const Position *p,
         return true;
     }
 
-    if (budget < 0.001) budget = 0.001;
-    SearchResult r = search_best_move(p, budget, max_engine_depth);
+    if (budget.base < 0.0 && budget.hard < 0.001) budget.hard = 0.001;
+    SearchResult r = search_with_budget(p, budget, max_engine_depth);
     if (!r.found) return false;
     print_search_result(&r);
     *out = r.move;
@@ -395,7 +399,7 @@ static bool choose_bot_move(const Position *p, const MoveList *legal,
                             Move *out) {
     return choose_bot_move_with_budget(
         p, legal, bot, max_engine_depth,
-        engine_time_budget(base_seconds, increment_seconds), out);
+        fixed_search_budget(engine_time_budget(base_seconds, increment_seconds)), out);
 }
 
 static void run_bot_vs_bot(Position *p, GameRecord *game, BotKind bot,
@@ -574,6 +578,32 @@ static bool run_bitboard_foundation_test(void) {
     return ok;
 }
 
+/* Reference counts include the starting position, Kiwipete and three tactical
+ * positions that exercise special moves. */
+#ifdef ADAPTIVE_TIME
+/* Exercise the clock boundaries without depending on the machine's speed.
+ * Integer-sized example budgets make the equality cases exact. */
+static bool test_adaptive_clock(void) {
+    SearchBudget blitz = game_clock_budget(1.0, 0.1, 0, 10.0);
+    SearchBudget refill = game_clock_budget(8.0, 0.0, 2, 10.0);
+    SearchBudget exhausted = game_clock_budget(-0.1, 1.0, 0, 10.0);
+    bool ok = blitz.base == 0.1 && blitz.hard == 0.25 &&
+              refill.base == 4.0 && refill.hard == 6.4 && exhausted.hard == 0.0;
+    /* (depth, consecutive best moves, score change, elapsed, last depth). */
+    ok &= !stop_after_iteration(10, 1, 1, -200, 6, 6);
+    ok &=  stop_after_iteration(10, 1, 1, -200, 10, 1);
+    ok &= !stop_after_iteration(10, 2, 2, -39, 6, 3);
+    ok &=  stop_after_iteration(10, 2, 2, -39, 7, 3);
+    ok &= !stop_after_iteration(10, 4, 3, -40, 9, 2);
+    ok &= !stop_after_iteration(10, 4, 1,  15, 9, 2);
+    ok &=  stop_after_iteration(10, 4, 1,  15, 12, 4);
+    ok &=  stop_after_iteration(10, 3, 3, -15, 5, 2);
+    ok &= !stop_after_iteration(10, 3, 3,  16, 5, 2);
+    printf("Adaptive clock limits and iteration decisions: %s\n", ok ? "PASS" : "FAIL");
+    return ok;
+}
+#endif
+
 static bool run_selftest(void) {
     static const uint64_t start_expected[] = {
         UINT64_C(20), UINT64_C(400), UINT64_C(8902), UINT64_C(197281), UINT64_C(4865609)
@@ -592,6 +622,9 @@ static bool run_selftest(void) {
     };
 
     bool ok = true;
+#ifdef ADAPTIVE_TIME
+    ok &= test_adaptive_clock();
+#endif
     ok &= run_bitboard_foundation_test();
     ok &= run_one_perft_test(
         "startpos",

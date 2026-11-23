@@ -23,8 +23,13 @@
  * a new executable; ENGINE_VERSION changes only when a tested experiment is
  * accepted. */
 #define ENGINE_VERSION "8.3"
+#ifdef ADAPTIVE_TIME
+#define ENGINE_BUILD_NAME "Zebrafish 8.3 adaptive time"
+#define ENGINE_BUILD_ID "8.3-adaptive"
+#else
 #define ENGINE_BUILD_NAME "Engine 8.3"
 #define ENGINE_BUILD_ID "8.3"
+#endif
 
 typedef uint8_t Piece;
 /* EMPTY is zero, followed by all white pieces and then all black pieces. This
