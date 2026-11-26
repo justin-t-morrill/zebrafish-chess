@@ -4,7 +4,7 @@ const {spawn}=require('node:child_process');
 const {playwright:pw,python}=require('./browser-runtime.cjs');
 const root=path.resolve(__dirname,'..'),output=path.join(__dirname,'output');fs.mkdirSync(output,{recursive:true});
 (async()=>{
-  const server=spawn(python,['-B','-u','-c','from zebrafish.workbench import Workbench; s=Workbench(0); print(s.url, flush=True); s.serve_forever()'],{cwd:root,windowsHide:true,env:{...process.env,PYTHONPATH:[path.join(root,'src'),path.join(root,'analysis/game_review/vendor_runtime')].join(path.delimiter),ZEBRAFISH_LOCAL_DIR:'tests/output/workbench-data',PYTHONDONTWRITEBYTECODE:'1'}});
+  const server=spawn(python,['-B','-u','-c','from zebrafish.workbench import Workbench; s=Workbench(0); print(s.url, flush=True); s.serve_forever()'],{cwd:root,windowsHide:true,env:{...process.env,PYTHONPATH:[path.join(root,'src'),path.join(root,'local/dependencies/reviewer')].join(path.delimiter),ZEBRAFISH_LOCAL_DIR:'tests/output/workbench-data',PYTHONDONTWRITEBYTECODE:'1'}});
   const url=await new Promise((resolve,reject)=>{let log='';const timeout=setTimeout(()=>reject(Error(log)),15000);server.stdout.on('data',chunk=>{log+=chunk;const match=log.match(/http:\/\/127\.0\.0\.1:\d+/);if(match){clearTimeout(timeout);resolve(match[0]);}});server.stderr.on('data',chunk=>log+=chunk);server.on('error',reject);});
   const browser=await pw.chromium.launch({channel:'msedge',headless:true}),page=await browser.newPage({viewport:{width:1320,height:1000}}),errors=[];
   page.on('pageerror',error=>errors.push(error.message));

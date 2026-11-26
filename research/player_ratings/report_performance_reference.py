@@ -131,7 +131,7 @@ both sides correctly withheld a numerical score for insufficient evidence.
 For a new PGN, using the same WSL environment and installed reference engine:
 
 ```text
-python analysis/elo_estimator/analyze_reference_game.py game.pgn --output analysis/elo_estimator/validation/my_game --workers 4
+python research/player_ratings/analyze_reference_game.py game.pgn --output research/player_ratings/validation/my_game --workers 4
 ```
 
 The output directory contains a resumable candidate cache, the versioned reference

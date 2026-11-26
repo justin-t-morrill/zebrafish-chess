@@ -34,7 +34,7 @@ python material_network.py pack checkpoints/merged256-24/quantised.bin nnue-merg
 
 The current accepted 8.3 network is the plain dual-perspective
 `(768 -> 256) x 2 -> 1` SCReLU model. Its exported weights are included as
-`engine/current/nnue-8.3.bin`; training is not required to run the engine.
+`resources/networks/nnue-8.3.bin`; training is not required to run the engine.
 The trainer supports plain hidden sizes 128, 256, and 512, plus experimental
 `king10` models at 128 and 256. King-bucket candidates were not accepted for 8.3.
 

@@ -16,8 +16,8 @@ try:
     import chess.pgn  # type: ignore
 except ImportError as error:  # pragma: no cover - actionable deployment error
     raise RuntimeError(
-        "python-chess is missing. Install it into analysis/game_review/vendor_runtime "
-        "with: python -m pip install --target .\\vendor_runtime python-chess==1.999"
+        "python-chess is missing. Activate the app environment and run "
+        "python -m pip install -e . from the repository root."
     ) from error
 
 

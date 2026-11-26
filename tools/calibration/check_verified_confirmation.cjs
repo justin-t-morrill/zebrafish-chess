@@ -1,7 +1,7 @@
 const {chromium}=require('C:/Users/Justin/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 const assert=require('assert/strict'),fs=require('fs');
 const root='file:///C:/Users/Justin/Desktop/Chess_2/strength_results/';
-const out='testing/results/strength_calibration/verified-human-log-20261014';
+const out='local/results/strength_calibration/verified-human-log-20261014';
 function fixture(target,color,result='1-0',round='confirmation',decision=1){const engine=`Engine 8.3 (${target} strength)`;return `[GUIBuild "relative-20261013-gui-worker-seed-v1"]\n[GUIFirstDecisionIndex "${decision}"]\n[GUIStartupSeed "1792001000"]\n[Event "Isolated test fixture"]\n[Round "${round}"]\n[White "${color==='White'?'Human':engine}"]\n[Black "${color==='Black'?'Human':engine}"]\n[Result "${result}"]\n[WhiteTimeControl "180+2"]\n[BlackTimeControl "180+2"]\n\n1. e4 e5 2. Nf3 Nc6 ${result}`;}
 (async()=>{
  const browser=await chromium.launch({channel:'msedge',headless:true});

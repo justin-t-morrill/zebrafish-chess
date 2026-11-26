@@ -22,13 +22,13 @@ PAIR = np.dtype([("index", "<u2"), ("value", "<f4")])
 def compile_extractor(engine: str, output: Path, header: Path) -> None:
     match = __import__("re").match(r"(\d+)", engine)
     bucket = f"v{match.group(1)}" if match else "misc"
-    source = ROOT / "engines" / "versions" / bucket / f"source_{engine}" / "chess.c"
+    source = ROOT / "history/engines" / bucket / f"source_{engine}" / "chess.c"
     if not source.exists():
         raise SystemExit(f"Missing saved engine source: {source}")
     include = source.relative_to(ROOT).as_posix()
     header.write_text(f'#define TEXEL_ENGINE_SOURCE "../{include}"\n', encoding="ascii")
     command = ["gcc", "-std=c11", "-O3", "-DNDEBUG", "-include", str(header),
-               str(ROOT / "training" / "tuning" / "extract_eval_features.c"), "-o", str(output),
+               str(ROOT / "research/evaluation_tuning" / "extract_eval_features.c"), "-o", str(output),
                "-lgdiplus", "-lgdi32", "-luser32"]
     subprocess.run(command, cwd=ROOT, check=True)
 

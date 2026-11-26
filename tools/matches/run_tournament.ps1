@@ -18,7 +18,7 @@ param(
     [int]$OpponentThreads = 1,
     [string]$EngineVersion = "1.7.1",
     [string]$EvalFile = "",
-    [string]$OpeningFile = "openings\suites\8moves_v3.epd",
+    [string]$OpeningFile = "tests\fixtures\openings\8moves_v3.epd",
     [string[]]$GauntletOpponents = @()
 )
 

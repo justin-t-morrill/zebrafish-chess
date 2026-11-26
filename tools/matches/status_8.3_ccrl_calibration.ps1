@@ -1,6 +1,6 @@
 . (Join-Path $PSScriptRoot "project_paths.ps1")
 $root = Get-ChessProjectRoot
-$results = Join-Path $root "testing\results\calibration\v8.3"
+$results = Join-Path $root "local\results\calibration\v8.3"
 $statePath = Join-Path $results "ccrl-calibration-state.json"
 if (Test-Path -LiteralPath $statePath) {
     $state = Get-Content -LiteralPath $statePath -Raw | ConvertFrom-Json

@@ -7,7 +7,7 @@
  * one candidate move cannot contaminate another through the TT or history. */
 #define main chess_engine_program_main
 #ifndef DIAGNOSTIC_ENGINE_SOURCE
-#define DIAGNOSTIC_ENGINE_SOURCE "../engine_versions/source_6.2/chess.c"
+#define DIAGNOSTIC_ENGINE_SOURCE "../../history/engines/v6/source_6.2/chess.c"
 #endif
 #include DIAGNOSTIC_ENGINE_SOURCE
 #undef main

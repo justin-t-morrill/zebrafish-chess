@@ -7,7 +7,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $engine = Join-Path $PSScriptRoot 'sf8h_benchmark.exe'
-$suite = Join-Path $root 'testing\runtime\profiles\benchmark_suite.txt'
+$suite = Join-Path $root 'tools\runtime\profiles\benchmark_suite.txt'
 $positions = Get-Content $suite | Where-Object { $_ -like 'position fen *' }
 $networks = [ordered]@{
     'current-v8' = Join-Path $root 'resources\networks\nnue-8.0.bin'

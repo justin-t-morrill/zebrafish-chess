@@ -15,7 +15,7 @@ from .paths import ROOT, resource
 
 
 def diagnostics() -> dict:
-    vendor = ROOT / "analysis/game_review/vendor_runtime"
+    vendor = resource("review_vendor")
     if str(vendor) not in sys.path:
         sys.path.insert(0, str(vendor))
     dependencies = {name: importlib.util.find_spec(name) is not None for name in ("chess", "numpy")}
@@ -56,8 +56,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.action == "verify":
         from .paths import python_environment
         environment = python_environment()
-        environment["PYTHONPATH"] += os.pathsep + str(ROOT / "analysis/game_review")
-        for directory in ("tests", "apps/web/tests", "analysis/game_review/tests"):
+        for directory in ("tests", "tests/web", "tests/review"):
             result = subprocess.run([sys.executable, "-B", "-m", "unittest", "discover", "-s", str(ROOT / directory), "-p", "test_*.py", "-v"], cwd=ROOT, env=environment)
             if result.returncode:
                 return result.returncode
@@ -73,10 +72,10 @@ def main(argv: list[str] | None = None) -> int:
             print("\nSetup does not change your existing environments or download anything.")
             print("For a new environment: py -3.12 -m venv .venv")
             print(r"Then: .venv\Scripts\python.exe -m pip install -e .")
-            print("Restore compatibility links with Zebrafish-Setup.cmd -RepairPaths.")
-            print("Build the playing engine and helper with Zebrafish-Build.cmd -Current.")
-            print("Build a separate test candidate with Zebrafish-Build.cmd.")
-            print("See docs/launchers.md for optional tools and the existing helper build.")
+            print("Restore compatibility links with launchers/optional/Zebrafish-Setup.cmd -RepairPaths.")
+            print("Build the playing engine and helper with launchers/Zebrafish-Build.cmd -Current.")
+            print("Build a separate test candidate with launchers/Zebrafish-Build.cmd.")
+            print("See launchers/README.md for optional tools and the existing helper build.")
         return 0
     if args.action == "play":
         entry = resource("web") / "server.py"
@@ -100,7 +99,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Build failed: {error}", file=sys.stderr)
             return 1
         print(f"\nCandidate built: {build}")
-        print("Select it in Zebrafish-Test.cmd. The playing engine was left in place.")
+        print("Select it in launchers/Zebrafish-Test.cmd. The playing engine was left in place.")
         return 0
     from .workbench import launch
     launch(args.action, port=args.port or 8770, no_browser=args.no_browser)

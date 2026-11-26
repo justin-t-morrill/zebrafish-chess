@@ -95,9 +95,9 @@ heavy competing workloads during timed calibration.
 ## Commands
 
 ```powershell
-python testing/strength_calibration/run_relative_ladder.py prepare <new-output-directory>
-python testing/strength_calibration/run_relative_ladder.py run <output-directory>
-python testing/strength_calibration/run_relative_ladder.py status <output-directory>
+python tools/calibration/run_relative_ladder.py prepare <new-output-directory>
+python tools/calibration/run_relative_ladder.py run <output-directory>
+python tools/calibration/run_relative_ladder.py status <output-directory>
 ```
 
 The most recent prepared output is recorded in `latest_relative_ladder_path.txt`.

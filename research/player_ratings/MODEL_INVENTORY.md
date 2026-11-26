@@ -36,14 +36,14 @@ against a ground-truth single-game performance label. We do not have that label.
 
 ## Interpretation for the user's performance-Elo objective
 
-Latest update: [the own-engine constrained CatBoost comparison](models/experiments/performance_likelihood_v4_revision/FINDINGS.md)
+Latest update: the own-engine constrained CatBoost comparison (local artifact: `local/models/player_ratings/experiments/performance_likelihood_v4_revision/FINDINGS.md`)
 is now the recommended practical research direction under the user's own-engine
 preference. Earlier v4 recommendations below record the prior research stage.
 
 
 The completed v4 Stockfish experiment is the recommended next research foundation.
 It improves quality prediction and deeper-search stability, but does not solve
-single-game precision: see [v4 findings](models/experiments/performance_likelihood_v4/FINDINGS.md).
+single-game precision: see v4 findings (local artifact: `local/models/player_ratings/experiments/performance_likelihood_v4/FINDINGS.md`).
 The v3 results below describe the previous starting point and a different engine
 protocol; their raw losses cannot be compared directly with v4.
 
@@ -63,7 +63,7 @@ the candidate-difficulty component is useful to revisit. RatingNet and the CNNs
 remain useful experimental representations, not established performance scorers.
 The inventory itself did not change weights. A subsequent v3 experiment trained
 new research models; the GUI remains unchanged. See the
-[v3 report](models/experiments/performance_likelihood_v3/REPORT.md).
+v3 report (local artifact: `local/models/player_ratings/experiments/performance_likelihood_v3/REPORT.md`).
 
 ## Detailed evidence
 

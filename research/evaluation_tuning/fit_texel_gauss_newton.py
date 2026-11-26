@@ -597,7 +597,7 @@ def main() -> None:
     parser.add_argument("--patience", type=int, default=3)
     parser.add_argument("--minimum-step", type=float, default=1e-4)
     parser.add_argument("--base-source", type=Path,
-                        default=Path("engine_versions/source_2.2/chess_engine.c"))
+                        default=Path("history/engines/v2/source_2.2/chess_engine.c"))
     args = parser.parse_args()
     cache = args.cache or args.output.with_suffix(".features.npz")
     data = load_cache(cache) if cache.exists() else build_cache(args.leaves, args.pawn_features, cache)

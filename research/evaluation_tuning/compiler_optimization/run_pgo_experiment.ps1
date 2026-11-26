@@ -5,7 +5,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-$source = Join-Path $root 'engine_versions\source_3.4\chess.c'
+$source = Join-Path $root 'history\engines\v3\source_3.4\chess.c'
 $suite = Join-Path $root 'tuning\runtime_profile\benchmark_suite.txt'
 $epd = Join-Path $root '8moves_v3.epd'
 $output = Join-Path $PSScriptRoot 'build_3.4'

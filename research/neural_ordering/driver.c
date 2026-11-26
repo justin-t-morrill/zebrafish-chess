@@ -1,7 +1,7 @@
 /* Native, single-thread experimental runner. Default production build unchanged. */
 #define main chess_program_main
 #ifdef NMO_BASELINE
-#include "../../testing/results/neural_ordering_pilot/baseline/chess.c"
+#include "../../local/results/neural_ordering_pilot/baseline/chess.c"
 #else
 #define NMO_EXPERIMENT
 #include "../../engine/src/chess.c"

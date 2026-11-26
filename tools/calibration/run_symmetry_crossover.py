@@ -36,7 +36,7 @@ def prepare(main,output):
     split=json.loads((main/'opening_split.json').read_text())
     excluded=set(split['main_final_positions'])|set(split['held_out_final_positions'])
     candidates=[];seen=set()
-    with (ROOT/'openings/suites/8moves_v3.pgn').open(encoding='utf-8-sig') as f:
+    with (ROOT/'tests/fixtures/openings/8moves_v3.pgn').open(encoding='utf-8-sig') as f:
         while (game:=chess.pgn.read_game(f)) is not None:
             if game.errors:continue
             moves=list(game.mainline_moves());board=game.end().board()

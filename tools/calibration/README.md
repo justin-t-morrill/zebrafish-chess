@@ -38,10 +38,10 @@ The probabilities, MultiPV width, temperature, and immediate-mate awareness are 
 ## Running calibration
 
 ```powershell
-.\testing\strength_calibration\run_calibration.ps1 -GamesPerProfile 120 -Concurrency 6 -SecondsPerMove 0.10 -EngineVersion Current
+.\tools\calibration\run_calibration.ps1 -GamesPerProfile 120 -Concurrency 6 -SecondsPerMove 0.10 -EngineVersion Current
 ```
 
-Select individual anchors with `-ProfileNames p800,p1000`. Results go to `testing/results/strength_calibration/vCurrent_perception`.
+Select individual anchors with `-ProfileNames p800,p1000`. Results go to `local/results/strength_calibration/vCurrent_perception`.
 
 Stockfish's limited-strength range does not extend below 1320, so beginner calibration is chained: 400 plays 600, 600 plays 800, 800 plays 1000, 1000 plays 1200, and 1200 plays Stockfish 1320. Higher anchors play the corresponding Stockfish level.
 
@@ -68,9 +68,9 @@ possible to check whether (for example) the 1200 profile has 1200-like tactical
 play but 900-like conversion, rather than hiding both behind one match Elo.
 
 ```powershell
-python .\testing\strength_calibration\calibrate_play_aspects.py `
-  .\analysis\elo_estimator\data\move_features_100k.csv `
-  --output .\testing\strength_calibration\human_aspect_targets.json
+python .\tools\calibration\calibrate_play_aspects.py `
+  .\local\datasets\player_ratings\move_features_100k.csv `
+  --output .\tools\calibration\human_aspect_targets.json
 ```
 
 For a candidate profile, review its PGNs with the normal game-review extractor,
@@ -82,9 +82,9 @@ curves diagnose which behavioral control needs adjustment.
 Score any compatible reviewed-move CSV with:
 
 ```powershell
-python .\testing\strength_calibration\score_play_aspects.py `
+python .\tools\calibration\score_play_aspects.py `
   .\path\to\move_features.csv `
-  --targets .\testing\strength_calibration\human_aspect_targets.json
+  --targets .\tools\calibration\human_aspect_targets.json
 ```
 
 ### Engine subcategory response curves
@@ -97,13 +97,13 @@ additional off-category games measure leakage. The default run contains 4,000
 paired-color games and takes about eight hours on this eight-core machine:
 
 ```powershell
-.\testing\strength_calibration\run_skill_response_calibration.ps1 `
+.\tools\calibration\run_skill_response_calibration.ps1 `
   -Concurrency 8 -TimeControl "2+1" -EngineVersion Current
 ```
 
 The run writes a live `manifest.json`, per-match PGNs and logs, `summary.json`,
 and finally `response_fit.json` under
-`testing\results\strength_calibration\skill-response-<timestamp>`. The fitted
+`local\results\strength_calibration\skill-response-<timestamp>`. The fitted
 file reports the category-specific response slope, overall-strength spillover,
 and cross-category effects. It is diagnostic calibration data; the playing
 adapter should only be changed after checking that the curves are monotonic and

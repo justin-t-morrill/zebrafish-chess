@@ -93,9 +93,9 @@ by the current results. No GUI model or calibration was changed in this work.
 Use the existing WSL `/opt/ratingnet-venv/bin/python` environment from the project root:
 
 ```text
-python -m unittest discover -s analysis/elo_estimator -p test_individual_benchmark.py
-python analysis/elo_estimator/train_individual_rating.py --split player-first --output <new-run-directory>
-python analysis/elo_estimator/verify_individual_rating.py <new-run-directory>
+python -m unittest discover -s research/player_ratings -p test_individual_benchmark.py
+python research/player_ratings/train_individual_rating.py --split player-first --output <new-run-directory>
+python research/player_ratings/verify_individual_rating.py <new-run-directory>
 ```
 
 See the main run's `REPORT.md`, `protocol.json`, `selection.json`, `report.json`,

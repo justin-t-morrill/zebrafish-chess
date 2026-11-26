@@ -20,7 +20,7 @@ param(
     [double]$Alpha = 0.05,
     [ValidateRange(0.0001, 0.4999)]
     [double]$Beta = 0.05,
-    [string]$OpeningFile = "openings\suites\8mvs_+90_+99.epd",
+    [string]$OpeningFile = "tests\fixtures\openings\8mvs_+90_+99.epd",
     [string]$BinaryA = "",
     [string]$BinaryB = "",
     [switch]$SearchOnly,
@@ -62,7 +62,7 @@ $results = if ($OutputDirectory) {
 } else { Get-TestResultDirectory "sprt" $EngineA }
 $requiredFiles = @($openings)
 if (-not $Preview) {
-    if (-not $cute) { throw "Install cutechess-cli.exe in testing/tools/cutechess or on PATH." }
+    if (-not $cute) { throw "Install cutechess-cli.exe in local/tools/cutechess or on PATH." }
     $requiredFiles += $engineAPath, $engineBPath
 }
 foreach ($required in $requiredFiles) {

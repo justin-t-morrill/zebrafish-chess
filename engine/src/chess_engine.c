@@ -1361,7 +1361,7 @@ static Move move_picker_next(MovePicker *picker) {
 
 #include "cutoff_policy.c"
 #ifdef NMO_EXPERIMENT
-#include "../../training/neural_ordering/runtime.c"
+#include "../../research/neural_ordering/runtime.c"
 #endif
 
 /* Bounded gravity update. Positive bonuses cannot permanently saturate an

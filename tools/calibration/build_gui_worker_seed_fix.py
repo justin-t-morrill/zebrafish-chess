@@ -8,10 +8,10 @@ import subprocess
 import sys
 
 ROOT=Path(__file__).resolve().parents[2]
-BASE=ROOT/'testing/results/strength_calibration/relative-candidate-20261013'
+BASE=ROOT/'local/results/strength_calibration/relative-candidate-20261013'
 PREVIOUS=BASE.with_name(BASE.name+'-opening-display')
 OUT=BASE.with_name(BASE.name+'-worker-seed-fix')
-DIAG=ROOT/'testing/results/strength_calibration/gui-rng-diagnostic-20261013'
+DIAG=ROOT/'local/results/strength_calibration/gui-rng-diagnostic-20261013'
 BUILD='relative-20261013-gui-worker-seed-v1'
 
 
@@ -181,7 +181,7 @@ int main(int argc,char **argv) {
     result=subprocess.run([str(OUT/'worker_seed_checks.exe'),str(source/'chess_gui_candidate.exe')],capture_output=True,text=True,timeout=120)
     (OUT/'worker_seed_checks.log').write_text(result.stdout+result.stderr,encoding='utf-8')
     result.check_returncode()
-    sys.path.insert(0,str(ROOT/'analysis/game_review/vendor_runtime'))
+    sys.path.insert(0,str(ROOT/'local/dependencies/reviewer'))
     import io, chess.pgn
     metadata_game=chess.pgn.read_game(io.StringIO(result.stdout.split('Final PGN:',1)[1]))
     assert not metadata_game.errors
@@ -218,7 +218,7 @@ int main(int argc,char **argv) {
         'Pre-fix human GUI games do not anchor this corrected GUI. Repeat a small bracket before using the 48-game confirmation schedule.\n'
         'The knight/rook development preference and deliberate oversight model remain and need a separate behavior decision.\n',encoding='utf-8')
     # Preserve historical estimates, but mark their evidence scope explicitly.
-    pilot=ROOT/'testing/results/strength_calibration/human-pilot-20261013-1700'
+    pilot=ROOT/'local/results/strength_calibration/human-pilot-20261013-1700'
     analysis_path=pilot/'pilot_analysis.json';analysis=json.loads(analysis_path.read_text())
     shutil.copy2(analysis_path,OUT/'pilot_analysis_before_rng_diagnosis.json')
     analysis.update(status='affected_pre_fix_gui_results_not_valid_for_corrected_human_anchor',
@@ -235,7 +235,7 @@ int main(int argc,char **argv) {
     (pilot/'confirmation_schedule.json').write_text(json.dumps({**json.loads((pilot/'confirmation_schedule.json').read_text()),
         'status':'defer_until_corrected_gui_bracket','required_gui_build':BUILD,
         'prior_gui_games_eligible':False},indent=2),encoding='utf-8')
-    sys.path.insert(0,str(ROOT/'analysis/game_review/vendor_runtime'))
+    sys.path.insert(0,str(ROOT/'local/dependencies/reviewer'))
     import chess.pgn
     with (DIAG/'user_1550_game.pgn').open() as f:game=chess.pgn.read_game(f)
     assert not game.errors and game.end().board().outcome().result()==game.headers['Result']

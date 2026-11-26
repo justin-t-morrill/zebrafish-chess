@@ -3,7 +3,7 @@ import argparse, json, os, subprocess, time
 from pathlib import Path
 import psutil
 
-ROOT=Path(__file__).resolve().parents[2]; OUT=ROOT/'testing/results/neural_ordering_pilot'
+ROOT=Path(__file__).resolve().parents[2]; OUT=ROOT/'local/results/neural_ordering_pilot'
 EXE=OUT/'experiment.exe'
 def run(args,timeout=240):
     start=time.perf_counter()
@@ -17,7 +17,7 @@ def rows(path): return [json.loads(x) for x in path.read_text().splitlines()]
 def configs(name,items,diag=0,conservative=0):
     file=OUT/f'{name}.cfg'
     file.write_text('\n'.join(f'{label} {mode} {gate} {diag} {conservative} '+
-        (f'testing/results/neural_ordering_pilot/models/{model}.nmo' if model else '-')
+        (f'local/results/neural_ordering_pilot/models/{model}.nmo' if model else '-')
         for label,mode,gate,model in items)+'\n')
     return file
 def main():

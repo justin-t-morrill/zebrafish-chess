@@ -22,7 +22,7 @@ try:
     from catboost import CatBoostClassifier
 except ImportError as exc:
     raise SystemExit(
-        "CatBoost is not installed. Run .\\analysis\\elo_estimator\\setup_performance_model.ps1 first."
+        "CatBoost is not installed. Run .\\research\\player_ratings\\setup_performance_model.ps1 first."
     ) from exc
 
 

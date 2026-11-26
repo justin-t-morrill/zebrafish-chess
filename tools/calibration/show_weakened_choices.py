@@ -8,15 +8,15 @@ import sys
 import html
 
 ROOT=Path(__file__).resolve().parents[2]
-OUT=ROOT/'testing/results/strength_calibration/ordinary-choice-explanation-20261013'
-SOURCE=ROOT/'testing/results/strength_calibration/relative-candidate-20261013-worker-seed-fix/snapshot'
-sys.path.insert(0,str(ROOT/'analysis/game_review/vendor_runtime'))
+OUT=ROOT/'local/results/strength_calibration/ordinary-choice-explanation-20261013'
+SOURCE=ROOT/'local/results/strength_calibration/relative-candidate-20261013-worker-seed-fix/snapshot'
+sys.path.insert(0,str(ROOT/'local/dependencies/reviewer'))
 import chess, chess.pgn
 
 
 def main():
     OUT.mkdir(exist_ok=True)
-    with (ROOT/'testing/results/strength_calibration/gui-rng-diagnostic-20261013/user_1550_game.pgn').open() as f:g=chess.pgn.read_game(f)
+    with (ROOT/'local/results/strength_calibration/gui-rng-diagnostic-20261013/user_1550_game.pgn').open() as f:g=chess.pgn.read_game(f)
     all_moves=list(g.mainline_moves());cases=[]
     for number,temp,budget,rank in [(9,83.4,6.62,6),(23,89.7,4.62,3)]:
         b=g.board();prefix=all_moves[:2*(number-1)]

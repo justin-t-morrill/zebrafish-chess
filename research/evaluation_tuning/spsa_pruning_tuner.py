@@ -11,7 +11,7 @@ import spsa_search_tuner as tuner
 
 
 ROOT = Path(__file__).resolve().parents[2]
-WORK = ROOT / "training" / "tuning" / "search_spsa_work"
+WORK = ROOT / "local/runs/search_spsa"
 Parameter = tuner.Parameter
 
 PARAMETERS = [
@@ -39,7 +39,7 @@ def instrument_base(base_engine: str) -> tuple[Path, dict[str, float]]:
         raise SystemExit("Unsafe base engine name")
     match = re.match(r"(\d+)", base_engine)
     bucket = f"v{match.group(1)}" if match else "misc"
-    original = ROOT / "engines" / "versions" / bucket / f"source_{base_engine}"
+    original = ROOT / "history/engines" / bucket / f"source_{base_engine}"
     if not original.is_dir():
         raise SystemExit(f"Saved source version was not found: {original}")
     base_dir = WORK / "bases" / f"{base_engine}_pruning"

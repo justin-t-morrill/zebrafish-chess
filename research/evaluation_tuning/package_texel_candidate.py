@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def version_directory(name: str) -> Path:
     match = re.match(r"(\d+)", name)
-    return ROOT / "engines" / "versions" / (f"v{match.group(1)}" if match else "misc")
+    return ROOT / "history/engines" / (f"v{match.group(1)}" if match else "misc")
 def replace_one(text: str, pattern: str, replacement: str, label: str,
                 flags: int = 0) -> str:
     result, count = re.subn(pattern, replacement, text, count=1, flags=flags)

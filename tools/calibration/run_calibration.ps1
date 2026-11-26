@@ -8,14 +8,14 @@ param(
 $ErrorActionPreference = "Stop"
 . (Join-Path $PSScriptRoot "..\tools\project_paths.ps1")
 $root = Get-ChessProjectRoot
-$cute = (Get-ChildItem (Join-Path $root "testing\tools\cutechess") -Recurse -Filter cutechess-cli.exe | Select-Object -First 1).FullName
-$stockfish = (Get-ChildItem (Join-Path $root "testing\tools\stockfish") -Recurse -Filter stockfish-windows-x86-64.exe | Select-Object -First 1).FullName
+$cute = (Get-ChildItem (Join-Path $root "local\tools\cutechess") -Recurse -Filter cutechess-cli.exe | Select-Object -First 1).FullName
+$stockfish = (Get-ChildItem (Join-Path $root "local\tools\stockfish") -Recurse -Filter stockfish-windows-x86-64.exe | Select-Object -First 1).FullName
 $engine = if ($EngineVersion -eq "Current") { Join-Path $root "build\current\chess.exe" } else { Get-EngineVersionPath $EngineVersion }
 $python = (Get-Command python).Source
 $proxy = Join-Path $PSScriptRoot "limited_strength_uci.py"
-$book = Join-Path $root "openings\book\OpeningBook.tsv"
-$openings = Join-Path $root "openings\suites\8moves_v3.epd"
-$results = Join-Path $root "testing\results\strength_calibration\v${EngineVersion}_perception"
+$book = Join-Path $root "resources\books\OpeningBook.tsv"
+$openings = Join-Path $root "tests\fixtures\openings\8moves_v3.epd"
+$results = Join-Path $root "local\results\strength_calibration\v${EngineVersion}_perception"
 New-Item -ItemType Directory -Force -Path $results | Out-Null
 if (($GamesPerProfile % 2) -ne 0) { throw "GamesPerProfile must be even." }
 

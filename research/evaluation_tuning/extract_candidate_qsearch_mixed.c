@@ -1,6 +1,6 @@
 /* Batch-export the rounded qsearch-mixed candidate evaluation. */
 #define main chess_engine_program_main
-#include "../engine_versions/source_2.2_eval_qsearch_mixed/chess.c"
+#include "../../history/engines/v2/source_2.2_eval_qsearch_mixed/chess.c"
 #undef main
 
 int main(int argc, char **argv) {

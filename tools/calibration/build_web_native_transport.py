@@ -2,8 +2,8 @@
 from pathlib import Path
 import hashlib,json,shutil,subprocess
 ROOT=Path(__file__).resolve().parents[2]
-SOURCE=ROOT/'testing/results/strength_calibration/relative-candidate-20261013-worker-seed-fix/snapshot'
-OUT=ROOT/'gui/web/native_calibrated'
+SOURCE=ROOT/'local/results/strength_calibration/relative-candidate-20261013-worker-seed-fix/snapshot'
+OUT=ROOT/'resources/calibrated/relative-20261013'
 def digest(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def main():
  OUT.mkdir(exist_ok=True)
@@ -54,7 +54,7 @@ static BOOL native_capture_result(HWND window, UINT message, WPARAM wparam, LPAR
  assert reference==observed and len(observed.splitlines())==2001
  unchanged={p.name:digest(OUT/p.name) for p in SOURCE.iterdir() if p.is_file() and p.name!='native_strength_uci.c' and p.suffix not in ('.exe','.o')}
  assert all(digest(SOURCE/name)==sha for name,sha in unchanged.items())
- m={'strength_system':'calibrated-native-worker-v1','gui_build':'relative-20261013-gui-worker-seed-v1','source':str(SOURCE),'engine_sha256':digest(OUT/'native_strength.exe'),'mapping_sha256':digest(ROOT/'testing/results/strength_calibration/relative-candidate-20261013/mapping.json'),'mapping_header_sha256':digest(OUT/'relative_mapping.h'),'gui_source_sha256':digest(OUT/'chess_gui.c'),'nnue_sha256':digest(OUT/'nnue-8.3.bin'),'book_sha256':digest(OUT/'OpeningBook.tsv'),'unchanged_files':unchanged,'transport_sha256':digest(OUT/'native_strength_uci.c'),'checks':{'actual_gui_worker_called':True,'worker_thread_rng_matches_gui':True,'compiled_mapping_points_identical':2001,'selftests_passed':True,'core_and_assets_byte_identical':True},'threads':1,'hash_mb':64,'lag_reserve_seconds':.01,'rating_conversion':False,'human_anchor_installed':False}
+ m={'strength_system':'calibrated-native-worker-v1','gui_build':'relative-20261013-gui-worker-seed-v1','source':str(SOURCE),'engine_sha256':digest(OUT/'native_strength.exe'),'mapping_sha256':digest(ROOT/'local/results/strength_calibration/relative-candidate-20261013/mapping.json'),'mapping_header_sha256':digest(OUT/'relative_mapping.h'),'gui_source_sha256':digest(OUT/'chess_gui.c'),'nnue_sha256':digest(OUT/'nnue-8.3.bin'),'book_sha256':digest(OUT/'OpeningBook.tsv'),'unchanged_files':unchanged,'transport_sha256':digest(OUT/'native_strength_uci.c'),'checks':{'actual_gui_worker_called':True,'worker_thread_rng_matches_gui':True,'compiled_mapping_points_identical':2001,'selftests_passed':True,'core_and_assets_byte_identical':True},'threads':1,'hash_mb':64,'lag_reserve_seconds':.01,'rating_conversion':False,'human_anchor_installed':False}
  approved=json.loads((OUT/'approved_manifests.json').read_text(encoding='utf-8')) if (OUT/'approved_manifests.json').exists() else []
  for item in (prior,m):
   if item and not any(x['engine_sha256']==item['engine_sha256'] for x in approved):approved.append(item)

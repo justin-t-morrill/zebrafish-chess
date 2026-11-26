@@ -1,10 +1,10 @@
 const {chromium}=require('C:/Users/Justin/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 const assert=require('assert/strict'),fs=require('fs');
-const base='file:///C:/Users/Justin/Desktop/Chess_2/strength_results/',out='testing/results/strength_calibration/web-native-equivalence-20261015';
+const base='file:///C:/Users/Justin/Desktop/Chess_2/strength_results/',out='local/results/strength_calibration/web-native-equivalence-20261015';
 (async()=>{const browser=await chromium.launch({headless:true,channel:'msedge'});try{
  const c=await browser.newContext({viewport:{width:1360,height:1000}}),page=await c.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto(base+'games.html');
  const opts={player:'main',rating:'1398',useTag:true,tc:'180+2',version:'',color:'auto',target:''};async function add(pgn){return page.evaluate(({pgn,opts})=>ChessPgnImport.importBatch(pgn,opts),{pgn,opts});}
- const old=fs.readFileSync('analysis/game_review/reviews/played/game-20261015-001515-bc7300.pgn','utf8');assert.equal((await add(old)).added,1);assert.match(await page.locator('#next-game-progress').innerText(),/0 \/ 48/);
+ const old=fs.readFileSync('local/reviews/played/game-20261015-001515-bc7300.pgn','utf8');assert.equal((await add(old)).added,1);assert.match(await page.locator('#next-game-progress').innerText(),/0 \/ 48/);
  const white=fs.readFileSync(out+'/equivalent-native-white.pgn','utf8'),black=fs.readFileSync(out+'/equivalent-native-black.pgn','utf8');assert.equal(await page.evaluate(p=>ChessCalibrationOffset.equivalentWeb(p),white),true);
  assert.equal((await add(white)).added,1);assert.match(await page.locator('#next-game-progress').innerText(),/1 \/ 48/);assert.match(await page.locator('#next-game-title').innerText(),/1450 · play as Black/);
  assert.equal((await add(black)).added,1);assert.match(await page.locator('#next-game-progress').innerText(),/2 \/ 48/);assert.match(await page.locator('#next-game-title').innerText(),/1750 · play as Black/);

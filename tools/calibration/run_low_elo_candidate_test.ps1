@@ -6,9 +6,9 @@ param(
 )
 $ErrorActionPreference="Stop"
 . (Join-Path $PSScriptRoot "..\tools\project_paths.ps1")
-$root=Get-ChessProjectRoot;$cute=(Get-ChildItem (Join-Path $root "testing\tools\cutechess") -Recurse -Filter cutechess-cli.exe|Select-Object -First 1).FullName
-$python=(Get-Command python).Source;$engine=Join-Path $root "build\current\chess.exe";$proxy=Join-Path $PSScriptRoot "limited_strength_uci.py";$book=Join-Path $root "openings\book\OpeningBook.tsv";$openings=Join-Path $root "openings\suites\8moves_v3.epd"
-$stamp=Get-Date -Format "yyyyMMdd-HHmmss";$results=Join-Path $root "testing\results\strength_calibration\low_candidates-$stamp";New-Item -ItemType Directory -Force -Path $results|Out-Null
+$root=Get-ChessProjectRoot;$cute=(Get-ChildItem (Join-Path $root "local\tools\cutechess") -Recurse -Filter cutechess-cli.exe|Select-Object -First 1).FullName
+$python=(Get-Command python).Source;$engine=Join-Path $root "build\current\chess.exe";$proxy=Join-Path $PSScriptRoot "limited_strength_uci.py";$book=Join-Path $root "resources\books\OpeningBook.tsv";$openings=Join-Path $root "tests\fixtures\openings\8moves_v3.epd"
+$stamp=Get-Date -Format "yyyyMMdd-HHmmss";$results=Join-Path $root "local\results\strength_calibration\low_candidates-$stamp";New-Item -ItemType Directory -Force -Path $results|Out-Null
 if($GamesPerProfile%2){throw "GamesPerProfile must be even."}
 $manifest=[ordered]@{status="running";started=(Get-Date).ToString("o");time_control=$TimeControl;anchor_profile=400;anchor_estimated_ccrl=695;planned_games=$Profiles.Count*$GamesPerProfile;current="";completed=@()};$manifestPath=Join-Path $results "manifest.json"
 function Save{$manifest|ConvertTo-Json -Depth 6|Set-Content $manifestPath -Encoding utf8}

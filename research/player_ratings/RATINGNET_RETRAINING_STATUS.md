@@ -11,7 +11,7 @@ dates, split labels, and both ratings are retained.
 Rebuild it with:
 
 ```powershell
-.\analysis\elo_estimator\prepare_ratingnet_data.ps1
+.\research\player_ratings\prepare_ratingnet_data.ps1
 ```
 
 ## GPU status

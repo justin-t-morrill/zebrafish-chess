@@ -3,10 +3,10 @@ import csv, hashlib, json, random
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
-OUT=ROOT/'testing/results/neural_ordering_pilot'
+OUT=ROOT/'local/results/neural_ordering_pilot'
 def main():
     rng=random.Random(17417); seen=set(); groups=set(); records=[]
-    rows=list(csv.DictReader((ROOT/'training/tuning/data/positions_50k.csv').open()))
+    rows=list(csv.DictReader((ROOT/'local/datasets/tuning/positions_50k.csv').open()))
     rng.shuffle(rows)
     buckets={}
     for row in rows:
@@ -21,7 +21,7 @@ def main():
     while any(buckets.values()):
         for bucket in buckets.values():
             if bucket: records.append(bucket.pop())
-    opening_lines=(ROOT/'openings/suites/8moves_v3.epd').read_text().splitlines()
+    opening_lines=(ROOT/'tests/fixtures/openings/8moves_v3.epd').read_text().splitlines()
     rng.shuffle(opening_lines)
     for idx,fen in enumerate(opening_lines[:100]):
         key=' '.join(fen.split()[:4])
@@ -43,7 +43,7 @@ def main():
     (OUT/'profile.cfg').write_text('profile 3 2 1 0 -\n')
     (OUT/'manifest.json').write_text(json.dumps({'seed':17417,'counts':{k:len(v) for k,v in sets.items()},
         'inputs':{str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in
-           [ROOT/'training/tuning/data/positions_50k.csv',ROOT/'openings/suites/8moves_v3.epd']},
+           [ROOT/'local/datasets/tuning/positions_50k.csv',ROOT/'tests/fixtures/openings/8moves_v3.epd']},
         'root_history':'FEN sources lack pre-root repetition history. Internal path keys are retained.'},indent=2))
     print({k:len(v) for k,v in sets.items()})
 if __name__=='__main__': main()

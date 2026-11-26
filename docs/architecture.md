@@ -5,6 +5,7 @@ runtime inputs, developer tools, research, historical evidence and local data.
 
 | Directory | Purpose |
 | --- | --- |
+| `launchers` | Six everyday double-click entry points; optional and legacy controls are nested |
 | `apps/web` | Play, Analyze, live analysis and game-review browser interface |
 | `apps/workbench` | Version-test setup, live boards, pause/resume and results |
 | `apps/review_desktop` | Existing Tk desktop reviewer |
@@ -23,7 +24,7 @@ runtime inputs, developer tools, research, historical evidence and local data.
 | `history/ELO_HISTORY.md` | Canonical accepted-release strength and calibration record |
 | `third_party/fathom`, `third_party/openings`, `third_party/lichess-bot` | Upstream source, licenses and the pinned bot checkout |
 | `integrations/lichess` | Our bot supervisor, setup, placeholder configuration and upstream patch |
-| `tests` | Runtime/workflow integration checks and small opening fixtures |
+| `tests` | Workflow checks, `web/` browser/app checks, `review/` analysis/desktop checks and fixtures |
 | `config` | Resource paths and the legacy-to-canonical alias map |
 | `build/current`, `build/helpers`, `build/candidates` | Ignored compiled output, including isolated candidate snapshots |
 | `local` | Ignored datasets, models, dependencies, checkpoints, reviews, runs, logs and migration records |
@@ -56,7 +57,7 @@ and 5% error bounds, evaluated at paired-batch checkpoints.
 
 `config/legacy-paths.json` records old directory names. Windows junctions keep
 old scripts and saved absolute PGN references usable. New review records use
-project-relative source paths; old records are not rewritten. `Zebrafish-Setup.cmd
+project-relative source paths; old records are not rewritten. `launchers/optional/Zebrafish-Setup.cmd
 -RepairPaths` restores missing aliases in a fresh checkout without moving data.
 
 Several physical locations intentionally remain stable:
@@ -75,3 +76,16 @@ Several physical locations intentionally remain stable:
 snapshots for pre-migration processes. Active development and new builds use
 `engine/src`; fresh-checkout compatibility files can be restored from canonical
 sources. Compatibility paths are excluded from Git to avoid duplicate sources.
+
+## Root and compatibility policy
+
+Only `README.md`, `pyproject.toml` and the three Git configuration files are
+published at the root. Root discovery uses the existing package and resource
+configuration together, so a separate `.chess-project` marker is unnecessary.
+Developer wrappers live in `tools/dev`, CLI review tools in `tools/review`,
+artwork generation in `tools/assets`, and download utilities in `tools/tablebases`.
+
+The former `analysis`, `gui`, `endgames`, `engine/current` and frontend test
+copies are no longer published as parallel implementations. Existing local
+copies remain ignored for saved references and running processes. Canonical
+application code and tests use the current paths and imports directly.

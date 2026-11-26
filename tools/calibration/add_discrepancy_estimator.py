@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
-OUT = ROOT / 'testing/results/strength_calibration/human-pilot-20261013-1700'
+OUT = ROOT / 'local/results/strength_calibration/human-pilot-20261013-1700'
 
 
 def header(pgn, name):
@@ -16,7 +16,7 @@ def main():
     baseline = []
     pilot = (OUT / 'games.pgn').read_text(encoding='utf-8')
     games = [g.strip() for g in re.split(r'(?=\[Event )', pilot) if g.strip()]
-    diagnostic = ROOT / 'testing/results/strength_calibration/gui-rng-diagnostic-20261013/user_1550_game.pgn'
+    diagnostic = ROOT / 'local/results/strength_calibration/gui-rng-diagnostic-20261013/user_1550_game.pgn'
     games.append(diagnostic.read_text(encoding='utf-8').strip())
     assert len(games) == 7
     for i, pgn in enumerate(games):

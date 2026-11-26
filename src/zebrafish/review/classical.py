@@ -53,7 +53,7 @@ class ClassicalEvaluator:
         path = Path(executable or DEFAULT_HELPER).resolve()
         if not path.is_file():
             raise FileNotFoundError(
-                f"Classical helper not found: {path}. Run classical_eval\\build.ps1"
+                f"Classical helper not found: {path}. Run engine\\helpers\\classical\\build.ps1"
             )
         creationflags = 0
         if os.name == "nt":

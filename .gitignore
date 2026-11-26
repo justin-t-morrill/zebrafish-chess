@@ -1,4 +1,4 @@
-# Local settings and credentials
+# Machine settings and credentials
 .vscode/
 .vs/
 .codex/
@@ -6,10 +6,19 @@
 .env
 .env.*
 !.env.example
-/integrations/lichess-bot/config.yml
-/integrations/lichess-bot/config.yaml
 
-# Build products and installed dependencies (keep runtime NNUE .bin files)
+# Local data, environments, installed tools and compiled output
+/local/
+/build/
+.rocm/
+.venv/
+venv/
+node_modules/
+python_packages/
+target/
+catboost_info/
+__pycache__/
+*.py[cod]
 *.exe
 *.dll
 *.o
@@ -18,26 +27,9 @@
 *.ilk
 *.a
 *.lib
-*.py[cod]
-__pycache__/
-/gui/web/tests/output/
-.venv/
-.rocm/
-/local/
-/build/
-/catboost_info/
-/apps/web/tests/output/
-/analysis/game_review/tests/output/
-/tests/output/
-/analysis/elo_estimator/data/
-/analysis/elo_estimator/external/
-/analysis/elo_estimator/model_runtime/
-/analysis/elo_estimator/runtime_access/
-/analysis/elo_estimator/vendor_runtime/
-venv/
-python_packages/
-target/
-node_modules/
+*.rtbw
+*.rtbz
+*.rtbm
 *.log
 *.pid
 *.tmp
@@ -48,127 +40,54 @@ gmon*.out
 *.profdata
 Thumbs.db
 .DS_Store
+**/output/
 
-# Large training inputs and generated training runs; keep scripts and src/
-/training/nnue/data/
-/training/nnue/checkpoints/
-/training/nnue/*_benchmark_raw.csv
-/training/tuning/data/
-/training/tuning/texel_runs/
-/training/tuning/spsa_work/
-/training/tuning/search_spsa_work/
-/training/tuning/texel_games*.txt
-/training/tuning/compiler_optimization/build_*/
-
-# Generated games, reviews, diagnostics, and profiles
-/testing/results/
-/testing/runtime/profiles/
-/testing/puzzles/lichess/data/
-/testing/puzzles/lichess/diagnostics/
-/testing/puzzles/lichess/results/
-/analysis/game_review/reviews/
-/analysis/game_review/vendor/
-/analysis/game_review/vendor_runtime/
-/integrations/lichess-bot/games/
-/integrations/lichess-bot/lichess_bot_auto_logs/
-
-# Downloaded test engines and tools; keep the project launch/analysis scripts
-/testing/tools/blunder/
-/testing/tools/carballo/
-/testing/tools/ccrl_engines/
-/testing/tools/cutechess/
-/testing/tools/our_engine/
-/testing/tools/stockfish/
-
-# Tablebase data only: retain Fathom/probing source and setup documentation
-*.rtbw
-*.rtbz
-*.rtbm
-
-# Raw opening databases; retain the runtime book, suites and preparation tools
-/openings/data/lichess/broadcast_database/
-
-# Legacy duplicates and disposable resources
-/archive/
-
-# Keep the final accepted source snapshot of each existing major version.
-# Other snapshots remain on disk. Add an exception when retaining a new release.
-# Major directories remain traversable so the source exceptions work.
-/engines/versions/misc/
-/engines/versions/v1/*
-!/engines/versions/v1/source_1.7.1/
-/engines/versions/v2/*
-!/engines/versions/v2/source_2.3/
-/engines/versions/v3/*
-!/engines/versions/v3/source_3.5/
-/engines/versions/v4/*
-!/engines/versions/v4/source_4.1/
-/engines/versions/v5/*
-!/engines/versions/v5/source_5.7/
-/engines/versions/v6/*
-!/engines/versions/v6/source_6.4/
-/engines/versions/v7/*
-!/engines/versions/v7/source_7.3/
-/engines/versions/v8/*
-!/engines/versions/v8/source_8.3/
-/engines/versions/v9/*
-!/engines/versions/v9/source_9.0/
-!/engines/versions/v9/source_9.1/
-!/engines/versions/v9/source_9.2/
-
-/integrations/lichess-bot/
-
-# Legacy directory junctions: canonical source is tracked at its new location.
-/analysis/elo_estimator/
+# Pre-migration paths remain local for existing installations.
+/analysis/
+/gui/
 /training/
-/testing/tools/
-/testing/puzzles/
-/testing/runtime/
-/testing/strength_calibration/
-/engines/versions/
-/engines/experiments/
-/openings/book/
-/openings/data/
-/openings/suites/
-/gui/assets/
-/gui/web/native_calibrated/
+/testing/
+/openings/
+/engines/
+/endgames/
+/archive/
+/engine/current/
+/apps/web/tests/
+/integrations/lichess-bot/
+/integrations/logs/
 /third_party/lichess-bot/
-/engine/current/*.c
-/engine/current/*.inc
-/engine/current/*.bin
-/engines/ELO_HISTORY.md
+/*.cmd
+/.chess-project
+/build.ps1
+/test.ps1
+/start_zebrafish.ps1
+/docs/launchers.md
 
-# Local data/dependency junctions inside canonical research/tool directories.
+# Existing browser report addresses retain their local storage and URLs.
+/strength_results/
+/Zebrafish-Live.html
+/STRENGTH_INTERIM_ANALYSIS.html
+/STRENGTH_TEST_RESULTS.html
+/strength_curve.html
+/strength_curve.png
+/docs/references/*.pdf
+
+# Local dependencies and generated research artifacts.
 /research/player_ratings/models/
 /research/player_ratings/data/
 /research/player_ratings/external/
 /research/player_ratings/model_runtime/
 /research/player_ratings/vendor_runtime/
 /research/player_ratings/runtime_access/
+/research/player_ratings/transparent_subscores/runs/
+/research/player_ratings/validation/
 /research/nnue/data/
 /research/nnue/checkpoints/
-/research/nnue/python_packages/
-/research/nnue/target/
+/research/nnue/*_benchmark_raw.csv
 /research/evaluation_tuning/data/
 /research/evaluation_tuning/texel_runs/
 /research/evaluation_tuning/spsa_work/
 /research/evaluation_tuning/search_spsa_work/
-/tools/matches/cutechess/
-/tools/matches/stockfish/
-/tools/matches/blunder/
-/tools/matches/carballo/
-/tools/matches/ccrl_engines/
-/tools/matches/our_engine/
-/tools/matches/python_packages/
-/tools/puzzles/lichess/data/
-/tools/puzzles/lichess/results/
-/tools/puzzles/lichess/diagnostics/
-/third_party/openings/lichess/broadcast_database/
-
-# Generated research output at the canonical locations.
-/research/player_ratings/transparent_subscores/runs/
-/research/player_ratings/validation/
-/research/nnue/*_benchmark_raw.csv
 /research/evaluation_tuning/texel_games*.txt
 /research/evaluation_tuning/compiler_optimization/build_*/
 /tools/runtime/profiles/
@@ -176,18 +95,19 @@ Thumbs.db
 /tools/calibration/cloud_cost_comparison.json
 /tools/calibration/latest_*_path.txt
 /tools/calibration/*_smoke.json
+/tools/matches/cutechess/
+/tools/matches/stockfish/
+/tools/matches/blunder/
+/tools/matches/carballo/
+/tools/matches/ccrl_engines/
+/tools/matches/our_engine/
+/tools/puzzles/lichess/data/
+/tools/puzzles/lichess/results/
+/tools/puzzles/lichess/diagnostics/
+/third_party/openings/lichess/broadcast_database/
+/tools/tablebases/manifests/*.index.html
 
-# Reports stay available locally at their original browser addresses.
-/strength_results/
-/Zebrafish-Live.html
-/STRENGTH_INTERIM_ANALYSIS.html
-/STRENGTH_TEST_RESULTS.html
-/strength_curve.html
-/strength_curve.png
-/integrations/logs/
-/endgames/syzygy/logs/
-
-# Retain the same selected historical source releases after relocation.
+# Publish selected accepted source snapshots, retaining other versions locally.
 /history/engines/misc/
 /history/engines/v1/*
 !/history/engines/v1/source_1.7.1/
@@ -209,12 +129,3 @@ Thumbs.db
 !/history/engines/v9/source_9.0/
 !/history/engines/v9/source_9.1/
 !/history/engines/v9/source_9.2/
-
-# Compatibility copies and downloaded reference papers are local only.
-/endgames/fathom/
-/analysis/game_review/references/
-/docs/references/*.pdf
-/gui/web/app.js
-/gui/web/index.html
-/gui/web/style.css
-/gui/web/tests/data/

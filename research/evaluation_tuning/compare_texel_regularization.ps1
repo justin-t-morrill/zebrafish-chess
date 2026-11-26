@@ -8,10 +8,10 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$root = Split-Path -Parent $PSScriptRoot
+$root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 if ($BaseEngine -notmatch '^[A-Za-z0-9._-]+$') { throw "Unsafe base engine name." }
 $run = Join-Path $PSScriptRoot "texel_runs\$RunName"
-$baseSource = Join-Path $root "engine_versions\source_$BaseEngine\chess_engine.c"
+$baseSource = Join-Path $root ("history\engines\v{0}\source_{1}\chess_engine.c" -f $BaseEngine.Split('.')[0], $BaseEngine)
 $baseMarker = Join-Path $run "base_engine.txt"
 if (Test-Path -LiteralPath $baseMarker) {
     $recordedBase = (Get-Content -LiteralPath $baseMarker -Raw).Trim()
@@ -26,7 +26,7 @@ foreach ($required in @($leaves, $pawns, $cache)) {
     if (-not (Test-Path -LiteralPath $required)) { throw "Missing cached input: $required" }
 }
 $python = Join-Path $env:USERPROFILE ".cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
-$sitePackages = Join-Path $root "lichess-bot\.venv\lib\python3.14\site-packages"
+$sitePackages = Join-Path $root "third_party\lichess-bot\.venv\lib\python3.14\site-packages"
 $oldPythonPath = $env:PYTHONPATH
 $env:PYTHONPATH = $sitePackages
 try {

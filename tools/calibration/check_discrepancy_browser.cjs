@@ -9,7 +9,7 @@ const fs=require('fs');
   page.on('pageerror',e=>errors.push(e.message));
   await page.goto('file:///C:/Users/Justin/Desktop/Chess_2/STRENGTH_TEST_RESULTS.html');
   assert.deepEqual(errors,[]);
-  await page.locator('#elo-discrepancy').screenshot({path:'testing/results/strength_calibration/human-pilot-20261013-1700/discrepancy_preview.png'});
+  await page.locator('#elo-discrepancy').screenshot({path:'local/results/strength_calibration/human-pilot-20261013-1700/discrepancy_preview.png'});
   assert.equal(await page.locator('#ed-cohorts tr').count(),2);
   assert.match(await page.locator('#ed-cohorts').innerText(),/−281/);
   const results=page.locator('#hc-sessions .hc-result'),versions=page.locator('#hc-sessions .hc-version');
@@ -24,7 +24,7 @@ const fs=require('fs');
   assert.equal(await versions.nth(0).inputValue(),'corrected');
   assert.match(await page.locator('#ed-status').innerText(),/Corrected 3\+2 estimate/);
   assert.deepEqual(errors,[]);
-  fs.writeFileSync('testing/results/strength_calibration/human-pilot-20261013-1700/discrepancy_browser_check.json',JSON.stringify({passed:true,scope:'Fresh isolated browser only; no actual user log accessed',checks:['whole-report JavaScript','rendered table','live edits','GUI separation','deduplication','reload persistence'],errors},null,2));
+  fs.writeFileSync('local/results/strength_calibration/human-pilot-20261013-1700/discrepancy_browser_check.json',JSON.stringify({passed:true,scope:'Fresh isolated browser only; no actual user log accessed',checks:['whole-report JavaScript','rendered table','live edits','GUI separation','deduplication','reload persistence'],errors},null,2));
   console.log('Passed isolated Edge rendering, whole-report scripts, live log updates, GUI separation, duplicate suppression and reload persistence.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1);});

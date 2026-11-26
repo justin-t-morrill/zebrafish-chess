@@ -3,9 +3,9 @@ import csv,html,io,json,math,statistics,sys
 from collections import defaultdict
 from pathlib import Path
 from assess_existing_pgn_quality import ROOT,OUT,ELO,sha,chess
-sys.path.insert(0,str(ROOT/'analysis/game_review'))
-from reviewer.uci_engine import UciEngine
-from reviewer.scoring import expected_score_loss
+sys.path.insert(0,str(ROOT/'src'))
+from zebrafish.opponents.uci_engine import UciEngine
+from zebrafish.review.scoring import expected_score_loss
 
 def mean(v):return statistics.mean(v) if v else None
 

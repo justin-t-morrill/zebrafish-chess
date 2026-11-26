@@ -47,7 +47,7 @@ static double gui_relative_internal_setting(double requested) {
     text=text.replace('gui.strength_elo[WHITE] = gui.strength_elo[BLACK] = 2800;','gui.strength_elo[WHITE] = gui.strength_elo[BLACK] = 1500;')
     text=text.replace('gui.maximum_strength[WHITE] = gui.maximum_strength[BLACK] = true;','gui.maximum_strength[WHITE] = gui.maximum_strength[BLACK] = false;')
     # The isolated candidate directory has a different depth than engine/current.
-    text=text.replace(r'L"%ls..\\..\\gui\\assets\\%ls"',r'L"%lsassets\\%ls"')
+    text=text.replace(r'L"%ls..\\..\\resources\\pieces\\%ls"',r'L"%lsassets\\%ls"')
     gui.write_text(text,encoding='utf-8')
     native=source/'native_strength_uci.c';text=native.read_text(encoding='utf-8')
     text=text.replace('Native GUI strength experiment','Relative calibration candidate')
@@ -104,10 +104,7 @@ static double gui_relative_internal_setting(double requested) {
         if result.returncode!=2:raise RuntimeError('Unsupported endpoint was accepted')
         rejected.append(rating)
     # Small GUI assets are copied into the candidate program directory.
-    for asset in ('pieces','images','assets'):
-        original=ROOT/'engine/current'/asset
-        if original.is_dir():shutil.copytree(original,source/asset)
-    if not (source/'assets').exists():shutil.copytree(ROOT/'gui/assets',source/'assets')
+    shutil.copytree(ROOT/'resources/pieces',source/'assets',dirs_exist_ok=True)
     (output/'Open candidate GUI.ps1').write_text('$ErrorActionPreference = "Stop"\n& (Join-Path $PSScriptRoot "snapshot/chess_gui_candidate.exe") --gui 180 2\n')
     (output/'README.txt').write_text('Relative strength candidate, pending fresh-game validation.\n'
         'Run Open candidate GUI.ps1 for three minutes plus two seconds per move.\n'

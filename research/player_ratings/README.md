@@ -11,7 +11,7 @@ The GUI has not been promoted to this research candidate.
 The earlier research starting point was **forward performance likelihood v3**.
 Its richer position context improved decision-quality prediction on July,
 June and May; continuous-loss alternatives did not improve the benchmark.
-See [v3 results and limitations](models/experiments/performance_likelihood_v3/REPORT.md).
+See v3 results and limitations (local artifact: `local/models/player_ratings/experiments/performance_likelihood_v3/REPORT.md`).
 The read-only `estimate_performance_likelihood.py` helper defaults to v3.
 
 ## V4 revision and own-engine CatBoost comparison
@@ -29,7 +29,7 @@ Stockfish and uses the existing at-most-12-own-decisions feature protocol.
 It is an account-calibrated quality indicator, not validated true performance
 Elo. Returning a point does not imply calibrated confidence. GUI unchanged.
 
-See [revision findings](models/experiments/performance_likelihood_v4_revision/FINDINGS.md)
+See revision findings (local artifact: `local/models/player_ratings/experiments/performance_likelihood_v4_revision/FINDINGS.md`)
 and `estimate_updated_elo.py`. The historical v4 input interface remains separate.
 The revised raw likelihood passes only 2/108 old display gates; MAE improvement
 has not solved its uncertainty. All five new integration checks passed, and the
@@ -55,20 +55,20 @@ about 1,188 Elo. Internal simulated coverage also fell short of 90%. The API
 withholds unsupported numbers and labels its ranges as sampling diagnostics.
 It supplies phase/category descriptions and supporting moves without category Elo.
 
-The subsequent [whole-game account-MAE check](models/experiments/performance_likelihood_v4/ACCOUNT_MAE.md)
+The subsequent whole-game account-MAE check (local artifact: `local/models/player_ratings/experiments/performance_likelihood_v4/ACCOUNT_MAE.md`)
 found 518.92 Elo test MAE, versus 492.36 for a training-median constant. Passing
 the provisional gates did not demonstrate better account accuracy. No display
 thresholds were changed. This further limits claims about the Elo mapping.
 
-Read [results](models/experiments/performance_likelihood_v4/REPORT.md),
-[recommendation and limitations](models/experiments/performance_likelihood_v4/FINDINGS.md),
-and [final artifact checks](models/experiments/performance_likelihood_v4/completion_audit.json).
+Read results (local artifact: `local/models/player_ratings/experiments/performance_likelihood_v4/REPORT.md`),
+recommendation and limitations (local artifact: `local/models/player_ratings/experiments/performance_likelihood_v4/FINDINGS.md`),
+and final artifact checks (local artifact: `local/models/player_ratings/experiments/performance_likelihood_v4/completion_audit.json`).
 All 22 tests and the actual saved-model and PGN interfaces passed.
 
 To analyze a new PGN with the installed WSL environment:
 
 ```powershell
-wsl -d Ubuntu-24.04 -- /opt/ratingnet-venv/bin/python analysis/elo_estimator/analyze_reference_game.py game.pgn --output analysis/elo_estimator/validation/my_game --workers 4
+wsl -d Ubuntu-24.04 -- /opt/ratingnet-venv/bin/python research/player_ratings/analyze_reference_game.py game.pgn --output research/player_ratings/validation/my_game --workers 4
 ```
 
 The output contains a resumable engine cache, `reference_package.json`, and
@@ -80,7 +80,7 @@ its existing behavior.
 
 **Maia pilot completed:** the 800-game frozen-model experiment did not beat
 calibrated shared RatingNet. Full-precision results and verification are in
-[the Maia pilot report](models/experiments/maia_pilot_fp32/REPORT.md).
+the Maia pilot report (local artifact: `local/models/player_ratings/experiments/maia_pilot_fp32/REPORT.md`).
 No GUI replacement was made.
 
 **Individual-player audit:** the current GUI RatingNet outputs nearly identical
@@ -98,7 +98,7 @@ Natural July validation: 178.43 Elo MAE across 30,015 games; locally unseen
 players: 183.45 MAE across 11,751 games. Missing-clock calibration achieved
 209.88 MAE with 91.15% player-level range coverage on 5,000 validation games.
 Fusion and new move-CNN experiments did not justify replacing this point model.
-See [release validation](models/releases/ratingnet_natural_v1/VALIDATION.md).
+See release validation (local artifact: `local/models/player_ratings/releases/ratingnet_natural_v1/VALIDATION.md`).
 August download returned HTTP 404; July has been examined during prior research
 and is not a pristine new experiment holdout. No August validation is claimed.
 
@@ -115,7 +115,7 @@ and each username is limited to 20 selected games.
 Install the local decompression dependency once:
 
 ```powershell
-.\analysis\elo_estimator\setup_elo_estimator.ps1
+.\research\player_ratings\setup_elo_estimator.ps1
 ```
 
 ## Completed September 2026 baselines
@@ -160,10 +160,10 @@ whose expected-score loss is at least 0.03. It is resumable and normally uses
 six independent one-thread workers:
 
 ```powershell
-.\analysis\elo_estimator\run_candidate_extraction.ps1 `
-    --input .\analysis\elo_estimator\data\move_features_detailed_5000_100k.csv `
-    --output .\analysis\elo_estimator\data\candidate_features_errors_100k.csv `
-    --engine .\engine\current\chess.exe `
+.\research\player_ratings\run_candidate_extraction.ps1 `
+    --input .\local\datasets\player_ratings\move_features_detailed_5000_100k.csv `
+    --output .\local\datasets\player_ratings\candidate_features_errors_100k.csv `
+    --engine .\build\current\chess.exe `
     --nodes 100000 `
     --workers 6
 ```
@@ -181,13 +181,13 @@ After it completes, build one independent White record and one independent
 Black record per game, then run the structural and signal audit:
 
 ```powershell
-python .\analysis\elo_estimator\build_player_game_features.py `
-    --moves .\analysis\elo_estimator\data\move_features_detailed_5000_100k.csv `
-    --candidates .\analysis\elo_estimator\data\candidate_features_errors_100k.csv `
-    --output .\analysis\elo_estimator\data\player_game_features_5000.csv
+python .\research\player_ratings\build_player_game_features.py `
+    --moves .\local\datasets\player_ratings\move_features_detailed_5000_100k.csv `
+    --candidates .\local\datasets\player_ratings\candidate_features_errors_100k.csv `
+    --output .\local\datasets\player_ratings\player_game_features_5000.csv
 
-python .\analysis\elo_estimator\validate_player_game_features.py `
-    .\analysis\elo_estimator\data\player_game_features_5000.csv
+python .\research\player_ratings\validate_player_game_features.py `
+    .\local\datasets\player_ratings\player_game_features_5000.csv
 ```
 
 ## Game-performance model
@@ -203,8 +203,8 @@ Install the modeling dependency once, then train after candidate extraction and
 player-game aggregation have completed:
 
 ```powershell
-.\analysis\elo_estimator\setup_performance_model.ps1
-.\analysis\elo_estimator\train_performance_model.ps1
+.\research\player_ratings\setup_performance_model.ps1
+.\research\player_ratings\train_performance_model.ps1
 ```
 
 The model, exact feature order, excluded fields, configuration, and
@@ -212,8 +212,8 @@ train/validation/test measurements are written to
 `models/game_performance_v1`. A standalone prediction smoke test is:
 
 ```powershell
-python .\analysis\elo_estimator\predict_performance.py `
-    .\analysis\elo_estimator\data\player_game_features_5000.csv
+python .\research\player_ratings\predict_performance.py `
+    .\local\datasets\player_ratings\player_game_features_5000.csv
 ```
 
 The printed likelihood range is provisional. It must be calibrated on the held-
@@ -278,7 +278,7 @@ Two immutable packages are stored under `models/releases`:
 Run the standard model on a newly completed review with:
 
 ```powershell
-python .\analysis\game_review\review_game.py performance-elo `
+python .\tools\review\review_game.py performance-elo `
     C:\path\to\game.review.json `
     --update
 ```
@@ -299,15 +299,15 @@ with a player-clustered 95% improvement interval of +46.8 to +61.2 Elo. See
 Download and filter the default balanced sample:
 
 ```powershell
-.\analysis\elo_estimator\download_lichess_blitz.ps1
+.\research\player_ratings\download_lichess_blitz.ps1
 ```
 
 For a small pipeline test:
 
 ```powershell
-.\analysis\elo_estimator\download_lichess_blitz.ps1 `
+.\research\player_ratings\download_lichess_blitz.ps1 `
     --games-per-band 10 `
-    --output .\analysis\elo_estimator\data\smoke.pgn `
+    --output .\local\datasets\player_ratings\smoke.pgn `
     --progress-every 1000
 ```
 
@@ -331,11 +331,11 @@ are spread evenly after the opening rather than clustered in one phase. Output
 is checkpointed after every game and can be resumed with the same command:
 
 ```powershell
-.\analysis\elo_estimator\run_elo_analysis.ps1 `
-    --pgn .\analysis\elo_estimator\data\lichess_blitz_balanced_2026-07.pgn `
-    --manifest .\analysis\elo_estimator\data\games_with_splits.csv `
-    --engine .\engine\current\chess.exe `
-    --output .\analysis\elo_estimator\data\move_features_100k.csv `
+.\research\player_ratings\run_elo_analysis.ps1 `
+    --pgn .\local\datasets\player_ratings\lichess_blitz_balanced_2026-07.pgn `
+    --manifest .\local\datasets\player_ratings\games_with_splits.csv `
+    --engine .\build\current\chess.exe `
+    --output .\local\datasets\player_ratings\move_features_100k.csv `
     --nodes 100000 `
     --workers 4 `
     --decisions-per-player 12

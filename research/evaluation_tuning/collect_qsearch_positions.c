@@ -1,7 +1,7 @@
 /* Collect positions at which Engine 2.2's quiescence search calls its static
  * evaluator. Input is one FEN per line; output is root_index<TAB>FEN. */
 #define main chess_engine_program_main
-#include "../engine_versions/source_2.2/chess.c"
+#include "../../history/engines/v2/source_2.2/chess.c"
 #undef main
 
 #define SAMPLE_CAP 8

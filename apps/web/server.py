@@ -27,7 +27,6 @@ sys.path.insert(0, str(ROOT / "src"))
 from zebrafish.paths import resource, resolve_saved_path, project_reference
 WEB = Path(__file__).resolve().parent
 REVIEWS = resource("reviews")
-sys.path.insert(0, str(ROOT / "analysis/game_review"))
 from zebrafish.review.chess_support import chess
 from zebrafish.review.models import AnalysisSettings, GameReview
 from zebrafish.review.storage import _construct, load_review, save_review
@@ -156,7 +155,7 @@ class Opponent(FinishEngine):
             self._write(f"setoption name Base Seconds value {max(1, settings['minutes'] * 60):g}")
         else:
             strength = None if rating == "max" else chesscom_to_ccrl(float(rating))
-            vendor = str(ROOT / "analysis/game_review/vendor_runtime")
+            vendor = str(resource("review_vendor"))
             if vendor not in os.environ.get("PYTHONPATH", "").split(os.pathsep):
                 os.environ["PYTHONPATH"] = vendor + os.pathsep + os.environ.get("PYTHONPATH", "")
             super().__init__(engine, threads=settings["threads"], strength_elo=strength,
@@ -880,7 +879,7 @@ class Handler(BaseHTTPRequestHandler):
                                       "live": app.live.snapshot()})
             if route == "/api/config":
                 return self.send({"engines": [{"id": key, "name": "Zebrafish 9.2 · Current" if key == "current" else f"Zebrafish {key}", "available": path.is_file()} for key, path in app.engines().items()],
-                                  "helper": (ROOT / "analysis/game_review/classical_eval/classical_breakdown.exe").is_file(),
+                                  "helper": resource("classical_helper").is_file(),
                                   "engine_ready": DEFAULT_ENGINE.is_file(), "rated_backend": "calibrated-native-worker-v1", "library": app.library()})
             if route == "/api/library":
                 return self.send(app.library())

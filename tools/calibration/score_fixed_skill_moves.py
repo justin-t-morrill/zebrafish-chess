@@ -5,8 +5,8 @@ import argparse,csv,multiprocessing as mp,sys,time
 from collections import defaultdict
 from pathlib import Path
 HERE=Path(__file__).resolve().parents[2]/"analysis"/"game_review";sys.path.insert(0,str(HERE))
-from reviewer.uci_engine import UciEngine
-from reviewer.scoring import expected_score_loss
+from zebrafish.opponents.uci_engine import UciEngine
+from zebrafish.review.scoring import expected_score_loss
 ENGINE=None;NODES=0
 FIELDS=("position_id","skill","split","phase","review_category","fen","human_elo","human_loss","internal_rating","seed","selected_move","best_move","best_cp_white","selected_cp_white","loss","exact_best","acceptable")
 def init(engine,nodes):

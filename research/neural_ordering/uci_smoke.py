@@ -1,7 +1,7 @@
 """Loading/fallback and multi-thread safety smoke tests; no game-strength claim."""
 import json, queue, subprocess, threading, time
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[2]; OUT=ROOT/'testing/results/neural_ordering_pilot'
+ROOT=Path(__file__).resolve().parents[2]; OUT=ROOT/'local/results/neural_ordering_pilot'
 def main():
     p=subprocess.Popen([str(OUT/'experiment.exe'),'--uci'],cwd=ROOT,stdin=subprocess.PIPE,
                        stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,bufsize=1)

@@ -7,16 +7,16 @@ param(
 $ErrorActionPreference = "Continue"
 . (Join-Path $PSScriptRoot "project_paths.ps1")
 $root = Get-ChessProjectRoot
-$results = Join-Path $root "testing\results\sprt\v8"
+$results = Join-Path $root "local\results\sprt\v8"
 $statePath = Join-Path $results "nnue-winner-ladder-state.json"
 $ladderLog = Join-Path $results "nnue-winner-ladder.log"
 $sprtScript = Join-Path $PSScriptRoot "run_version_sprt.ps1"
 
 $candidates = [ordered]@{
-    "full-plain128" = Join-Path $root "training\nnue\checkpoints\minimal-chess-768x128-lichessfull5ep-wdl000-40\quantised.bin"
-    "full-plain256" = Join-Path $root "training\nnue\checkpoints\minimal-chess-768x256-lichessfull5ep-wdl000-40\quantised.bin"
-    "full-king128" = Join-Path $root "training\nnue\checkpoints\minimal-chess-king10x128-lichessfull10ep-wdl000-40\quantised.bin"
-    "full-king256" = Join-Path $root "training\nnue\checkpoints\minimal-chess-king10x256-lichessfull10ep-wdl000-40\quantised.bin"
+    "full-plain128" = Join-Path $root "local\checkpoints\nnue\minimal-chess-768x128-lichessfull5ep-wdl000-40\quantised.bin"
+    "full-plain256" = Join-Path $root "local\checkpoints\nnue\minimal-chess-768x256-lichessfull5ep-wdl000-40\quantised.bin"
+    "full-king128" = Join-Path $root "local\checkpoints\nnue\minimal-chess-king10x128-lichessfull10ep-wdl000-40\quantised.bin"
+    "full-king256" = Join-Path $root "local\checkpoints\nnue\minimal-chess-king10x256-lichessfull10ep-wdl000-40\quantised.bin"
 }
 foreach ($path in $candidates.Values) {
     if (-not (Test-Path -LiteralPath $path)) { throw "Missing candidate: $path" }

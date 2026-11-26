@@ -41,16 +41,16 @@ def prepare(output, concurrency):
     for path in (ROOT / 'engine/src').iterdir():
         if path.suffix in ('.c', '.h', '.inc'):
             shutil.copy2(path, source / path.name)
-    for path in (ROOT / 'endgames/fathom').iterdir():
+    for path in (ROOT / 'third_party/fathom').iterdir():
         if path.suffix in ('.c', '.h'):
             shutil.copy2(path, source / path.name)
     shutil.copy2(HERE / 'native_strength_uci.c', source)
     shutil.copy2(HERE / 'run_relative_ladder.py', output / 'runner_snapshot.py')
     for original, name in [(ROOT / 'resources/networks/nnue-8.3.bin', 'nnue-8.3.bin'),
-                           (ROOT / 'openings/book/OpeningBook.tsv', 'OpeningBook.tsv')]:
+                           (ROOT / 'resources/books/OpeningBook.tsv', 'OpeningBook.tsv')]:
         shutil.copy2(original, source / name)
     compiler = shutil.which('gcc')
-    cute = next((ROOT / 'testing/tools/cutechess').rglob('cutechess-cli.exe'))
+    cute = next((ROOT / 'local/tools/cutechess').rglob('cutechess-cli.exe'))
     if not compiler:
         raise RuntimeError('gcc is required for the frozen native GUI harness')
     common = [compiler, '-std=c11', '-O3', '-march=native', '-DNDEBUG', '-I', str(source)]
@@ -69,7 +69,7 @@ def prepare(output, concurrency):
     # receive the same move history as actual play. Reserve disjoint final FENs.
     records = []
     seen = set()
-    with (ROOT / 'openings/suites/8moves_v3.pgn').open(encoding='utf-8-sig') as handle:
+    with (ROOT / 'tests/fixtures/openings/8moves_v3.pgn').open(encoding='utf-8-sig') as handle:
         while (game := chess.pgn.read_game(handle)) is not None:
             if game.errors:
                 continue

@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
 OUT = ROOT / 'strength_results'
-PILOT = ROOT / 'testing/results/strength_calibration/human-pilot-20261013-1700'
+PILOT = ROOT / 'local/results/strength_calibration/human-pilot-20261013-1700'
 PAGES = [('index.html','Overview'),('games.html','Game log'),('calibration.html','Human Elo'),
          ('curve.html','Slider curve'),('validation.html','Validation'),('engine.html','Engine behavior'),
          ('human-guide.html','How to play'),('history.html','Earlier experiments')]
@@ -62,20 +62,20 @@ def main():
       'engine.html':['gui-worker-rng-diagnosis','ordinary-selection-explanation','opening-behavior-diagnosis','precise-elo-gui-revision','board-flip-gui-revision'],
       'human-guide.html':['single-tester-human-plan'],
       'history.html':['human-pilot-1700-results','matched-final-analysis','matched-diagnostic-live','full-data-analysis']}
-    quality=ROOT/'testing/results/strength_calibration/playing-quality-20261014'
+    quality=ROOT/'local/results/strength_calibration/playing-quality-20261014'
     if (quality/'report_section.html').exists():
         byid['playing-quality-cnn']=BeautifulSoup((quality/'report_section.html').read_text(encoding='utf-8'),'html.parser').find('section')
         mapping['engine.html'].insert(0,'playing-quality-cnn')
         target=assets/'playing-quality';target.mkdir(exist_ok=True)
         for name in ('quality_summary.json','per_game_quality.csv','full_moves.csv','normalized_input.pgn','provenance.json'):
             shutil.copy2(quality/name,target/name)
-    web_check=ROOT/'testing/results/strength_calibration/web-native-equivalence-20261015'
-    if not (web_check/'report_section.html').exists():web_check=ROOT/'testing/results/strength_calibration/web-interface-check-20261015'
+    web_check=ROOT/'local/results/strength_calibration/web-native-equivalence-20261015'
+    if not (web_check/'report_section.html').exists():web_check=ROOT/'local/results/strength_calibration/web-interface-check-20261015'
     if (web_check/'report_section.html').exists():
         byid['web-interface-verification']=BeautifulSoup((web_check/'report_section.html').read_text(encoding='utf-8'),'html.parser').find('section')
         mapping['engine.html'].insert(0,'web-interface-verification')
         shutil.copy2(web_check/'verification.json',assets/'web-interface-verification.json')
-    repetition=ROOT/'testing/results/strength_calibration/repetition-fix-20261017'
+    repetition=ROOT/'local/results/strength_calibration/repetition-fix-20261017'
     if (repetition/'report_section.html').exists():
         byid['repetition-draw-fix']=BeautifulSoup((repetition/'report_section.html').read_text(encoding='utf-8'),'html.parser').find('section')
         mapping['engine.html'].insert(0,'repetition-draw-fix')
@@ -108,11 +108,11 @@ html{scroll-behavior:smooth}body{margin:0;font:16px system-ui,sans-serif;color:#
     friend=json.loads((PILOT/'friend_cross_check_plan.json').read_text(encoding='utf-8'))
     account=json.loads((PILOT/'pktaces67_game_plan.json').read_text(encoding='utf-8'))
     baseline=json.loads((PILOT/'discrepancy_archived_games.json').read_text(encoding='utf-8'))
-    plan=json.loads((ROOT/'testing/results/strength_calibration/relative-candidate-20261013/human_calibration_plan.json').read_text(encoding='utf-8'))
+    plan=json.loads((ROOT/'local/results/strength_calibration/relative-candidate-20261013/human_calibration_plan.json').read_text(encoding='utf-8'))
     confirmation=json.loads(Path(plan['active_confirmation_plan']).read_text(encoding='utf-8')) if plan.get('active_confirmation_plan') else None
     verified=json.loads(Path(plan['verified_log_snapshot']).read_text(encoding='utf-8')) if plan.get('verified_log_snapshot') else None
-    native_manifest=ROOT/'gui/web/native_calibrated/manifest.json'
-    native_approved=ROOT/'gui/web/native_calibrated/approved_manifests.json'
+    native_manifest=ROOT/'resources/calibrated/relative-20261013/manifest.json'
+    native_approved=ROOT/'resources/calibrated/relative-20261013/approved_manifests.json'
     data=dict(equivalentWebManifests=json.loads(native_approved.read_text(encoding='utf-8')) if native_approved.exists() else [],equivalentWebManifest=json.loads(native_manifest.read_text(encoding='utf-8')) if native_manifest.exists() else None,schedule=schedule,friendPlan=friend,accountPlan=account,baseline=baseline,recommendationPolicy=plan.get('recommendation_policy'),confirmationPlan=confirmation,verifiedSnapshot=verified,previousConfirmationPlans=[json.loads(Path(path).read_text(encoding='utf-8')) for path in plan.get('previous_confirmation_plans',[])])
     if verified:shutil.copy2(Path(plan['verified_log_snapshot']),assets/'uploaded-log-20261014.json')
     (assets/'data.js').write_text('globalThis.ChessReportData='+json.dumps(data,ensure_ascii=False).replace('</','<\\/')+';',encoding='utf-8')
@@ -185,17 +185,17 @@ html{scroll-behavior:smooth}body{margin:0;font:16px system-ui,sans-serif;color:#
             content+=''.join(str(s) for s in sections if not s.get('id'))
         if filename=='human-guide.html':
             content='<details class="fold"><summary>Earlier human-pilot preparation notes</summary><p class="archive-warning">Earlier plans are preserved here for context. The corrected-GUI bracket and instructions above take priority.</p>'+content+'</details>'
-            content='''<section><h2>Launch the corrected candidate</h2><p>Close any older GUI window, then run this in PowerShell:</p><pre><code>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\\Users\\Justin\\Desktop\\Chess_2\\testing\\results\\strength_calibration\\relative-candidate-20261013\\Open candidate GUI.ps1"</code></pre><p>Select engine 8.3, Maximum off and both profiles at the desired relative target. Apply before play. Use 3+2 for blitz calibration, normal start and a fresh process for each game. Numeric Elo input and Flip Board are available. Export the PGN after the game and <a data-portal-link href="games.html">paste it on Game log</a>.</p><p class="callout">The GUI seed fix requires a fresh exploratory bracket before the prepared 48-game confirmation. The earlier affected-GUI offset is not installed. Longer games can be useful as separate rapid checks; they do not set the blitz offset.</p></section>'''+content
+            content='''<section><h2>Launch the corrected candidate</h2><p>Close any older GUI window, then run this in PowerShell:</p><pre><code>powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\\Users\\Justin\\Desktop\\Chess_2\\local\\results\\strength_calibration\\relative-candidate-20261013\\Open candidate GUI.ps1"</code></pre><p>Select engine 8.3, Maximum off and both profiles at the desired relative target. Apply before play. Use 3+2 for blitz calibration, normal start and a fresh process for each game. Numeric Elo input and Flip Board are available. Export the PGN after the game and <a data-portal-link href="games.html">paste it on Game log</a>.</p><p class="callout">The GUI seed fix requires a fresh exploratory bracket before the prepared 48-game confirmation. The earlier affected-GUI offset is not installed. Longer games can be useful as separate rapid checks; they do not set the blitz offset.</p></section>'''+content
             if confirmation:content=content.replace('The GUI seed fix requires a fresh exploratory bracket before the prepared 48-game confirmation.','The corrected-GUI pilot is complete. Follow the new 48-game schedule at 1450, 1600 and 1750; close and relaunch the GUI for each game.')
         if filename=='human-guide.html':
-            content='<section><h2>Local web opponent</h2><p>Double-click Zebrafish.cmd, or run start_zebrafish.ps1 from the project folder. In Play a Game choose Human vs engine, 3+2 and the desired numeric target. Keep settings consistent, start a new game each time, and avoid takebacks or analysis assistance for calibration games. Download the completed PGN and paste it on Game log with the human rating. Updated current-engine rated games now run the exact frozen GUI worker and slider mapping, with no extra rating conversion. Verified exports fill the same 48-game log as GUI games; old Python-adapter exports remain separate.</p></section>'+content
+            content='<section><h2>Local web opponent</h2><p>Double-click launchers/Zebrafish.cmd, or run tools/launchers/Start-Zebrafish.ps1 -Action play from the project folder. In Play a Game choose Human vs engine, 3+2 and the desired numeric target. Keep settings consistent, start a new game each time, and avoid takebacks or analysis assistance for calibration games. Download the completed PGN and paste it on Game log with the human rating. Updated current-engine rated games now run the exact frozen GUI worker and slider mapping, with no extra rating conversion. Verified exports fill the same 48-game log as GUI games; old Python-adapter exports remain separate.</p></section>'+content
         if filename=='validation.html':
             live=str(byid['candidate-validation-live'])
             content=content.replace(live,'<details class="fold"><summary>Completed collection record and run settings</summary>'+live+'</details>')
         title=dict(PAGES)[filename];(OUT/filename).write_text(wrap(title,content,page_scripts),encoding='utf-8')
     rootcontent='''<p class="callout">The report has moved into the <strong>strength_results</strong> folder. Use the pages below. Open Game log from this address first to carry any entries saved here into the new log.</p><p id="portal-saved-count">Saved entries at this address will be carried when you follow a page link.</p><p><button id="portal-backup">Download existing browser log backup</button></p><div class="page-cards">'''+''.join(f'<a class="page-card" data-portal-link href="strength_results/{f}"><strong>{t}</strong><span>{descriptions.get(t,"Current status and page navigation.")}</span></a>' for f,t in PAGES)+'</div>'
     report.write_text(wrap('Overview',rootcontent,old=True),encoding='utf-8')
-    (OUT/'README.txt').write_text('Open index.html, or STRENGTH_TEST_RESULTS.html one folder above. No server needed.\nGame log: paste PGNs, choose the human rating, download JSON backups.\nHuman Elo: live estimates from the same log, with separate builds/players/controls.\nBrowser entries are local. Follow navigation links to carry them between file addresses.\nThe original report and figures are preserved under archive/full-report.html.\nTo refresh generated pages, run testing/strength_calibration/build_results_folder.py.\n',encoding='utf-8')
+    (OUT/'README.txt').write_text('Open index.html, or STRENGTH_TEST_RESULTS.html one folder above. No server needed.\nGame log: paste PGNs, choose the human rating, download JSON backups.\nHuman Elo: live estimates from the same log, with separate builds/players/controls.\nBrowser entries are local. Follow navigation links to carry them between file addresses.\nThe original report and figures are preserved under archive/full-report.html.\nTo refresh generated pages, run tools/calibration/build_results_folder.py.\n',encoding='utf-8')
     print('Built eight offline results pages, external figures/scripts, a PGN importer and original-address storage transfer. Original full report preserved.')
 
 

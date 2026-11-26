@@ -1,7 +1,8 @@
 function Get-ChessProjectRoot {
     $candidate = (Resolve-Path -LiteralPath $PSScriptRoot).Path
     while ($candidate) {
-        if (Test-Path -LiteralPath (Join-Path $candidate ".chess-project")) { return $candidate }
+        if ((Test-Path -LiteralPath (Join-Path $candidate 'pyproject.toml')) -and
+            (Test-Path -LiteralPath (Join-Path $candidate 'config\paths.json'))) { return $candidate }
         $parent = Split-Path -Parent $candidate
         if ($parent -eq $candidate) { break }
         $candidate = $parent
@@ -14,7 +15,7 @@ function Get-EngineVersionPath([string]$Name) {
     $root = Get-ChessProjectRoot
     $match = [regex]::Match($Name, '^(\d+)')
     $bucket = if ($match.Success) { "v$($match.Groups[1].Value)" } else { "misc" }
-    $directory = Join-Path $root "engines\versions\$bucket"
+    $directory = Join-Path $root "history\engines\$bucket"
     foreach ($file in @("${Name}_uci.exe", "$Name.exe")) {
         $candidate = Join-Path $directory $file
         if (Test-Path -LiteralPath $candidate) { return $candidate }
@@ -26,7 +27,7 @@ function Get-TestResultDirectory([string]$Kind, [string]$EngineName) {
     $root = Get-ChessProjectRoot
     $match = [regex]::Match($EngineName, '^(\d+)')
     $bucket = if ($match.Success) { "v$($match.Groups[1].Value)" } else { "misc" }
-    $directory = Join-Path $root "testing\results\$Kind\$bucket"
+    $directory = Join-Path $root "local\results\$Kind\$bucket"
     New-Item -ItemType Directory -Force -Path $directory | Out-Null
     return $directory
 }

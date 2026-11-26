@@ -12,7 +12,7 @@ $root = Resolve-Path (Join-Path $PSScriptRoot "..\..")
 function Resolve-Engine([string]$Name) {
     if (Test-Path -LiteralPath $Name) { return (Resolve-Path $Name).Path }
     $major = ($Name -split '\.')[0]
-    $path = Join-Path $root "engines\versions\v$major\$Name.exe"
+    $path = Join-Path $root "history\engines\v$major\$Name.exe"
     if (-not (Test-Path -LiteralPath $path)) {
         throw "Engine executable not found: $path"
     }

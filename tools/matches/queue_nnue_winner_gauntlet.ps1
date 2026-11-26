@@ -8,15 +8,15 @@ param(
 $ErrorActionPreference = "Stop"
 . (Join-Path $PSScriptRoot "project_paths.ps1")
 $root = Get-ChessProjectRoot
-$results = Join-Path $root "testing\results\sprt\v8"
+$results = Join-Path $root "local\results\sprt\v8"
 $statePath = Join-Path $results "nnue-winner-ladder-state.json"
 $queueLog = Join-Path $results "nnue-winner-gauntlet-queue.log"
 
 $candidates = @{
-    "full-plain128" = Join-Path $root "training\nnue\checkpoints\minimal-chess-768x128-lichessfull5ep-wdl000-40\quantised.bin"
-    "full-plain256" = Join-Path $root "training\nnue\checkpoints\minimal-chess-768x256-lichessfull5ep-wdl000-40\quantised.bin"
-    "full-king128" = Join-Path $root "training\nnue\checkpoints\minimal-chess-king10x128-lichessfull10ep-wdl000-40\quantised.bin"
-    "full-king256" = Join-Path $root "training\nnue\checkpoints\minimal-chess-king10x256-lichessfull10ep-wdl000-40\quantised.bin"
+    "full-plain128" = Join-Path $root "local\checkpoints\nnue\minimal-chess-768x128-lichessfull5ep-wdl000-40\quantised.bin"
+    "full-plain256" = Join-Path $root "local\checkpoints\nnue\minimal-chess-768x256-lichessfull5ep-wdl000-40\quantised.bin"
+    "full-king128" = Join-Path $root "local\checkpoints\nnue\minimal-chess-king10x128-lichessfull10ep-wdl000-40\quantised.bin"
+    "full-king256" = Join-Path $root "local\checkpoints\nnue\minimal-chess-king10x256-lichessfull10ep-wdl000-40\quantised.bin"
 }
 
 function Add-QueueMessage([string]$message) {

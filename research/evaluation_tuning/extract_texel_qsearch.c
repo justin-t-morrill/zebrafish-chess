@@ -2,7 +2,7 @@
  * by the requested saved engine. No TT, timing, or history state is reused. */
 #define main chess_engine_program_main
 #ifndef TEXEL_ENGINE_SOURCE
-#define TEXEL_ENGINE_SOURCE "../engine_versions/source_2.2/chess.c"
+#define TEXEL_ENGINE_SOURCE "../../history/engines/v2/source_2.2/chess.c"
 #endif
 #include TEXEL_ENGINE_SOURCE
 #undef main

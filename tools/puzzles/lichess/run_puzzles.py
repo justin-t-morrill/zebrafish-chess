@@ -18,8 +18,8 @@ from datetime import datetime
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
-VERSION_DIR = ROOT / "engine_versions"
+ROOT = Path(__file__).resolve().parents[3]
+VERSION_DIR = ROOT / "history/engines"
 INFO_RE = re.compile(r"\bdepth\s+(\d+).*?\bscore\s+(cp|mate)\s+(-?\d+).*?\bnodes\s+(\d+)")
 REPORT_THEMES = {
     "quietMove", "defensiveMove", "zugzwang", "advancedPawn", "promotion",
@@ -50,7 +50,7 @@ def resolve_engine(value: str) -> tuple[str, Path]:
     if supplied.is_file():
         return supplied.stem, supplied.resolve()
     for suffix in ("_uci.exe", ".exe"):
-        candidate = VERSION_DIR / f"{value}{suffix}"
+        candidate = VERSION_DIR / ("v" + value.split(".")[0]) / f"{value}{suffix}"
         if candidate.is_file():
             return value, candidate.resolve()
     raise SystemExit(f"Engine version or executable not found: {value}")

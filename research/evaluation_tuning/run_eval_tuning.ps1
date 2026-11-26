@@ -1,6 +1,6 @@
 param(
     [string]$Tag = "custom",
-    [string]$PgnDirectory = ".\reference_engines\results",
+    [string]$PgnDirectory = ".\local\results",
     [string[]]$Include = @("*.pgn"),
     [int]$Positions = 50000,
     [int]$PositionsPerGame = 8,
@@ -12,8 +12,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$root = Split-Path -Parent $PSScriptRoot
-$python = Join-Path $root "lichess-bot\.venv\bin\python.exe"
+$root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
+$python = Join-Path $root "third_party\lichess-bot\.venv\bin\python.exe"
 $data = Join-Path $PSScriptRoot "data"
 $selector = Join-Path $PSScriptRoot "select_positions.py"
 $labeler = Join-Path $PSScriptRoot "label_positions.py"

@@ -28,6 +28,6 @@ Before publishing, inspect both staged and unstaged changes, including new
 files. Ignore rules do not remove files already tracked by Git. Commit only
 the reviewed source, fixtures, resources and documentation; pushing publishes
 commits rather than every file on disk. A fresh checkout needs Python 3.11+
-and GCC to build the engines. Follow [launcher setup](launchers.md) to restore
+and GCC to build the engines. Follow [launcher setup](../launchers/README.md) to restore
 optional dependencies and local integrations. Lichess credentials must be
-created locally with `Zebrafish-Bot-Setup.cmd`.
+created locally with `launchers/optional/Zebrafish-Bot-Setup.cmd`.

@@ -1,9 +1,9 @@
 # Game analysis design
 
-The [game reviewer guide](../analysis/game_review/README.md) covers installation,
+The [game reviewer guide](../docs/review.md) covers installation,
 GUI use, and command-line reviews. This document describes scoring,
 explanations, stability tracking, and remaining development. File paths in the
-technical notes are relative to `analysis/game_review/` unless stated otherwise.
+technical notes are relative to `src/` unless stated otherwise.
 
 ## Intended review model
 

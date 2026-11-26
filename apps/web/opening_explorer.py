@@ -153,5 +153,5 @@ class OpeningCatalog:
 
 @lru_cache(maxsize=1)
 def project_catalog(root):
-    return OpeningCatalog(root / 'openings/book/OpeningNames.tsv', root / 'openings/book/OpeningBook.tsv',
-                          root / 'openings/data/lichess/lichess-chess-openings')
+    return OpeningCatalog(root / 'resources/books/OpeningNames.tsv', root / 'resources/books/OpeningBook.tsv',
+                          root / 'third_party/openings/lichess/lichess-chess-openings')

@@ -20,12 +20,12 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-WORK = ROOT / "training" / "tuning" / "search_spsa_work"
+WORK = ROOT / "local/runs/search_spsa"
 
 
 def version_directory(name: str) -> Path:
     match = re.match(r"(\d+)", name)
-    return ROOT / "engines" / "versions" / (f"v{match.group(1)}" if match else "misc")
+    return ROOT / "history/engines" / (f"v{match.group(1)}" if match else "misc")
 
 
 @dataclass(frozen=True)
@@ -259,7 +259,7 @@ def main() -> None:
     parser.add_argument("--gain", type=float, default=60.0)
     parser.add_argument("--seed", type=int, default=20260902)
     parser.add_argument("--openings", type=Path,
-                        default=ROOT / "openings" / "suites" / "8moves_v3.epd")
+                        default=ROOT / "tests/fixtures/openings" / "8moves_v3.epd")
     parser.add_argument("--prepare-only", action="store_true")
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9._-]+", args.run_name):
@@ -275,7 +275,7 @@ def main() -> None:
     run_dir.mkdir(parents=True, exist_ok=True)
     state_path = run_dir / "state.json"
     history = run_dir / "history.csv"
-    cute_matches = list((ROOT / "testing" / "tools" / "cutechess").rglob("cutechess-cli.exe"))
+    cute_matches = list((ROOT / "local/tools/cutechess").rglob("cutechess-cli.exe"))
     if not cute_matches:
         raise SystemExit("cutechess-cli.exe was not found")
     fathom_object = compile_fathom(source, run_dir)

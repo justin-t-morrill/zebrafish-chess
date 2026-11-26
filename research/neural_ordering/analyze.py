@@ -2,7 +2,7 @@
 import argparse, collections, json
 from pathlib import Path
 import numpy as np
-ROOT=Path(__file__).resolve().parents[2]; OUT=ROOT/'testing/results/neural_ordering_pilot'
+ROOT=Path(__file__).resolve().parents[2]; OUT=ROOT/'local/results/neural_ordering_pilot'
 def rows(name): return [json.loads(x) for x in (OUT/name).read_text().splitlines()]
 def interval(values):
     a=np.array(values,dtype=float); rng=np.random.default_rng(17417)

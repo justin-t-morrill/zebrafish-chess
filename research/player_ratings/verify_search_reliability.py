@@ -14,8 +14,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 REVIEW = HERE.parent / "game_review"
 sys.path[:0] = [str(REVIEW), str(REVIEW / "vendor_runtime")]
-from reviewer.scoring import classify_move, expected_score_loss
-from reviewer.uci_engine import UciEngine
+from zebrafish.review.scoring import classify_move, expected_score_loss
+from zebrafish.opponents.uci_engine import UciEngine
 
 ENGINE = None
 

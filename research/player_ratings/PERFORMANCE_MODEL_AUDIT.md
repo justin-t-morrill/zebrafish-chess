@@ -18,9 +18,9 @@ provisional numeric gates, and internal simulated sampling-range coverage was
 below its nominal 90%. Keep this as research; do not display the raw peak as a
 confident single-game Elo or reuse RatingNet to conceal the uncertainty.
 
-See [full results](models/experiments/performance_likelihood_v4/REPORT.md),
-[findings and next steps](models/experiments/performance_likelihood_v4/FINDINGS.md),
-and [completion evidence](models/experiments/performance_likelihood_v4/completion_audit.json).
+See full results (local artifact: `local/models/player_ratings/experiments/performance_likelihood_v4/REPORT.md`),
+findings and next steps (local artifact: `local/models/player_ratings/experiments/performance_likelihood_v4/FINDINGS.md`),
+and completion evidence (local artifact: `local/models/player_ratings/experiments/performance_likelihood_v4/completion_audit.json`).
 The sections below preserve the earlier audit and v2/v3 experiments.
 
 ## What already existed
@@ -139,9 +139,9 @@ on an existing review without modifying saved estimates.
 Use the existing WSL `/opt/ratingnet-venv/bin/python` environment:
 
 ```text
-python -m unittest discover -s analysis/elo_estimator -p test_performance_likelihood.py
-python analysis/elo_estimator/train_performance_likelihood.py --output <new-directory>
-python analysis/elo_estimator/estimate_performance_likelihood.py <completed-review.json>
+python -m unittest discover -s research/player_ratings -p test_performance_likelihood.py
+python research/player_ratings/train_performance_likelihood.py --output <new-directory>
+python research/player_ratings/estimate_performance_likelihood.py <completed-review.json>
 ```
 
 The helper now defaults to `performance_likelihood_v3/selected.npz` (see update below).
@@ -167,4 +167,4 @@ rescoring 225 decisions across 222 player-games at 500k nodes changed peaks by
 225 Elo at the 90th percentile, and up to 725 Elo. This is partial-rescoring
 sensitivity, not an independent accuracy test or full-game reanalysis.
 The GUI remains unchanged; v3 is the research starting point, not a validated
-production performance scale. See [full v3 report](models/experiments/performance_likelihood_v3/REPORT.md).
+production performance scale. See full v3 report (local artifact: `local/models/player_ratings/experiments/performance_likelihood_v3/REPORT.md`).

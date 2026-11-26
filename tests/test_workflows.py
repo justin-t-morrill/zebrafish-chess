@@ -48,6 +48,17 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(paths.project_root(ROOT / "apps/web/server.py"), ROOT)
         self.assertEqual(paths.resource("engine"), ROOT / "build/current/chess.exe")
 
+    def test_project_discovery_skips_an_unrelated_nested_package(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            project = Path(temporary)
+            (project / "pyproject.toml").write_text("[project]\nname='zebrafish-local'\n")
+            (project / "config").mkdir()
+            (project / "config/paths.json").write_text("{}")
+            nested = project / "research/example"
+            nested.mkdir(parents=True)
+            (nested / "pyproject.toml").write_text("[project]\nname='other'\n")
+            self.assertEqual(paths.project_root(nested), project)
+
     def test_old_review_storage_and_calibrated_bundle_are_preserved(self):
         self.assertEqual(paths.resource("reviews"), ROOT / "local/reviews")
         self.assertEqual(paths.resource("calibrated"), ROOT / "resources/calibrated/relative-20261013")

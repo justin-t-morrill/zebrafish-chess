@@ -38,12 +38,15 @@
   "openings/book": "resources/books",
   "openings/suites": "tests/fixtures/openings",
   "gui/assets": "resources/pieces",
-  "gui/web/tests/data": "apps/web/tests/data",
+  "gui/web/tests/data": "tests/web/data",
+  "apps/web/tests": "tests/web",
+  "analysis/game_review/tests": "tests/review",
   "endgames/fathom": "third_party/fathom",
   "engines/versions": "history/engines",
   "engines/experiments": "history/experiments",
   "gui/web/native_calibrated": "resources/calibrated/relative-20261013",
   "analysis/game_review/references": "docs/references",
   "archive": "local/archive/original",
-  "integrations/lichess-bot": "third_party/lichess-bot"
+  "integrations/lichess-bot": "third_party/lichess-bot",
+  "local/tablebases/syzygy": "endgames/syzygy"
 }

@@ -1,6 +1,6 @@
 /* Batch-export the experimental king-safety candidate's static evaluation. */
 #define main chess_engine_program_main
-#include "../engine_versions/source_2.0_eval_king_safety/chess.c"
+#include "../../history/engines/v2/source_2.0_eval_king_safety/chess.c"
 #undef main
 
 int main(int argc, char **argv) {

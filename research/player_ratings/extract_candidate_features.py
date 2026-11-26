@@ -23,9 +23,9 @@ REVIEW_ROOT = HERE.parent / "game_review"
 sys.path.insert(0, str(REVIEW_ROOT))
 sys.path.insert(0, str(REVIEW_ROOT / "vendor_runtime"))
 
-from reviewer.chess_support import chess
-from reviewer.scoring import classify_move, expected_score_loss
-from reviewer.uci_engine import UciEngine
+from zebrafish.review.chess_support import chess
+from zebrafish.review.scoring import classify_move, expected_score_loss
+from zebrafish.opponents.uci_engine import UciEngine
 
 
 ENGINE = None

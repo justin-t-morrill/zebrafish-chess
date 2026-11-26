@@ -10,13 +10,13 @@ import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / 'analysis/game_review/vendor_runtime'))
+sys.path.insert(0, str(ROOT / 'local/dependencies/reviewer'))
 import chess
 import chess.engine
 import chess.pgn
 
-OUT = ROOT / 'testing/results/strength_calibration/human-pilot-20261013-1700'
-ENGINE = ROOT / 'testing/tools/stockfish/stockfish/stockfish-windows-x86-64.exe'
+OUT = ROOT / 'local/results/strength_calibration/human-pilot-20261013-1700'
+ENGINE = ROOT / 'local/tools/stockfish/stockfish/stockfish-windows-x86-64.exe'
 
 
 def now():
@@ -57,7 +57,7 @@ def main():
     if len(games) != 6:
         raise RuntimeError('Expected exactly six games')
     print('All six games replay legally and match the recorded endings.', flush=True)
-    reference = json.loads((ROOT / 'testing/results/strength_calibration/human-pilot-preparation-20261013/public_blitz_reference.json').read_text())
+    reference = json.loads((ROOT / 'local/results/strength_calibration/human-pilot-preparation-20261013/public_blitz_reference.json').read_text())
     reference.update(captured_utc=now(), verified_against_public_api='Latest response read in this analysis turn matched the saved blitz data.')
     save('public_blitz_reference.json', reference)
     metadata = dict(received_utc=now(), participant='thecarrotgod',
@@ -176,7 +176,7 @@ def main():
     save('pilot_analysis.json',analysis)
     # Preserve the outdated plan, then bring the live plan in line with the pilot
     # protocol already discussed and the actual returned outcomes.
-    plan_path = ROOT / 'testing/results/strength_calibration/relative-candidate-20261013/human_calibration_plan.json'
+    plan_path = ROOT / 'local/results/strength_calibration/relative-candidate-20261013/human_calibration_plan.json'
     old_plan = plan_path.read_text(encoding='utf-8')
     (OUT / 'plan_before_pilot_results.json').write_text(old_plan,encoding='utf-8')
     plan = json.loads(old_plan)

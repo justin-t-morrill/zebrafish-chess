@@ -7,16 +7,16 @@ param(
 $ErrorActionPreference="Stop"
 . (Join-Path $PSScriptRoot "..\tools\project_paths.ps1")
 $root=Get-ChessProjectRoot
-$cute=(Get-ChildItem (Join-Path $root "testing\tools\cutechess") -Recurse -Filter cutechess-cli.exe|Select-Object -First 1).FullName
+$cute=(Get-ChildItem (Join-Path $root "local\tools\cutechess") -Recurse -Filter cutechess-cli.exe|Select-Object -First 1).FullName
 $python=(Get-Command python).Source
 $engine=if($EngineVersion-eq"Current"){Join-Path $root "build\current\chess.exe"}else{Get-EngineVersionPath $EngineVersion}
-$proxy=Join-Path $PSScriptRoot "limited_strength_uci.py";$book=Join-Path $root "openings\book\OpeningBook.tsv"
-$general=Join-Path $root "openings\suites\8moves_v3.epd";$suiteDir=Join-Path $PSScriptRoot "skill_suites"
-$pool=Join-Path $root "testing\tools\ccrl_engines"
+$proxy=Join-Path $PSScriptRoot "limited_strength_uci.py";$book=Join-Path $root "resources\books\OpeningBook.tsv"
+$general=Join-Path $root "tests\fixtures\openings\8moves_v3.epd";$suiteDir=Join-Path $PSScriptRoot "skill_suites"
+$pool=Join-Path $root "local\tools\ccrl_engines"
 $raven030=Join-Path $pool "raven_versions\raven0.30.exe"
 $blunder40=Join-Path $pool "blunder_versions\blunder-4.0.0\blunder-4.0.0\windows\blunder.exe"
 if(-not(Test-Path (Join-Path $suiteDir "tactics.epd"))){&$python (Join-Path $PSScriptRoot "build_skill_suites.py") $general $suiteDir --per-category 5000;if($LASTEXITCODE-ne 0){throw "Suite generation failed"}}
-$stamp=Get-Date -Format "yyyyMMdd-HHmmss";$results=Join-Path $root "testing\results\strength_calibration\skills-$stamp"
+$stamp=Get-Date -Format "yyyyMMdd-HHmmss";$results=Join-Path $root "local\results\strength_calibration\skills-$stamp"
 New-Item -ItemType Directory -Force -Path $results|Out-Null;$manifest=Join-Path $results "manifest.json"
 function P($name,$overall,$t=0,$p=0,$d=0,$e=0){[ordered]@{Name=$name;Overall=$overall;T=$t;P=$p;D=$d;E=$e}}
 $balanced=P "Balanced 1500" 1500

@@ -1,6 +1,6 @@
 /* Synchronous fixed-depth search driver for sampling profilers. */
 #define main chess_program_main
-#include "../chess.c"
+#include "../../engine/src/chess.c"
 #undef main
 
 static const char *profile_positions[] = {

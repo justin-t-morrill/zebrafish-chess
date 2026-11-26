@@ -51,14 +51,14 @@ and the nodes spent on that move. The trainer uses the cutoff label.
 From the repository root on Windows, with GCC and NumPy available:
 
 ```powershell
-$out = 'testing/results/cutoff_policy'
+$out = 'local/results/cutoff_policy'
 New-Item -ItemType Directory -Force $out | Out-Null
-$common = @('-std=c11', '-O3', '-march=native', '-DNDEBUG', '-Iendgames/fathom')
+$common = @('-std=c11', '-O3', '-march=native', '-DNDEBUG', '-Ithird_party/fathom')
 $libs = @('-lgdiplus', '-lgdi32', '-luser32', '-lcomctl32', '-luxtheme', '-lm')
-gcc @common -c endgames/fathom/tbprobe.c -o "$out/tbprobe.o"
+gcc @common -c third_party/fathom/tbprobe.c -o "$out/tbprobe.o"
 gcc @common -flto -DCUTOFF_POLICY_COLLECT research/evaluation_tuning/cutoff_policy_driver.c "$out/tbprobe.o" -o "$out/collect.exe" @libs
 & "$out/collect.exe" "$out/train.fen" 10 "$out/train.csv"
-python research/evaluation_tuning/train_cutoff_policy.py "$out/train.csv" engine/current/cutoff_policy_weights.inc
+python research/evaluation_tuning/train_cutoff_policy.py "$out/train.csv" engine/src/cutoff_policy_weights.inc
 gcc @common -flto research/evaluation_tuning/cutoff_policy_driver.c "$out/tbprobe.o" -o "$out/bench.exe" @libs
 & "$out/bench.exe" "$out/bench.fen" 12 3 0 100
 ```
@@ -74,3 +74,12 @@ elapsed time, total nodes, and the selected move for every run.
 design, pilot results, parameter fits, and detailed experimental commands.
 Those examples describe the original inputs and conditions, including resources
 that are not distributed with this repository.
+
+## Historical extractors
+
+The version-specific `extract_baseline_*`, `extract_candidate_*` and qsearch
+collectors reproduce older evaluation experiments using exact source snapshots
+under `history/engines/v2` or `v5`. Intermediate experimental snapshots remain
+local rather than being published beside accepted releases. Restore the matching
+snapshot from your backup before reproducing that historical experiment. New
+fitting runs should select an available base release explicitly.

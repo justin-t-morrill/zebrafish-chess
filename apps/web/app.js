@@ -929,8 +929,8 @@ async function init() {
   document.querySelectorAll('.engine-select').forEach(select=>select.innerHTML=cfg.engines.map(engine=>`<option value="${esc(engine.id)}" ${engine.available?'':'disabled'}>${esc(engine.name)}${engine.available?'':' (build needed)'}</option>`).join(''));
   S.calibratedBackend=cfg.rated_backend;syncSetup();
   if(!cfg.rated_backend)toast('Restart Zebrafish.cmd to activate the calibrated GUI engine before starting a rated game.',true);
-  if(!cfg.engine_ready)toast('Build the playing engine with engine/current/build.ps1 before playing against Zebrafish.',true);
-  if(!cfg.helper)toast('Build analysis/game_review/classical_eval/build.ps1 to enable reviews and position explanations.',true);
+  if(!cfg.engine_ready)toast('Run launchers/Zebrafish-Build.cmd -Current before playing against Zebrafish.',true);
+  if(!cfg.helper)toast('Run launchers/Zebrafish-Build.cmd -Current to enable reviews and position explanations.',true);
   S.analysis=await api('/api/position',{fen:START});renderAnalysis();
   S.analysisViews.live=captureAnalysisView();S.analysisViews.review={...captureAnalysisView(),arrows:[],marks:new Set()};
   const heroData=await api('/api/position',{fen:'r1bq1rk1/pp2bppp/2n1pn2/2pp4/3P4/2PBPN2/PP1N1PPP/R1BQ1RK1 w - - 2 8'});

@@ -8,14 +8,14 @@ Carballo requires Java; the launchers require PowerShell.
 
 ## Prepare engine binaries
 
-Build the current engine with `engine/current/build.ps1` from the repository
+Build the current engine with `engine/build.ps1` from the repository
 root. The version launchers resolve numbered executables under
 `history/engines/v<major>/<version>.exe`; source snapshots alone are not enough.
 Build frozen 9.0 for versioned matches from the repository root. Its build
 places both executables and the matching 8.3 network in `history/engines/v9/`.
 
 ```powershell
-.\engines\versions\v9\source_9.0\build.ps1
+.\history\engines\v9\source_9.0\build.ps1
 ```
 
 Historical versions require their own builds and matching runtime resources.
@@ -26,7 +26,7 @@ The retained releases are 1.7.1, 2.3, 3.5, 4.1, 5.7, 6.4, 7.3, 8.3, and 9.0.
 Run from the repository root after installing the external tools:
 
 ```powershell
-.\testing\tools\run_tournament.ps1 -Opponent Blunder `
+.\tools\matches\run_tournament.ps1 -Opponent Blunder `
     -EngineVersion 8.3 -Games 200 -TimeControl "30+0.3" -Concurrency 1
 ```
 
@@ -41,14 +41,14 @@ even for paired colors. Set thread counts and concurrency to suit your machine.
 After building both versions:
 
 ```powershell
-.\testing\tools\run_version_tournament.ps1 -EngineA 8.3 -EngineB 7.3 `
+.\tools\matches\run_version_tournament.ps1 -EngineA 8.3 -EngineB 7.3 `
     -Games 1000 -TimeControl "1+0.1" -Concurrency 1
 ```
 
 `run_version_sprt.ps1` provides sequential acceptance testing. Use each
 script's parameter block for its supported options. Opening suites live under
 `tests/fixtures/openings/`; `-OpeningFile` overrides the default. Results are generated
-under `testing/results/` and excluded from Git.
+under `local/results/` and excluded from Git.
 
 ## Interpreting results
 

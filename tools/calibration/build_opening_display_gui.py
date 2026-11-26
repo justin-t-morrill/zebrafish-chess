@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 ROOT=Path(__file__).resolve().parents[2]
-BASE=ROOT/'testing/results/strength_calibration/relative-candidate-20261013'
+BASE=ROOT/'local/results/strength_calibration/relative-candidate-20261013'
 PREVIOUS=BASE.with_name(BASE.name+'-precise-input')
 OUT=BASE.with_name(BASE.name+'-opening-display')
 
@@ -23,7 +23,7 @@ def main():
         raise RuntimeError('Previous GUI changed')
     source=OUT/'snapshot';shutil.copytree(PREVIOUS/'snapshot',source)
     shutil.copy2(BASE/'mapping.json',OUT/'mapping.json')
-    shutil.copy2(ROOT/'openings/book/OpeningNames.tsv',source/'OpeningNames.tsv')
+    shutil.copy2(ROOT/'resources/books/OpeningNames.tsv',source/'OpeningNames.tsv')
     path=source/'chess_gui.c';text=path.read_text(encoding='utf-8')
     old='''static void gui_refresh_opening(void) {
     char name[256];
@@ -90,10 +90,10 @@ int main(int argc,char **argv) {
     puts("Passed: 3810 opening names load; Caro-Kann recognized; naming survives book departure and disabled book; new-game reset and missing-data message; 1000 identical seeded book choices; six pilot PGNs replay and identify named positions.");return 0;
 }
 '''
-    sys.path.insert(0,str(ROOT/'analysis/game_review/vendor_runtime'))
+    sys.path.insert(0,str(ROOT/'local/dependencies/reviewer'))
     import chess.pgn
     snippets=[]
-    with (ROOT/'testing/results/strength_calibration/human-pilot-20261013-1700/games.pgn').open() as pgn:
+    with (ROOT/'local/results/strength_calibration/human-pilot-20261013-1700/games.pgn').open() as pgn:
         for i in range(1,7):
             game=chess.pgn.read_game(pgn);moves=','.join(json.dumps(m.uci()) for m in game.mainline_moves())
             snippets.append('{const char *moves[]={'+moves+'};init_position(&p);for(unsigned i=0;i<sizeof(moves)/sizeof(moves[0]);++i)CHECK(play(&p,moves[i]));CHECK(gui_opening_name_from_history(&p,later,sizeof(later)));printf("Pilot game '+str(i)+': %s\\n",later);}')
@@ -136,7 +136,7 @@ int main(int argc,char **argv) {
     (OUT/'Open candidate GUI.ps1').write_text('$ErrorActionPreference = "Stop"\n& (Join-Path $PSScriptRoot "snapshot/chess_gui_candidate.exe") --gui 180 2\n',encoding='utf-8')
     shutil.copy2(BASE/'Open candidate GUI.ps1',OUT/'previous_launcher.ps1')
     (BASE/'Open candidate GUI.ps1').write_text('$ErrorActionPreference = "Stop"\n& (Join-Path $PSScriptRoot "../relative-candidate-20261013-opening-display/snapshot/chess_gui_candidate.exe") --gui 180 2\n',encoding='utf-8')
-    diagnostic=json.loads((ROOT/'testing/results/strength_calibration/opening-diagnostic-20261013/opening_diagnostic.json').read_text())
+    diagnostic=json.loads((ROOT/'local/results/strength_calibration/opening-diagnostic-20261013/opening_diagnostic.json').read_text())
     report=ROOT/'STRENGTH_TEST_RESULTS.html';page=report.read_text(encoding='utf-8')
     (OUT/'report_before_opening_display.html').write_text(page,encoding='utf-8')
     section=f'''<section id="opening-behavior-diagnosis"><h2>Opening behavior and opening-name display</h2>

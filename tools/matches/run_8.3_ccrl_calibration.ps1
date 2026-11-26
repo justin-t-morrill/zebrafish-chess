@@ -19,13 +19,13 @@ $cute = (Get-ChildItem (Join-Path $PSScriptRoot "cutechess") -Recurse `
 $ourEngine = if ($CandidateBinary) {
     (Resolve-Path -LiteralPath $CandidateBinary).Path
 } elseif ($CandidateName -eq "8.3") {
-    Join-Path $root "engines\versions\v8\8.3.exe"
+    Join-Path $root "history\engines\v8\8.3.exe"
 } else {
     throw "Supply CandidateBinary for $CandidateName."
 }
-$openings = Join-Path $root "openings\suites\8moves_v3.epd"
+$openings = Join-Path $root "tests\fixtures\openings\8moves_v3.epd"
 $pool = Join-Path $PSScriptRoot "ccrl_engines"
-$results = Join-Path $root "testing\results\calibration\v$CandidateName"
+$results = Join-Path $root "local\results\calibration\v$CandidateName"
 if ($CandidateBinary) {
     $results = Join-Path $results (Get-Date -Format "yyyyMMdd-HHmmss-fff")
 }

@@ -8,10 +8,10 @@ import subprocess
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
-BASE = ROOT / 'testing/results/strength_calibration/relative-candidate-20261013'
+BASE = ROOT / 'local/results/strength_calibration/relative-candidate-20261013'
 PREVIOUS = BASE.with_name(BASE.name + '-board-flip')
 OUT = BASE.with_name(BASE.name + '-precise-input')
-FIT = ROOT / 'testing/results/strength_calibration/candidate-fit-20261013'
+FIT = ROOT / 'local/results/strength_calibration/candidate-fit-20261013'
 
 
 def digest(p):

@@ -113,7 +113,7 @@ checks passed, including metadata independence and own-player separation.
 Example using the existing environment:
 
 ```text
-wsl -d Ubuntu-24.04 -- /opt/ratingnet-venv/bin/python analysis/elo_estimator/estimate_updated_elo.py analysis/elo_estimator/models/experiments/performance_likelihood_v4_revision/own_engine_monotone/example_features.json
+wsl -d Ubuntu-24.04 -- /opt/ratingnet-venv/bin/python research/player_ratings/estimate_updated_elo.py local/models/player_ratings/experiments/performance_likelihood_v4_revision/own_engine_monotone/example_features.json
 ```
 
 For historical comparison, `estimate_reference_revision(package)` loads the

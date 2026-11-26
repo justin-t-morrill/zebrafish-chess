@@ -174,7 +174,7 @@ def create_run(settings: dict, *, spawn: bool = True) -> Path:
                 "sprt_model": "Cute Chess 1.5.1 BayesElo WDL; paired-batch checkpoints",
                 "snapshots": {}, "runner_hashes": {p.name: sha256(p) for p in
                     resource("match_tools").glob("*.ps1")},
-                "tablebase_paths": [str(ROOT / "endgames/syzygy" / name) for name in ("3-4-5", "6-WDL", "6-DTZ")]}
+                "tablebase_paths": [str(resource("tablebases") / name) for name in ("3-4-5", "6-WDL", "6-DTZ")]}
     try:
         for side in ("a", "b"):
             manifest["snapshots"][side] = snapshot_engine(catalog[options["engine_" + side]], folder / ("engine_" + side))

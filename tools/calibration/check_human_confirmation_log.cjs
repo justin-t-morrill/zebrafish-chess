@@ -2,7 +2,7 @@
 const fs=require('fs');
 const vm=require('vm');
 const assert=require('assert/strict');
-const source=fs.readFileSync('testing/results/strength_calibration/human-pilot-20261013-1700/confirmation_log.js','utf8');
+const source=fs.readFileSync('local/results/strength_calibration/human-pilot-20261013-1700/confirmation_log.js','utf8');
 class Element {
  constructor(tag){this.tag=tag;this.children=[];this.listeners={};this.dataset={};this.value='';this.textContent='';this.className='';}
  append(...children){this.children.push(...children);}
@@ -21,8 +21,8 @@ function run(saved=null,failStorage=false){
  const document={getElementById:id=>ids.get(id),createElement:tag=>new Element(tag),createTextNode:text=>({textContent:text})};
  const context={document,localStorage:{getItem:k=>storage.get(k)||null,setItem:(k,v)=>{if(failStorage)throw Error('Quota');storage.set(k,v);}},Blob,
   URL:{createObjectURL:b=>{downloads.push(b);return 'blob:test';},revokeObjectURL:()=>{}},setTimeout:()=>{},confirm:()=>true,console};
- vm.runInNewContext(fs.readFileSync('testing/strength_calibration/elo_discrepancy_estimator.js','utf8'),context);
- vm.runInNewContext(fs.readFileSync('testing/results/strength_calibration/human-pilot-20261013-1700/elo_discrepancy_ui.js','utf8'),context);
+ vm.runInNewContext(fs.readFileSync('tools/calibration/elo_discrepancy_estimator.js','utf8'),context);
+ vm.runInNewContext(fs.readFileSync('local/results/strength_calibration/human-pilot-20261013-1700/elo_discrepancy_ui.js','utf8'),context);
  vm.runInNewContext(source,context);
  return {ids,storage,downloads,context,get selectors(){return ids.get('hc-sessions').walk('select').filter(x=>x.className==='hc-result');},get pgns(){return ids.get('hc-sessions').walk('textarea');}};
 }

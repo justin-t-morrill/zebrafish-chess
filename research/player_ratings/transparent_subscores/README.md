@@ -104,9 +104,9 @@ Do not run this while preserving the current “no data processing” state. Whe
 ready, the complete experiment is:
 
 ```powershell
-.\analysis\elo_estimator\transparent_subscores\run_pipeline.ps1 `
-    -Moves .\analysis\elo_estimator\data\move_features_detailed_5000_100k.csv `
-    -Candidates .\analysis\elo_estimator\data\candidate_features_errors_100k.csv `
+.\research\player_ratings\transparent_subscores\run_pipeline.ps1 `
+    -Moves .\local\datasets\player_ratings\move_features_detailed_5000_100k.csv `
+    -Candidates .\local\datasets\player_ratings\candidate_features_errors_100k.csv `
     -RunName july_transparent_v3
 ```
 
@@ -124,9 +124,9 @@ evidence are less trustworthy. Outputs are placed under `runs\<RunName>`:
 To inspect a prediction after training:
 
 ```powershell
-python .\analysis\elo_estimator\transparent_subscores\predict_subscores.py `
-    --features .\analysis\elo_estimator\transparent_subscores\runs\may_transparent_v1\subscore_features.csv `
-    --model .\analysis\elo_estimator\transparent_subscores\runs\may_transparent_v1\model.json `
+python .\research\player_ratings\transparent_subscores\predict_subscores.py `
+    --features .\research\player_ratings\transparent_subscores\runs\may_transparent_v1\subscore_features.csv `
+    --model .\research\player_ratings\transparent_subscores\runs\may_transparent_v1\model.json `
     --game-index 42
 ```
 

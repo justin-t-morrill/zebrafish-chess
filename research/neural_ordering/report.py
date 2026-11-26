@@ -2,7 +2,7 @@
 import collections, difflib, hashlib, json, re
 from pathlib import Path
 import numpy as np
-ROOT=Path(__file__).resolve().parents[2]; OUT=ROOT/'testing/results/neural_ordering_pilot'
+ROOT=Path(__file__).resolve().parents[2]; OUT=ROOT/'local/results/neural_ordering_pilot'
 HERE=Path(__file__).resolve().parent
 def read(name): return json.loads((OUT/name).read_text())
 def rows(name): return [json.loads(x) for x in (OUT/name).read_text().splitlines()]
@@ -109,7 +109,7 @@ This rejects this pilot's runtime/data combination, not neural ordering in gener
 
 - Starting point: actual working-tree Zebrafish 8.3, including the user's existing
   uncommitted work. Only `chess_engine.c` and `uci.c` receive guarded hooks;
-  new experiment files are in `training/neural_ordering`. The normal build excludes
+  new experiment files are in `research/neural_ordering`. The normal build excludes
   those hooks. The production executables, prior cutoff-policy files, and evaluator
   were preserved. `experiment_only.patch` contains only this investigation's edits.
 - Baseline executable SHA-256: `{baselinehash}`.

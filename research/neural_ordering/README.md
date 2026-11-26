@@ -10,7 +10,7 @@ throughout this experiment. No commits, external jobs, or downloads are needed.
 Run commands from the repository root. Use an installed Python with NumPy and
 psutil; this machine uses
 `C:\Users\Justin\AppData\Local\Programs\Python\Python312\python.exe`.
-The local output directory is `testing/results/neural_ordering_pilot`.
+The local output directory is `local/results/neural_ordering_pilot`.
 
 1. Preserve `engine/current` C/inc files and `nnue-8.3.bin` under the output
    directory's `baseline/` before editing. The supplied frozen snapshot is the
@@ -18,10 +18,10 @@ The local output directory is `testing/results/neural_ordering_pilot`.
 2. `./research/neural_ordering/build.ps1 -Baseline`
 3. `./research/neural_ordering/build.ps1`
 4. `python research/neural_ordering/prepare.py`
-5. `testing/results/neural_ordering_pilot/experiment.exe bench testing/results/neural_ordering_pilot/profile.fen 16 25 1 testing/results/neural_ordering_pilot/profile.cfg testing/results/neural_ordering_pilot/profile.jsonl`
-6. `testing/results/neural_ordering_pilot/experiment.exe collect testing/results/neural_ordering_pilot/collect.fen 16 250 testing/results/neural_ordering_pilot/samples.bin 5000`
-7. `testing/results/neural_ordering_pilot/experiment.exe label testing/results/neural_ordering_pilot/samples.bin testing/results/neural_ordering_pilot/samples.jsonl 180 20000`
-8. `python research/neural_ordering/train.py testing/results/neural_ordering_pilot/samples.jsonl testing/results/neural_ordering_pilot/collect_roots.json testing/results/neural_ordering_pilot/models`
+5. `local/results/neural_ordering_pilot/experiment.exe bench local/results/neural_ordering_pilot/profile.fen 16 25 1 local/results/neural_ordering_pilot/profile.cfg local/results/neural_ordering_pilot/profile.jsonl`
+6. `local/results/neural_ordering_pilot/experiment.exe collect local/results/neural_ordering_pilot/collect.fen 16 250 local/results/neural_ordering_pilot/samples.bin 5000`
+7. `local/results/neural_ordering_pilot/experiment.exe label local/results/neural_ordering_pilot/samples.bin local/results/neural_ordering_pilot/samples.jsonl 180 20000`
+8. `python research/neural_ordering/train.py local/results/neural_ordering_pilot/samples.jsonl local/results/neural_ordering_pilot/collect_roots.json local/results/neural_ordering_pilot/models`
 9. Repeat the previous command with `--board` only after the small rankers show
    useful signal. These models use identical data, seed, optimizer and epochs.
 10. `python research/neural_ordering/benchmark.py --phase selection`

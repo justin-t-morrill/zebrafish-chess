@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build human reference curves for the five game-review play aspects.
 
-The input is the move-level feature CSV produced by analysis/elo_estimator.
+The input is the move-level feature CSV produced by research/player_ratings.
 Definitions intentionally match reviewer/rating_diagnostics.py. Output curves
 let a reduced engine (or reviewed human game) be compared with real players of
 the same nominal rating, aspect by aspect, without forcing each aspect to equal
@@ -60,7 +60,7 @@ def main():
             importance=difficulty*(1.0+min(1.0,discovery/10))
             for name in cats:
                 s=stats[(band,name)];s[0]+=1;s[1]+=loss;s[2]+=loss>=.07;s[3]+=loss>=.15;s[4]+=loss*importance
-    output={"schema":1,"source":str(args.features.resolve()),"definitions":"Matches analysis/game_review/reviewer/rating_diagnostics.py","anchors":list(ANCHORS),"aspects":{}}
+    output={"schema":1,"source":str(args.features.resolve()),"definitions":"Matches src/reviewer/rating_diagnostics.py","anchors":list(ANCHORS),"aspects":{}}
     for name in ASPECTS:
         rows=[]
         for rating in ANCHORS:

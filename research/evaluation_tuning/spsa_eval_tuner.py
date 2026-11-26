@@ -15,10 +15,15 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "engine_versions" / "source_2.2_eval_spsa"
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def saved_version_directory(version: str) -> Path:
+    return ROOT / "history/engines" / ("v" + version.split(".")[0])
+
+SOURCE = ROOT / "history/engines/v2/source_2.2_eval_spsa"
 HEADER = SOURCE / "spsa_eval_params.inc"
-WORK = ROOT / "tuning" / "spsa_work"
+WORK = ROOT / "local/runs/spsa"
 RUN_WORK = WORK
 
 
@@ -80,7 +85,7 @@ def instrument_base(base_engine: str) -> tuple[Path, dict[str, float]]:
     global SOURCE, HEADER
     if not re.fullmatch(r"[A-Za-z0-9._-]+", base_engine):
         raise SystemExit("Unsafe base engine name")
-    original = ROOT / "engine_versions" / f"source_{base_engine}"
+    original = saved_version_directory(base_engine) / f"source_{base_engine}"
     if not original.is_dir():
         raise SystemExit(f"Saved source version was not found: {original}")
     target = WORK / "bases" / base_engine / "source"
@@ -304,7 +309,7 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=20260825)
     parser.add_argument("--state", type=Path, default=WORK / "state.json")
     parser.add_argument("--openings", type=Path,
-                        default=ROOT / "reference_engines" / "openings" / "8mvs_+90_+99.epd")
+                        default=ROOT / "tests/fixtures/openings/8mvs_+90_+99.epd")
     args = parser.parse_args()
     if args.games < 2 or args.games % 2:
         raise SystemExit("--games must be a positive even number")
@@ -312,7 +317,7 @@ def main() -> None:
     _, base_values = instrument_base(args.base_engine)
     RUN_WORK = WORK / "runs" / f"{args.base_engine}-{args.group}"
     RUN_WORK.mkdir(parents=True, exist_ok=True)
-    cute_matches = list((ROOT / "reference_engines" / "cutechess").rglob("cutechess-cli.exe"))
+    cute_matches = list((ROOT / "local/tools/cutechess").rglob("cutechess-cli.exe"))
     if not cute_matches:
         raise SystemExit("cutechess-cli.exe was not found")
     active = selected(args.group)
@@ -373,7 +378,7 @@ def main() -> None:
             if new_file: writer.writeheader()
             writer.writerow(row)
         current = integer_values(state["theta"], active, None, iteration)
-        latest = ROOT / "engine_versions" / f"{args.base_engine}_eval_spsa_latest.exe"
+        latest = saved_version_directory(args.base_engine) / f"{args.base_engine}_eval_spsa_latest.exe"
         compile_engine(current, latest)
         totals = state["totals"]
         total_games = totals["wins"] + totals["draws"] + totals["losses"]
@@ -383,7 +388,7 @@ def main() -> None:
               f"  cumulative +{totals['wins']} ={totals['draws']} "
               f"-{totals['losses']}; score {total_score:.3%}", flush=True)
     print(f"Done. State: {args.state}\nHistory: {history}\n"
-          f"Latest engine: {ROOT / 'engine_versions' / f'{args.base_engine}_eval_spsa_latest.exe'}")
+          f"Latest engine: {saved_version_directory(args.base_engine) / f'{args.base_engine}_eval_spsa_latest.exe'}")
 
 
 if __name__ == "__main__":

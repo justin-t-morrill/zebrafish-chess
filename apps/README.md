@@ -1,9 +1,8 @@
 # Applications
 
-- `web/`: canonical Play/Analyze application, served on loopback by Python.
-- `workbench/`: static testing, live-status and results pages, served by
-  `src/zebrafish/workbench.py`.
+- [web/](web/README.md): Play/Analyze browser application.
+- `workbench/`: version-test setup, live boards, pause/resume and saved results.
+- [review_desktop/](review_desktop/README.md): optional Tk desktop reviewer.
 
-Use the root `.cmd` launchers. The applications share resource configuration
-and keep long-running test workers independent of the playing session.
-See `docs/launchers.md` and `docs/migration.md` for behavior and compatibility.
+Start them through [launchers/](../launchers/README.md). Shared behavior lives
+under `src/zebrafish`; all application tests live under [tests/](../tests/README.md).

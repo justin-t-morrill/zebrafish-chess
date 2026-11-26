@@ -6,15 +6,15 @@ param(
 $ErrorActionPreference="Stop"
 . (Join-Path $PSScriptRoot "..\tools\project_paths.ps1")
 $root=Get-ChessProjectRoot
-$cute=(Get-ChildItem (Join-Path $root "testing\tools\cutechess") -Recurse -Filter cutechess-cli.exe|Select-Object -First 1).FullName
+$cute=(Get-ChildItem (Join-Path $root "local\tools\cutechess") -Recurse -Filter cutechess-cli.exe|Select-Object -First 1).FullName
 $python=(Get-Command python).Source
 $engine=if($EngineVersion-eq"Current"){Join-Path $root "build\current\chess.exe"}else{Get-EngineVersionPath $EngineVersion}
 $proxy=Join-Path $PSScriptRoot "limited_strength_uci.py"
-$book=Join-Path $root "openings\book\OpeningBook.tsv"
-$general=Join-Path $root "openings\suites\8moves_v3.epd"
+$book=Join-Path $root "resources\books\OpeningBook.tsv"
+$general=Join-Path $root "tests\fixtures\openings\8moves_v3.epd"
 $suiteDir=Join-Path $PSScriptRoot "skill_suites"
 $stamp=Get-Date -Format "yyyyMMdd-HHmmss"
-$results=Join-Path $root "testing\results\strength_calibration\skill-response-$stamp"
+$results=Join-Path $root "local\results\strength_calibration\skill-response-$stamp"
 New-Item -ItemType Directory -Force -Path $results|Out-Null
 $manifest=Join-Path $results "manifest.json"
 

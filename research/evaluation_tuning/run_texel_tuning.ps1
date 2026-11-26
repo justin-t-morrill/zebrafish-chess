@@ -3,7 +3,7 @@ param(
     [string]$RunName = "",
     [string]$ReuseDataFrom = "",
     [string]$ReusePositionsFrom = "",
-    [string]$Manifest = ".\training\tuning\texel_games_spsa.txt",
+    [string]$Manifest = ".\research\evaluation_tuning\texel_games_spsa.txt",
     [ValidateSet("core", "pst", "eval", "positional", "king_safety_fast", "threats", "pawn_details", "bishop_quality", "all")][string]$Group = "all",
     [int]$PositionsPerGame = 0,
     [int]$MinimumPly = 16,
@@ -37,7 +37,7 @@ if ($ReuseDataFrom -and $Rebuild) {
 }
 if (-not $RunName) { $RunName = "${BaseEngine}_texel_$Group" }
 $major = if ($BaseEngine -match '^(\d+)') { "v$($Matches[1])" } else { "misc" }
-$baseSourceDirectory = Join-Path $root "engines\versions\$major\source_$BaseEngine"
+$baseSourceDirectory = Join-Path $root "history\engines\$major\source_$BaseEngine"
 $baseEngineSource = Join-Path $baseSourceDirectory "chess_engine.c"
 if (-not (Test-Path -LiteralPath (Join-Path $baseSourceDirectory "chess.c"))) {
     throw "Saved source for base engine '$BaseEngine' was not found."
@@ -107,7 +107,7 @@ if ($ReuseDataFrom) {
 $qsearchExtractor = Join-Path $runDirectory "extract_texel_qsearch_$BaseEngine.exe"
 $pawnExtractor = Join-Path $runDirectory "extract_eval_features_$BaseEngine.exe"
 $sourceHeader = Join-Path $runDirectory "texel_engine_source_$BaseEngine.h"
-$sourceInclude = '../../engines/versions/' + $major + '/source_' + $BaseEngine + '/chess.c'
+$sourceInclude = '../../history/engines/' + $major + '/source_' + $BaseEngine + '/chess.c'
 # Keep the quoted include path in a generated header. Passing this definition
 # directly to GCC is unreliable because PowerShell can strip its quote marks.
 Set-Content -LiteralPath $sourceHeader -Encoding ascii `

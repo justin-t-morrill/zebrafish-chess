@@ -6,7 +6,7 @@ $config = Join-Path $root 'local\config\lichess\config.yml'
 $python = @((Join-Path $checkout '.venv\Scripts\python.exe'),(Join-Path $checkout '.venv\bin\python.exe')) |
     Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
 if (-not $python) { throw 'The bot environment is missing. See integrations/lichess/README.md.' }
-if (-not (Test-Path -LiteralPath $config)) { throw 'Run Zebrafish-Bot-Setup.cmd to save the token locally.' }
+if (-not (Test-Path -LiteralPath $config)) { throw 'Run launchers/optional/Zebrafish-Bot-Setup.cmd to save the token locally.' }
 if (-not (Test-Path -LiteralPath (Join-Path $root 'build\current\chess.exe'))) { throw 'The current engine is missing.' }
 if ($Check) {
     Write-Output 'Bot environment, local configuration and current engine are present. No Lichess connection was made.'

@@ -59,6 +59,8 @@ static bool syzygy_init_bundled(const char *program) {
     else snprintf(directory, sizeof(directory), ".");
 
     const char *layouts[] = {
+        "%s\\..\\..\\local\\tablebases\\syzygy\\3-4-5;%s\\..\\..\\local\\tablebases\\syzygy\\6-WDL;%s\\..\\..\\local\\tablebases\\syzygy\\6-DTZ",
+        "%s\\..\\..\\..\\local\\tablebases\\syzygy\\3-4-5;%s\\..\\..\\..\\local\\tablebases\\syzygy\\6-WDL;%s\\..\\..\\..\\local\\tablebases\\syzygy\\6-DTZ",
         "%s\\..\\..\\endgames\\syzygy\\3-4-5;%s\\..\\..\\endgames\\syzygy\\6-WDL;%s\\..\\..\\endgames\\syzygy\\6-DTZ",
         "%s\\..\\..\\..\\endgames\\syzygy\\3-4-5;%s\\..\\..\\..\\endgames\\syzygy\\6-WDL;%s\\..\\..\\..\\endgames\\syzygy\\6-DTZ"
     };

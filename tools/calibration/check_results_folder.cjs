@@ -1,7 +1,7 @@
 // All browser actions run in a fresh isolated context, never the user's profile.
 const {chromium}=require('C:/Users/Justin/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 const assert=require('assert/strict'),fs=require('fs'),path=require('path');
-const root='file:///C:/Users/Justin/Desktop/Chess_2/',out='testing/results/strength_calibration/human-pilot-20261013-1700';
+const root='file:///C:/Users/Justin/Desktop/Chess_2/',out='local/results/strength_calibration/human-pilot-20261013-1700';
 const key='chess2-human-confirmation-20261013-v1';
 function pgn(target,color,result='1-0',control='180+2',round='1',rating=null){
  const engine=`Engine 8.3 (${target} strength)`;

@@ -108,10 +108,10 @@ foreach ($entry in $networks.GetEnumerator()) {
     -NetworkNames @($networks.Keys) 2>&1 | Tee-Object -FilePath $log -Append
 
 Set-Stage "8/8 SPRT: full-data plain-128 versus Engine 8.2"
-& (Join-Path $root "testing\tools\run_version_sprt.ps1") `
+& (Join-Path $root "tools\matches\run_version_sprt.ps1") `
     -EngineA 8.2 -EngineB 8.2 `
     -EvalFileA $networks["full128"] `
-    -EvalFileB (Join-Path $root "engines\versions\v8\nnue-8.2.bin") `
+    -EvalFileB (Join-Path $root "history\engines\v8\nnue-8.2.bin") `
     -MaxGames 10000 -TimeControl "1+0.1" -Concurrency 6 `
     -ThreadsA 1 -ThreadsB 1 -Elo0 0 -Elo1 10 2>&1 |
     Tee-Object -FilePath $log -Append

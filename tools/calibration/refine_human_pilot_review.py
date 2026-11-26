@@ -6,8 +6,8 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / 'testing/results/strength_calibration/human-pilot-20261013-1700'
-sys.path.insert(0, str(ROOT / 'analysis/game_review/vendor_runtime'))
+OUT = ROOT / 'local/results/strength_calibration/human-pilot-20261013-1700'
+sys.path.insert(0, str(ROOT / 'local/dependencies/reviewer'))
 import chess
 import chess.engine
 

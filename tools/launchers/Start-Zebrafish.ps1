@@ -25,7 +25,7 @@ foreach ($candidate in ($candidates | Select-Object -Unique)) {
 if (-not $runtime) { throw 'Python 3.11 or later is required. Install Python or set ZEBRAFISH_PYTHON to python.exe.' }
 $previousPath = $env:PYTHONPATH
 $previousBytecode = $env:PYTHONDONTWRITEBYTECODE
-$env:PYTHONPATH = (Join-Path $root 'src') + [IO.Path]::PathSeparator + (Join-Path $root 'analysis\game_review\vendor_runtime')
+$env:PYTHONPATH = (Join-Path $root 'src') + [IO.Path]::PathSeparator + (Join-Path $root 'local\dependencies\reviewer')
 if ($previousPath) { $env:PYTHONPATH += [IO.Path]::PathSeparator + $previousPath }
 $env:PYTHONDONTWRITEBYTECODE = '1'
 try {

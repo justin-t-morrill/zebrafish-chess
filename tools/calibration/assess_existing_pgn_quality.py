@@ -11,9 +11,9 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
-ELO=ROOT/'analysis/elo_estimator'
-OUT=ROOT/'testing/results/strength_calibration/playing-quality-20261014'
-sys.path.insert(0,str(ROOT/'analysis/game_review/vendor_runtime'))
+ELO=ROOT/'research/player_ratings'
+OUT=ROOT/'local/results/strength_calibration/playing-quality-20261014'
+sys.path.insert(0,str(ROOT/'local/dependencies/reviewer'))
 import chess
 import chess.pgn
 
@@ -23,12 +23,12 @@ def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
 def prepare():
     OUT.mkdir(exist_ok=True)
-    old=ROOT/'testing/results/strength_calibration/human-pilot-20261013-1700/games.pgn'
+    old=ROOT/'local/results/strength_calibration/human-pilot-20261013-1700/games.pgn'
     records=[]
     with old.open(encoding='utf-8') as f:
         while (game:=chess.pgn.read_game(f)) is not None:
             records.append({'id':f'initial-pilot-{len(records)+1}','version':'affected','pgn':str(game)})
-    audit=json.loads((ROOT/'testing/results/strength_calibration/verified-human-log-20261014/game_audit.json').read_text())
+    audit=json.loads((ROOT/'local/results/strength_calibration/verified-human-log-20261014/game_audit.json').read_text())
     records += [{'id':r['label'],'version':'corrected' if r['version']=='corrected' else 'affected','pgn':r['pgn']} for r in audit['records']]
     assert len(records)==20
     seen=set();normalized=[];manifest=[]
@@ -55,7 +55,7 @@ def prepare():
         w=csv.DictWriter(f,fieldnames=list(manifest[0]));w.writeheader();w.writerows(manifest)
     release=ELO/'models/releases/ratingnet_natural_v1'
     pool=ELO/'models/experiments/move_cnn_pooling_v1/attention'
-    provenance={'games':20,'corrected':12,'affected':8,'source_audit_sha256':sha(ROOT/'testing/results/strength_calibration/verified-human-log-20261014/game_audit.json'),
+    provenance={'games':20,'corrected':12,'affected':8,'source_audit_sha256':sha(ROOT/'local/results/strength_calibration/verified-human-log-20261014/game_audit.json'),
        'initial_pilot_sha256':sha(old),'ratingnet_checkpoint_sha256':sha(release/'ratingnet.pt'),'ratingnet_metadata_sha256':sha(release/'metadata.json'),
        'pooling_checkpoint_sha256':sha(pool/'best.pt'),'analysis_engine':str(ROOT/'build/current/chess.exe'),
        'analysis_engine_sha256':sha(ROOT/'build/current/chess.exe'),'feature_budget_nodes':100000,'workers':2,'threads_per_engine':1,
@@ -76,8 +76,8 @@ def torch_runtime():
 
 
 def scale():
-    sys.path.insert(0,str(ROOT/'analysis/game_review'))
-    from reviewer.rating_scale import lichess_to_chesscom_blitz,_converted_compatibility_interval,CONVERSION_90_HALF_WIDTH
+    sys.path.insert(0,str(ROOT/'src'))
+    from zebrafish.ratings.rating_scale import lichess_to_chesscom_blitz,_converted_compatibility_interval,CONVERSION_90_HALF_WIDTH
     return lichess_to_chesscom_blitz,_converted_compatibility_interval,CONVERSION_90_HALF_WIDTH
 
 

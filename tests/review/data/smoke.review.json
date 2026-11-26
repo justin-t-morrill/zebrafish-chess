@@ -1,0 +1,328 @@
+{
+  "source_pgn": "tests/review/data/smoke.pgn",
+  "source_game_index": 1,
+  "headers": {
+    "Event": "Reviewer smoke test",
+    "Site": "Local",
+    "Date": "2026.09.04",
+    "Round": "-",
+    "White": "White",
+    "Black": "Black",
+    "Result": "*"
+  },
+  "settings": {
+    "engine_name": "",
+    "engine_version": "current",
+    "network_sha256": "",
+    "nodes_per_position": 1000,
+    "minimum_depth": 0,
+    "maximum_depth": 0,
+    "multipv": 1,
+    "hash_mb": 256,
+    "threads": 1,
+    "tablebase_enabled": true,
+    "stability_iterations": 3,
+    "stability_score_tolerance_cp": 25,
+    "stability_prefix_plies": 4
+  },
+  "moves": [
+    {
+      "ply": 1,
+      "move_number": 1,
+      "mover": "white",
+      "san": "e4",
+      "uci": "e2e4",
+      "fen_before": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      "best_move_uci": "e2e4",
+      "best_move_san": "e4",
+      "evaluation_before_cp": 36,
+      "evaluation_after_cp": -2,
+      "expected_score_before": 0.5224848247918001,
+      "expected_score_after": 0.49875000260416025,
+      "expected_score_loss": 0.023734822187639892,
+      "classification": "good",
+      "forced": false,
+      "book": false,
+      "tablebase": false,
+      "critical": false,
+      "multipv": [
+        {
+          "rank": 1,
+          "move": "e2e4",
+          "score_cp": 36,
+          "mate": null,
+          "pv": [
+            "e4",
+            "d5"
+          ]
+        }
+      ],
+      "iterations": [
+        {
+          "depth": 2,
+          "seldepth": 0,
+          "nodes": 234,
+          "score_cp": 36,
+          "mate": null,
+          "best_move": "e2e4",
+          "pv": [
+            "e2e4",
+            "d7d5"
+          ]
+        }
+      ],
+      "stability": {
+        "final_best_move": "e2e4",
+        "discovery_depth": 2,
+        "discovery_nodes": 234,
+        "stability_depth": null,
+        "stability_nodes": null,
+        "verification_depth": 2,
+        "stable_prefix": [],
+        "stable": false,
+        "score_span_cp": null
+      },
+      "played_classical": null,
+      "best_classical": null,
+      "explanation_position_fen": "",
+      "qsearch_score_cp": null,
+      "qsearch_pv_uci": [],
+      "qsearch_pv_san": [],
+      "explanation_facts": []
+    },
+    {
+      "ply": 2,
+      "move_number": 1,
+      "mover": "black",
+      "san": "e5",
+      "uci": "e7e5",
+      "fen_before": "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+      "best_move_uci": "e7e5",
+      "best_move_san": "e5",
+      "evaluation_before_cp": 40,
+      "evaluation_after_cp": 40,
+      "expected_score_before": 0.47502081252106,
+      "expected_score_after": 0.47502081252106,
+      "expected_score_loss": 0.0,
+      "classification": "best",
+      "forced": false,
+      "book": false,
+      "tablebase": false,
+      "critical": false,
+      "multipv": [
+        {
+          "rank": 1,
+          "move": "e7e5",
+          "score_cp": -40,
+          "mate": null,
+          "pv": [
+            "e5",
+            "Nf3",
+            "d6"
+          ]
+        }
+      ],
+      "iterations": [
+        {
+          "depth": 1,
+          "seldepth": 0,
+          "nodes": 41,
+          "score_cp": -36,
+          "mate": null,
+          "best_move": "d7d5",
+          "pv": [
+            "d7d5"
+          ]
+        },
+        {
+          "depth": 2,
+          "seldepth": 0,
+          "nodes": 351,
+          "score_cp": 2,
+          "mate": null,
+          "best_move": "e7e5",
+          "pv": [
+            "e7e5",
+            "d2d4"
+          ]
+        },
+        {
+          "depth": 3,
+          "seldepth": 0,
+          "nodes": 1864,
+          "score_cp": -40,
+          "mate": null,
+          "best_move": "e7e5",
+          "pv": [
+            "e7e5",
+            "g1f3",
+            "d7d6"
+          ]
+        }
+      ],
+      "stability": {
+        "final_best_move": "e7e5",
+        "discovery_depth": 2,
+        "discovery_nodes": 351,
+        "stability_depth": null,
+        "stability_nodes": null,
+        "verification_depth": 3,
+        "stable_prefix": [],
+        "stable": false,
+        "score_span_cp": null
+      },
+      "played_classical": null,
+      "best_classical": {
+        "material": 0,
+        "piece_square": 22,
+        "activity": -18,
+        "king_safety": 0,
+        "pawn_structure": -20,
+        "threats": 0,
+        "endgame": 0,
+        "total": -16,
+        "phase": 24
+      },
+      "explanation_position_fen": "rnbqkbnr/ppp2ppp/3p4/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3",
+      "qsearch_score_cp": null,
+      "qsearch_pv_uci": [],
+      "qsearch_pv_san": [],
+      "explanation_facts": [
+        "The classical evaluation is -0.16, favoring Black.",
+        "The largest factors are piece placement favors White by about 0.22, pawn structure and passed pawns favors Black by about 0.20, piece activity and mobility favors Black by about 0.18."
+      ]
+    },
+    {
+      "ply": 3,
+      "move_number": 2,
+      "mover": "white",
+      "san": "Nf3",
+      "uci": "g1f3",
+      "fen_before": "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",
+      "best_move_uci": "g1f3",
+      "best_move_san": "Nf3",
+      "evaluation_before_cp": 6,
+      "evaluation_after_cp": 6,
+      "expected_score_before": 0.5037499296890819,
+      "expected_score_after": 0.5037499296890819,
+      "expected_score_loss": 0.0,
+      "classification": "best",
+      "forced": false,
+      "book": false,
+      "tablebase": false,
+      "critical": false,
+      "multipv": [
+        {
+          "rank": 1,
+          "move": "g1f3",
+          "score_cp": 6,
+          "mate": null,
+          "pv": [
+            "Nf3",
+            "Nc6",
+            "d4"
+          ]
+        }
+      ],
+      "iterations": [
+        {
+          "depth": 1,
+          "seldepth": 0,
+          "nodes": 59,
+          "score_cp": -2,
+          "mate": null,
+          "best_move": "d2d4",
+          "pv": [
+            "d2d4"
+          ]
+        },
+        {
+          "depth": 2,
+          "seldepth": 0,
+          "nodes": 449,
+          "score_cp": 40,
+          "mate": null,
+          "best_move": "g1f3",
+          "pv": [
+            "g1f3",
+            "d7d6"
+          ]
+        },
+        {
+          "depth": 3,
+          "seldepth": 0,
+          "nodes": 2519,
+          "score_cp": 6,
+          "mate": null,
+          "best_move": "g1f3",
+          "pv": [
+            "g1f3",
+            "b8c6",
+            "d2d4"
+          ]
+        }
+      ],
+      "stability": {
+        "final_best_move": "g1f3",
+        "discovery_depth": 2,
+        "discovery_nodes": 449,
+        "stability_depth": null,
+        "stability_nodes": null,
+        "verification_depth": 3,
+        "stable_prefix": [],
+        "stable": false,
+        "score_span_cp": null
+      },
+      "played_classical": null,
+      "best_classical": {
+        "material": 0,
+        "piece_square": 42,
+        "activity": 24,
+        "king_safety": 0,
+        "pawn_structure": 0,
+        "threats": 0,
+        "endgame": 0,
+        "total": 66,
+        "phase": 24
+      },
+      "explanation_position_fen": "r1bqkbnr/pppp1ppp/2n5/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 0 3",
+      "qsearch_score_cp": 6,
+      "qsearch_pv_uci": [],
+      "qsearch_pv_san": [],
+      "explanation_facts": [
+        "The classical evaluation is +0.66, favoring White.",
+        "The largest factors are: piece placement (0.42 for White); piece activity and mobility (0.24 for White)."
+      ]
+    }
+  ],
+  "players": {
+    "white": {
+      "color": "white",
+      "accuracy": 95.47140726556165,
+      "average_expected_score_loss": 0.011867411093819946,
+      "informative_moves": 2,
+      "classifications": {
+        "good": 1,
+        "best": 1
+      },
+      "estimated_performance_elo": null,
+      "elo_interval_low": null,
+      "elo_interval_high": null
+    },
+    "black": {
+      "color": "black",
+      "accuracy": 100.0,
+      "average_expected_score_loss": 0.0,
+      "informative_moves": 1,
+      "classifications": {
+        "best": 1
+      },
+      "estimated_performance_elo": null,
+      "elo_interval_low": null,
+      "elo_interval_high": null
+    }
+  },
+  "completed_plies": 3,
+  "complete": false,
+  "schema_version": 1
+}

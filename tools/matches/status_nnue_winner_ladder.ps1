@@ -1,6 +1,6 @@
 . (Join-Path $PSScriptRoot "project_paths.ps1")
 $root = Get-ChessProjectRoot
-$results = Join-Path $root "testing\results\sprt\v8"
+$results = Join-Path $root "local\results\sprt\v8"
 $statePath = Join-Path $results "nnue-winner-ladder-state.json"
 $ladderLog = Join-Path $results "nnue-winner-ladder.log"
 $queueLog = Join-Path $results "nnue-winner-gauntlet-queue.log"

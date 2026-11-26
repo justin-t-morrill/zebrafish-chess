@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / 'testing/results/strength_calibration/human-pilot-20261013-1700'
+OUT = ROOT / 'local/results/strength_calibration/human-pilot-20261013-1700'
 
 
 def main():
@@ -235,7 +235,7 @@ render();
     # Keep executable JavaScript separately for syntax and isolated behavior checks.
     js=fragment.split('<script id="human-confirmation-log-script">',1)[1].split('</script>',1)[0]
     (OUT/'confirmation_log.js').write_text(js,encoding='utf-8')
-    plan_path=ROOT/'testing/results/strength_calibration/relative-candidate-20261013/human_calibration_plan.json'
+    plan_path=ROOT/'local/results/strength_calibration/relative-candidate-20261013/human_calibration_plan.json'
     plan=json.loads(plan_path.read_text())
     plan['stages'][2].update(settings=[1100,1200,1300],center=1200,status='optional_not_started',
         detailed_plan=str(OUT/'friend_cross_check_plan.json'),

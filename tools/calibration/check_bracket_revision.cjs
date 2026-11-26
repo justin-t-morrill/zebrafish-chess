@@ -1,6 +1,6 @@
 const {chromium}=require('C:/Users/Justin/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
 const assert=require('assert/strict'),fs=require('fs');
-const base='file:///C:/Users/Justin/Desktop/Chess_2/strength_results/',key='chess2-human-confirmation-20261013-v1',out='testing/results/strength_calibration/verified-human-log-20261014';
+const base='file:///C:/Users/Justin/Desktop/Chess_2/strength_results/',key='chess2-human-confirmation-20261013-v1',out='local/results/strength_calibration/verified-human-log-20261014';
 (async()=>{const browser=await chromium.launch({channel:'msedge',headless:true});try{
  const context=await browser.newContext({viewport:{width:1360,height:1000}}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(base+'games.html');let s=await page.evaluate(()=>ChessHumanLog.getState());const old=JSON.parse(fs.readFileSync(out+'/confirmation_plan.1300-1450-1600.json','utf8'));

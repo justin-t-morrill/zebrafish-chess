@@ -9,7 +9,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$root = Split-Path -Parent $PSScriptRoot
+$root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..\..'))
 if ($Engine -notmatch '^[A-Za-z0-9._-]+$') { throw "Unsafe engine version name." }
 $sourceDirectory = Join-Path $root "engine_versions\source_$Engine"
 if (-not (Test-Path -LiteralPath (Join-Path $sourceDirectory "chess.c"))) {

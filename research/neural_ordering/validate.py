@@ -3,7 +3,7 @@ import json, subprocess
 from pathlib import Path
 import numpy as np
 from train import forward
-ROOT=Path(__file__).resolve().parents[2]; OUT=ROOT/'testing/results/neural_ordering_pilot'
+ROOT=Path(__file__).resolve().parents[2]; OUT=ROOT/'local/results/neural_ordering_pilot'
 def main():
     data=[json.loads(x) for x in (OUT/'samples.jsonl').open()]
     results={'records':len(data),'semantics':True,'models':{}}

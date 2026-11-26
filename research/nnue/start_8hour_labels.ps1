@@ -1,7 +1,7 @@
 param([double]$Hours = 8.0)
 
 $ErrorActionPreference = 'Stop'
-$root = Split-Path -Parent $PSScriptRoot
+$root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $pythonPackages = Join-Path $PSScriptRoot 'python_packages'
 $source = Join-Path $root 'tuning\texel_runs\5.0_native_selfplay_all\leaves.csv'
 $campaign = Join-Path $PSScriptRoot 'data\stockfish-8hour'

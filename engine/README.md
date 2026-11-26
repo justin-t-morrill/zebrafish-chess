@@ -44,11 +44,11 @@ compile all those included files into additional objects.
 From the repository root:
 
 ```powershell
-.\start_zebrafish.ps1
+.\tools/launchers/Start-Zebrafish.ps1 -Action play
 ```
 
 This opens the new local HTML interface with Home, Play a Game, and Analyze
-tabs. You can also double-click `Zebrafish.cmd`. It uses this engine through
+tabs. You can also double-click `launchers/Zebrafish.cmd`. It uses this engine through
 UCI and the existing review pipeline. See [web interface setup](../apps/web/README.md).
 
 The original Windows GUI, terminal, and UCI entry points remain available:
@@ -89,7 +89,7 @@ Syzygy files are optional and excluded from Git; the downloader is in
 
 ## Game analysis and historical sources
 
-The standalone [game reviewer](../analysis/game_review/README.md) uses this
+The standalone [game reviewer](../docs/review.md) uses this
 engine for PGN and position analysis, with a separate classical explanation
 helper. Accuracy and move classifications remain provisional.
 

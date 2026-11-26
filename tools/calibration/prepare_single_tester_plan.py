@@ -6,7 +6,7 @@ import shutil
 from run_relative_ladder import ROOT,HERE,save
 
 candidate=Path((HERE/'latest_relative_candidate_path.txt').read_text().strip())
-prep=ROOT/'testing/results/strength_calibration/human-pilot-preparation-20261013'
+prep=ROOT/'local/results/strength_calibration/human-pilot-preparation-20261013'
 reference=json.loads((prep/'public_blitz_reference.json').read_text(encoding='utf-8-sig'))
 blitz=reference['chess_blitz'];rating=blitz['last']['rating'];rd=blitz['last']['rd'];games=sum(blitz['record'].values())
 plan=candidate/'human_calibration_plan.json';archive=candidate/'human_calibration_plan.population-proposal.json'

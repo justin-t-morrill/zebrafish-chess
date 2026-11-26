@@ -16,18 +16,18 @@ are collected or linked here.
 
 ## Setup and usage
 
-- [Separate launchers and version tests](launchers.md)
+- [Separate launchers and version tests](../launchers/README.md)
 - [Repository migration status](migration.md)
 - [What belongs in Git](source-control.md)
 
 - [Current engine](../engine/README.md)
-- [Game reviewer](../analysis/game_review/README.md)
+- [Game reviewer](../docs/review.md)
 - [Tournament tools](../tools/matches/README.md)
 - [Puzzle diagnostics](../tools/puzzles/lichess/README.md)
 - [Evaluation and search tuning](../research/evaluation_tuning/README.md)
 - [NNUE training](../research/nnue/README.md)
 - [Opening data](../third_party/openings/lichess/README.md)
-- [Syzygy downloads](../endgames/syzygy/README.md)
+- [Syzygy downloads](../tools/tablebases/README.md)
 
 Historical release READMEs remain with their source snapshots under
 `history/engines/`. Third-party notices and licenses remain with their assets.

@@ -1,7 +1,7 @@
 # Local Lichess integration
 
-`Zebrafish-Bot.cmd` runs the local supervisor; `Zebrafish-Bot.cmd -Check`
-validates prerequisites without contacting Lichess. `Zebrafish-Bot-Setup.cmd`
+`launchers/Zebrafish-Bot.cmd` runs the local supervisor; `launchers/Zebrafish-Bot.cmd -Check`
+validates prerequisites without contacting Lichess. `launchers/optional/Zebrafish-Bot-Setup.cmd`
 stores a new token under the Git-ignored `local/config/lichess/config.yml`.
 Existing credentials are copied privately, never embedded in source or reports.
 

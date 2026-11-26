@@ -50,7 +50,7 @@ def prepare(output):
     excluded|={c['opening_final_position'] for c in crossover['clusters']}
     excluded|={t['opening_final_position'] for t in previous['tasks']}
     candidates=[];seen=set()
-    with (ROOT/'openings/suites/8moves_v3.pgn').open(encoding='utf-8-sig') as handle:
+    with (ROOT/'tests/fixtures/openings/8moves_v3.pgn').open(encoding='utf-8-sig') as handle:
         while (game:=chess.pgn.read_game(handle)) is not None:
             if game.errors:continue
             moves=list(game.mainline_moves());board=game.end().board();key=' '.join(board.fen().split()[:4])

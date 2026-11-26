@@ -23,7 +23,7 @@ coverage([[.1,.8,.1],[.7,.2,.1],[.1,.1,.8],[.2,.4,.4],[.3,.6,.1],[.1,.6,.3]]);
 // Data assembly consumes arbitrary browser log records, not a hardcoded game total.
 const dummy={value:'1398',addEventListener(){},replaceChildren(){},append(){},textContent:''};
 const context={ChessCalibrationOffset:m,document:{getElementById:()=>dummy,createElement:()=>({...dummy})},localStorage:{getItem:()=>null,setItem(){}},console};
-vm.runInNewContext(fs.readFileSync('testing/results/strength_calibration/human-pilot-20261013-1700/elo_discrepancy_ui.js','utf8'),context);
+vm.runInNewContext(fs.readFileSync('local/results/strength_calibration/human-pilot-20261013-1700/elo_discrepancy_ui.js','utf8'),context);
 const ui=context.ChessCalibrationDiscrepancyUI;
 const schedule=[{game:1,session:1,relative_setting:1550,human_color:'White'},{game:2,session:1,relative_setting:1550,human_color:'Black'}];
 let state={games:{1:{result:'win',version:'affected'},2:{result:'win',version:'affected'}},sessions:{1:{rating:'1398',time_control:'180+2'}},friends:[]};
@@ -32,7 +32,7 @@ assert.equal(result.groups.find(g=>g.version==='affected').estimate.n,8); // six
 assert.equal(result.groups.find(g=>g.version==='corrected').estimate.n,0);
 state.games[1].version='corrected';result=ui.assemble(state,schedule,{}, {},1398);
 assert.equal(result.groups.find(g=>g.version==='corrected').estimate.n,1);
-const archived=JSON.parse(fs.readFileSync('testing/results/strength_calibration/human-pilot-20261013-1700/discrepancy_archived_games.json','utf8'));
+const archived=JSON.parse(fs.readFileSync('local/results/strength_calibration/human-pilot-20261013-1700/discrepancy_archived_games.json','utf8'));
 state={games:{1:{pgn:archived[0].pgn,result:'loss'}},sessions:{},friends:[]};
 result=ui.assemble(state,schedule,{}, {},1398);assert.equal(result.records.length,7);assert(result.warnings.some(x=>x.includes('duplicate')));
 state={games:{1:{result:'draw',version:'corrected'}},sessions:{1:{rating:'1398',time_control:'600+5'}},friends:[{id:1,name:'Rapid friend',preset:'generic',rating:'875',time_control:'900+10',games:{1:{result:'loss',version:'corrected'}}}]};

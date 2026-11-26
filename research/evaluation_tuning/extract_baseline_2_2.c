@@ -1,6 +1,6 @@
 /* Batch-export accepted Engine 2.2's static evaluation for tuning. */
 #define main chess_engine_program_main
-#include "../engine_versions/source_2.2/chess.c"
+#include "../../history/engines/v2/source_2.2/chess.c"
 #undef main
 
 int main(int argc, char **argv) {

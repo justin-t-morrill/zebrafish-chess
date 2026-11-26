@@ -7,7 +7,7 @@ import shutil
 
 
 ROOT = Path(__file__).resolve().parents[2]
-RUN = ROOT / 'testing/results/strength_calibration/matched-diagnostic-20261012-140500'
+RUN = ROOT / 'local/results/strength_calibration/matched-diagnostic-20261012-140500'
 OUT = RUN / 'final_analysis'
 data = json.loads((OUT / 'matched_analysis.json').read_text())
 audit = json.loads((RUN / 'final_audit.json').read_text())
@@ -61,7 +61,7 @@ section = '''<section id="matched-final-analysis"><h1>Final analysis: ready for 
 <li><strong>Validate the candidate on fresh games.</strong> Use reserved positions, settings between measured points, and ordinary start-position games. Balance listing order and starting-color sequence independently. A practical 600–800-game plan at the observed 55–63 games/hour would take roughly 10–15 hours on eight simultaneous games; the exact plan and duration depend on the candidate. Check that the large middle jump is repaired and that upper gaps behave consistently.</li>
 <li><strong>Begin human comparison on a frozen candidate.</strong> A small pilot can start once the candidate is built and reviewed; results intended to anchor the released slider should use the validated version and the intended human time control. Planning estimate: a few hours for fitting/build preparation plus an overnight validation run, approximately 1–2 days of technical work. Recruiting players and obtaining enough human games is additional time and has no reliable ETA yet.</li>
 </ol><p>I recommend proceeding to candidate fitting and validation, rather than restarting the primary experiment or immediately repeating another large diagnostic. If a scheduling effect repeats on fresh validation data or materially changes the fitted curve, a targeted fixed-work search test would be justified before release. No candidate curve has been installed and no new games have been launched by this final analysis.</p>
-<p>All final numeric analysis and trace comparisons are preserved beside the raw games in <code>testing/results/strength_calibration/matched-diagnostic-20261012-140500/final_analysis</code>. The earlier 460 archived games remain excluded from the primary fit.</p></section>'''.replace('__ROWS__', ''.join(rows)).replace('__EFFECTS__', ''.join(effects))
+<p>All final numeric analysis and trace comparisons are preserved beside the raw games in <code>local/results/strength_calibration/matched-diagnostic-20261012-140500/final_analysis</code>. The earlier 460 archived games remain excluded from the primary fit.</p></section>'''.replace('__ROWS__', ''.join(rows)).replace('__EFFECTS__', ''.join(effects))
 text = text.replace('<meta http-equiv="refresh" content="30">', '')
 text = text.replace('<body><main>', '<body><main>' + section, 1)
 text = text.replace(' · refreshes every 30 seconds · completed primary experiment retained below.', ' · completed primary experiment retained below.')

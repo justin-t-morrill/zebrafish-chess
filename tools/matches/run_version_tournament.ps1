@@ -12,7 +12,7 @@ param(
     [int]$ThreadsB = 0,
     [string]$EvalFileA = "",
     [string]$EvalFileB = "",
-    [string]$OpeningFile = "openings\suites\8mvs_+90_+99.epd",
+    [string]$OpeningFile = "tests\fixtures\openings\8mvs_+90_+99.epd",
     [string]$BinaryA = "",
     [string]$BinaryB = "",
     [string]$OutputDirectory = "",

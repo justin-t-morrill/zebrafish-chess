@@ -7,7 +7,7 @@ import shutil
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
-BASE = ROOT / 'testing/results/strength_calibration/relative-candidate-20261013'
+BASE = ROOT / 'local/results/strength_calibration/relative-candidate-20261013'
 OUT = BASE.with_name(BASE.name + '-board-flip')
 
 

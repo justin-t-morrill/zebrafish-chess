@@ -4,7 +4,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$root = Resolve-Path (Join-Path $PSScriptRoot "..")
+$root = Resolve-Path (Join-Path $PSScriptRoot "..\..")
 $queueLog = Join-Path $PSScriptRoot "results\7.1-thread-scaling-queue.log"
 
 function Write-QueueLog([string]$Message) {

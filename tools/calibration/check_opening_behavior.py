@@ -4,8 +4,8 @@ import json
 import subprocess
 
 ROOT=Path(__file__).resolve().parents[2]
-SOURCE=ROOT/'testing/results/strength_calibration/relative-candidate-20261013-precise-input/snapshot'
-OUT=ROOT/'testing/results/strength_calibration/opening-diagnostic-20261013'
+SOURCE=ROOT/'local/results/strength_calibration/relative-candidate-20261013-precise-input/snapshot'
+OUT=ROOT/'local/results/strength_calibration/opening-diagnostic-20261013'
 
 
 def main():
@@ -68,7 +68,7 @@ int main(int argc,char **argv) {
     compiler='C:/msys64/ucrt64/bin/gcc.exe'
     cmd=[compiler,'-std=c11','-O3','-march=native','-DNDEBUG','-I',str(SOURCE),'-flto',str(harness),str(SOURCE/'tbprobe.o'),'-o',str(OUT/'opening_checks.exe'),'-lgdiplus','-lgdi32','-luser32','-lcomctl32','-luxtheme','-lm']
     with (OUT/'build.log').open('w') as log:subprocess.run(cmd,stdout=log,stderr=log,check=True)
-    result=subprocess.run([str(OUT/'opening_checks.exe'),str(SOURCE/'chess_gui_candidate.exe'),str(ROOT/'openings/book/name_lookup_placeholder.exe')],capture_output=True,text=True,check=True)
+    result=subprocess.run([str(OUT/'opening_checks.exe'),str(SOURCE/'chess_gui_candidate.exe'),str(ROOT/'resources/books/name_lookup_placeholder.exe')],capture_output=True,text=True,check=True)
     report=json.loads(result.stdout)
     (OUT/'opening_diagnostic.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
     print(json.dumps(report,indent=2),flush=True)

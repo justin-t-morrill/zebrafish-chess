@@ -14,15 +14,15 @@ From the repository root, with Python 3.11+ and the engine build prerequisites:
 python -m pip install python-chess
 .\engine\build.ps1
 .\engine\helpers\classical\build.ps1
-.\start_zebrafish.ps1
+.\tools/launchers/Start-Zebrafish.ps1 -Action play
 ```
 
-Or double-click `Zebrafish.cmd`. The launcher prefers the existing bundled
+Or double-click `launchers/Zebrafish.cmd`. The launcher prefers the existing bundled
 Python runtime when installed, otherwise `python` on PATH. An existing
-`analysis/game_review/vendor_runtime` chess installation is also supported.
+`local/dependencies/reviewer` chess installation is also supported.
 The server prints its local address and opens your default browser. Keep the
 launcher open; Ctrl+C shuts it down. It binds only to `127.0.0.1` and normally
-uses port 8765, with a free-port fallback. Run `start_zebrafish.ps1 -NoBrowser`
+uses port 8765, with a free-port fallback. Run `tools/launchers/Start-Zebrafish.ps1 -Action play -NoBrowser`
 to open the printed address yourself, or add `-Port 9000` for another port.
 
 Opening `index.html` directly cannot launch the engine; use the launcher.
@@ -70,7 +70,7 @@ games to Game Log in one batch or keep a copy before a temporary link changes.
 - Current and locally built numbered historical UCI engines; thread, book,
   NNUE, depth, and starting-FEN settings.
 - PGN download and direct transfer to Analyze. Completed games save
-  automatically under `analysis/game_review/reviews/played`.
+  automatically under `local/reviews/played`.
 
 Current-engine rated opponents (600–2600) run the **same frozen C GUI search
 worker** as the corrected October 13 candidate: byte-identical chess source,
@@ -100,7 +100,7 @@ preserved as separate exploratory evidence, not relabeled as equivalent. This
 includes untagged exports made before the backend switch. Export hashes do not
 retroactively change those games.
 
-Restart Zebrafish.cmd after finishing/exporting any current game, then refresh
+Restart launchers/Zebrafish.cmd after finishing/exporting any current game, then refresh
 the Game log. The client checks the server's backend version and requests a
 restart instead of silently starting a rated game on an older server.
 
@@ -168,7 +168,7 @@ the original game and move selection intact.
   variations, undo, copying, and arbitrary FEN analysis.
 - Existing performance rating model, per-player subscores, compatibility ranges,
   refresh, and diagnostic details. Inference uses the locally installed
-  `analysis/elo_estimator` models and their existing helper runtime.
+  `research/player_ratings` models and their existing helper runtime.
 - Continue the displayed position against a maximum-strength, rated, or
   review-matched opponent. It opens in Play with the analysis position; the
   original review stays available in Analyze.
@@ -190,7 +190,7 @@ The source path must be inside this project. A completed review can still be
 explored and exported without its source file.
 
 The old interfaces remain available: `build/current/chess_gui.exe` (including
-batch tournament controls) and `analysis/game_review/run_review_gui.ps1 -Native`.
+batch tournament controls) and `launchers/optional/Zebrafish-Review-Desktop.cmd`.
 The Python review and engine implementations are shared, not reimplemented in
 JavaScript. One server represents one shared local session; multiple tabs show
 the same game. Play and opened reviews survive a browser reload while that
@@ -200,9 +200,9 @@ played game can be downloaded before shutting down.
 ## Development checks
 
 ```powershell
-python -m unittest discover -s apps/web/tests -p 'test_*.py' -v
-node --check gui/web/app.js
-node apps/web/tests/browser.cjs
+python -m unittest discover -s tests/web -p 'test_*.py' -v
+node --check apps/web/app.js
+node tests/web/browser.cjs
 ```
 
 Backend checks cover rules, clocks, draw claims, automatic saves, real-engine

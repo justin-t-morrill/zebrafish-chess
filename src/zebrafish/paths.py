@@ -11,9 +11,9 @@ def project_root(start: Path | None = None) -> Path:
     if candidate.is_file():
         candidate = candidate.parent
     for folder in (candidate, *candidate.parents):
-        if (folder / ".chess-project").is_file():
+        if (folder / "pyproject.toml").is_file() and (folder / "config/paths.json").is_file():
             return folder
-    raise RuntimeError("Cannot find the Zebrafish project marker (.chess-project).")
+    raise RuntimeError("Cannot find Zebrafish's pyproject.toml and config/paths.json.")
 
 
 ROOT = project_root()

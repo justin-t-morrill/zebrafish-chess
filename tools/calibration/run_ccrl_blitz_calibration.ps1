@@ -8,15 +8,15 @@ param(
 $ErrorActionPreference="Stop"
 . (Join-Path $PSScriptRoot "..\tools\project_paths.ps1")
 $root=Get-ChessProjectRoot
-$cute=(Get-ChildItem (Join-Path $root "testing\tools\cutechess") -Recurse -Filter cutechess-cli.exe | Select-Object -First 1).FullName
+$cute=(Get-ChildItem (Join-Path $root "local\tools\cutechess") -Recurse -Filter cutechess-cli.exe | Select-Object -First 1).FullName
 $python=(Get-Command python).Source
 $engine=if($EngineVersion -eq "Current"){Join-Path $root "build\current\chess.exe"}else{Get-EngineVersionPath $EngineVersion}
 $proxy=Join-Path $PSScriptRoot "limited_strength_uci.py"
-$book=Join-Path $root "openings\book\OpeningBook.tsv"
-$openings=Join-Path $root "openings\suites\8moves_v3.epd"
-$pool=Join-Path $root "testing\tools\ccrl_engines"
+$book=Join-Path $root "resources\books\OpeningBook.tsv"
+$openings=Join-Path $root "tests\fixtures\openings\8moves_v3.epd"
+$pool=Join-Path $root "local\tools\ccrl_engines"
 $stamp=Get-Date -Format "yyyyMMdd-HHmmss"
-$results=Join-Path $root "testing\results\strength_calibration\ccrl_blitz-$stamp"
+$results=Join-Path $root "local\results\strength_calibration\ccrl_blitz-$stamp"
 $statePath=Join-Path $results "manifest.json";$summaryPath=Join-Path $results "summary.json"
 New-Item -ItemType Directory -Force -Path $results | Out-Null
 if(($GamesPerMatch%2)-ne 0){throw "GamesPerMatch must be even."}

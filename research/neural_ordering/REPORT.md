@@ -14,7 +14,7 @@ This rejects this pilot's runtime/data combination, not neural ordering in gener
 
 - Starting point: actual working-tree Zebrafish 8.3, including the user's existing
   uncommitted work. Only `chess_engine.c` and `uci.c` receive guarded hooks;
-  new experiment files are in `training/neural_ordering`. The normal build excludes
+  new experiment files are in `research/neural_ordering`. The normal build excludes
   those hooks. The production executables, prior cutoff-policy files, and evaluator
   were preserved. `experiment_only.patch` contains only this investigation's edits.
 - Baseline executable SHA-256: `ebb681c0f968daa505e1313705474b589cf5a13815fcf61b5904e566016f1773`.

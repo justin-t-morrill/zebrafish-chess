@@ -11,7 +11,7 @@ import chess.pgn
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = Path('C:/Users/Justin/Downloads/human-calibration-log-2026-10-14.json')
-OUT = ROOT/'testing/results/strength_calibration/verified-human-log-20261014'
+OUT = ROOT/'local/results/strength_calibration/verified-human-log-20261014'
 
 
 def main():
@@ -47,7 +47,7 @@ def main():
     corrected=[r for r in records if r['version']=='corrected'];old=[r for r in records if r['version']!='corrected']
     assert len(records)==14 and len(corrected)==12 and not errors
     (OUT/'corrected_records.json').write_text(json.dumps(corrected,indent=2),encoding='utf-8')
-    js="""const fs=require('fs');require('./testing/strength_calibration/elo_discrepancy_estimator.js');const m=ChessCalibrationOffset,rs=JSON.parse(fs.readFileSync(process.argv[1],'utf8'));const summarize=a=>({games:a.length,wins:a.filter(r=>r.score===1).length,draws:a.filter(r=>r.score===.5).length,losses:a.filter(r=>r.score===0).length,estimate:m.estimate(a)});const all=summarize(rs);all.even_score_target=1398-all.estimate.point;all.by_target=[1400,1550,1700,1850].map(target=>({target,...summarize(rs.filter(r=>r.target===target))}));all.first_eight=summarize(rs.filter(r=>r.target!==1400));console.log(JSON.stringify(all,(k,v)=>v===Infinity?'+infinity':v===-Infinity?'-infinity':v));"""
+    js="""const fs=require('fs');require('./tools/calibration/elo_discrepancy_estimator.js');const m=ChessCalibrationOffset,rs=JSON.parse(fs.readFileSync(process.argv[1],'utf8'));const summarize=a=>({games:a.length,wins:a.filter(r=>r.score===1).length,draws:a.filter(r=>r.score===.5).length,losses:a.filter(r=>r.score===0).length,estimate:m.estimate(a)});const all=summarize(rs);all.even_score_target=1398-all.estimate.point;all.by_target=[1400,1550,1700,1850].map(target=>({target,...summarize(rs.filter(r=>r.target===target))}));all.first_eight=summarize(rs.filter(r=>r.target!==1400));console.log(JSON.stringify(all,(k,v)=>v===Infinity?'+infinity':v===-Infinity?'-infinity':v));"""
     analysis=json.loads(subprocess.check_output(['node','-e',js,str(OUT/'corrected_records.json')],cwd=ROOT,text=True))
     groups=Counter(r['gui_startup_seed'] for r in corrected)
     audit=dict(source_path=str(SOURCE),source_sha256=hashlib.sha256(raw).hexdigest(),audited_utc=datetime.now(timezone.utc).isoformat(),
@@ -62,7 +62,7 @@ def main():
     analysis.update(scope='Exploratory personal offset, not installed and not a prospective confirmation result',audit_errors=errors,source_sha256=audit['source_sha256'])
     (OUT/'pilot_analysis.json').write_text(json.dumps(analysis,indent=2),encoding='utf-8')
     (OUT/'ALL_UPLOADED_GAMES.pgn').write_text('\n\n'.join(r['pgn'].strip() for r in records)+'\n',encoding='utf-8')
-    old_plan=json.loads((ROOT/'testing/results/strength_calibration/human-pilot-20261013-1700/confirmation_schedule.json').read_text())
+    old_plan=json.loads((ROOT/'local/results/strength_calibration/human-pilot-20261013-1700/confirmation_schedule.json').read_text())
     remap={1550:1300,1700:1450,1850:1600}
     items=[dict(game=i['game'],session=i['session'],relative_setting=remap[i['relative_setting']],human_color=i['human_color'],time_control='180+2') for i in old_plan['items']]
     confirmation=dict(plan_id='fresh-confirmation-20261014-1300-1450-1600',status='prepared_not_started',participant='thecarrotgod',items=items,
@@ -74,7 +74,7 @@ def main():
         approximate_precision='Current conservative independent-game score interval is roughly +/-150-160 Elo near crossover after 48 games; excludes rating, curve, sessions and style uncertainty.',
         limits='One-person confirmation validates a personal anchor only. It cannot establish Chess.com population equivalence.')
     (OUT/'confirmation_plan.json').write_text(json.dumps(confirmation,indent=2),encoding='utf-8')
-    plan_path=ROOT/'testing/results/strength_calibration/relative-candidate-20261013/human_calibration_plan.json'
+    plan_path=ROOT/'local/results/strength_calibration/relative-candidate-20261013/human_calibration_plan.json'
     plan=json.loads(plan_path.read_text())
     if plan.get('latest_human_report'):plan['previous_self_report']=plan['latest_human_report']
     plan['latest_human_report']={'report_id':'verified-backup-20261014','status':'PGNs_audited_exploratory','analysis':str(OUT/'pilot_analysis.json'),'audit':str(OUT/'game_audit.json'),'uploaded_log':str(OUT/SOURCE.name),'corrected_games':12,'corrected_score':4,'older_games_in_upload':2,'clarification':'Original reported 1-7 spans 1550, 1700 and 1850. At 1700 alone: one win and five losses; 1400 follow-up: three wins and one loss.'}

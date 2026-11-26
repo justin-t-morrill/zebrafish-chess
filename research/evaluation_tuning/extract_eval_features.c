@@ -3,7 +3,7 @@
  * records; index 65535 terminates each input row. */
 #define main chess_engine_program_main
 #ifndef TEXEL_ENGINE_SOURCE
-#define TEXEL_ENGINE_SOURCE "../engine_versions/source_5.0/chess.c"
+#define TEXEL_ENGINE_SOURCE "../../history/engines/v5/source_5.0/chess.c"
 #endif
 #include TEXEL_ENGINE_SOURCE
 #undef main

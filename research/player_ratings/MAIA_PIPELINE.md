@@ -6,7 +6,7 @@ Validation selected zero weight for adding Maia's gap to RatingNet. Four input
 and attribution tests passed; CPU/GPU calibrated ratings differed by at most
 0.000607 Elo on the replayed verification game. The tested sparse, coarse-grid
 configuration does not justify a GUI replacement. See
-[the checked report](models/experiments/maia_pilot_fp32/REPORT.md).
+the checked report (local artifact: `local/models/player_ratings/experiments/maia_pilot_fp32/REPORT.md`).
 
 The frozen-model pilot is implemented in `maia_pilot.py`, with tests in
 `test_maia_pilot.py` and a CPU/GPU audit in `verify_maia_pilot.py`. Official
@@ -31,9 +31,9 @@ Run with the existing WSL `/opt/ratingnet-venv/bin/python` environment and
 `HSA_ENABLE_DXG_DETECTION=1` for the GPU:
 
 ```text
-python -m unittest discover -s analysis/elo_estimator -p test_maia_pilot.py
-python analysis/elo_estimator/maia_pilot.py --full-precision --output <new-output-directory>
-python analysis/elo_estimator/verify_maia_pilot.py <output-directory>
+python -m unittest discover -s research/player_ratings -p test_maia_pilot.py
+python research/player_ratings/maia_pilot.py --full-precision --output <new-output-directory>
+python research/player_ratings/verify_maia_pilot.py <output-directory>
 ```
 
 Game scores are cached for compatible `--resume` runs. Names, known ratings,

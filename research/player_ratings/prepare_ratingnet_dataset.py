@@ -21,7 +21,7 @@ HERE = Path(__file__).resolve().parent
 # Reuse the complete python-chess copy already maintained by the NNUE tools.
 # The old RatingNet runtime can contain a namespace-only ``chess`` package on
 # Windows, which imports but does not provide chess.pgn.
-sys.path.insert(0, str(HERE.parents[1] / "training" / "nnue" / "python_packages"))
+sys.path.insert(0, str(HERE.parents[1] / "local/dependencies/nnue"))
 
 import chess
 import chess.pgn

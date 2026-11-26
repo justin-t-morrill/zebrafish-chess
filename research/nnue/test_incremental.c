@@ -1,6 +1,6 @@
 /* Exercise NNUE accumulator updates through the standard perft suite. */
 #define main chess_program_main
-#include "../chess.c"
+#include "../../engine/src/chess.c"
 #undef main
 
 int main(int argc, char **argv) {

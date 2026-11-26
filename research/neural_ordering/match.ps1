@@ -9,10 +9,10 @@ param(
 $ErrorActionPreference='Stop'
 if($Games % 2) { throw 'Use an even number of games for paired colors.' }
 $root=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-$out=Join-Path $root 'testing/results/neural_ordering_pilot'
+$out=Join-Path $root 'local/results/neural_ordering_pilot'
 $exe=Join-Path $out 'experiment.exe'
 $modelPath=Join-Path $out "models/$Model.nmo"
-$cute=(Get-ChildItem (Join-Path $root 'testing/tools/cutechess') -Filter cutechess-cli.exe -Recurse | Select-Object -First 1).FullName
+$cute=(Get-ChildItem (Join-Path $root 'local/tools/cutechess') -Filter cutechess-cli.exe -Recurse | Select-Object -First 1).FullName
 $openings=Join-Path $out 'match_reserved.fen'
 if($Games/2 -gt (Get-Content $openings).Count) { throw 'Not enough distinct reserved pairs. Supply a larger separately frozen opening set.' }
 $cache=if($Model -eq 'base') {'false'} else {'true'}

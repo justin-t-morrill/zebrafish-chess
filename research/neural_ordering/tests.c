@@ -87,9 +87,9 @@ int main(int argc,char **argv) {
     ctx.stopped=true;
     nmo_save_observation(&s->position,5,10,11,2,0,&ctx,0,0);
     assert(nmo_slot(search_tt_key(&s->position))->serial==before.serial);
-    assert(!nmo_load("testing/results/neural_ordering_pilot/missing-model.nmo"));
+    assert(!nmo_load("local/results/neural_ordering_pilot/missing-model.nmo"));
     assert(!nmo_loaded);
-    assert(!nmo_load("training/neural_ordering/PLAN.md")); assert(!nmo_loaded);
+    assert(!nmo_load("research/neural_ordering/PLAN.md")); assert(!nmo_loaded);
     assert(nmo_load(argv[1]));
     printf("{\"pass\":true,\"accumulator_transitions\":%d,\"feature_records\":%d,\"feature_candidates\":%d,\"aux_entry_bytes\":%zu,\"model_memory_bytes\":%zu}\n",
             transitions,records,candidates,sizeof(NmoObservation),sizeof(NmoModel));
