@@ -1,0 +1,5 @@
+$env:CHESS_BLACK_TACTICS_ELO = '1059'
+$env:CHESS_BLACK_POSITIONAL_ELO = '1129'
+$env:CHESS_BLACK_DEFENSE_ELO = '1084'
+$env:CHESS_BLACK_ENDGAME_ELO = '1087'
+& 'C:\Users\Justin\Desktop\Chess_2\build\current\chess_gui.exe'

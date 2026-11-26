@@ -1,0 +1,134 @@
+diff --git a/engines/README.md b/engines/README.md
+index f6e5271..51fdd69 100644
+--- a/engines/README.md
++++ b/engines/README.md
+@@ -1 +1,5 @@
+-Put your engines and opening books here.
+\ No newline at end of file
++The Lichess configuration uses the repository-root `chess.exe`, which is always
++the newest accepted release (currently Engine 8.0). Preserved `7.3.exe` and
++`8.0.exe` copies are kept here for rollback and comparison. Engine 8.0 loads
++`nnue-8.0.bin` from the executable directory and can fall back to classical
++evaluation through the UCI `Use NNUE` option.
+diff --git a/lib/engine_wrapper.py b/lib/engine_wrapper.py
+index 38c13f9..52e719c 100644
+--- a/lib/engine_wrapper.py
++++ b/lib/engine_wrapper.py
+@@ -32,6 +32,36 @@ logger = logging.getLogger(__name__)
+ out_of_online_opening_book_moves: Counter[str] = Counter()
+ 
+ 
++def load_opening_names() -> dict[str, str]:
++    """Load the engine's ECO names, keyed without move counters.
++
++    The C engine identifies positions by Zobrist hash, which likewise ignores
++    the halfmove and fullmove counters.  Using the first four FEN fields keeps
++    the bridge's lookup equivalent while avoiding a second chess dependency.
++    """
++    names: dict[str, str] = {}
++    # The shared opening data lives at the project root after the workspace
++    # migration: integrations/lichess-bot/lib -> openings/book.
++    path = os.path.abspath(os.path.join(
++        os.path.dirname(__file__), "..", "..", "..",
++        "openings", "book", "OpeningNames.tsv"))
++    try:
++        with open(path, encoding="utf-8") as opening_file:
++            next(opening_file, None)  # fen\teco\tname header
++            for line in opening_file:
++                fields = line.rstrip("\r\n").split("\t", 2)
++                if len(fields) != 3:
++                    continue
++                fen, eco, name = fields
++                names[" ".join(fen.split()[:4])] = f"{eco} {name}"
++    except OSError as error:
++        logger.warning(f"Could not load opening names from {path}: {error}")
++    return names
++
++
++opening_names = load_opening_names()
++
++
+ def create_engine(engine_config: Configuration, game: model.Game | None = None) -> EngineWrapper:
+     """
+     Create the engine.
+@@ -99,6 +129,24 @@ class EngineWrapper:
+         self.go_commands = Configuration(cast(GO_COMMANDS_TYPE, options.pop("go_commands", {})) or {})
+         self.move_commentary: list[InfoStrDict] = []
+         self.comment_start_index = -1
++        self.last_logged_opening: str | None = None
++
++    def log_opening_name(self, board: chess.Board, game_id: str) -> None:
++        """Log the deepest recognized opening reached in the current game."""
++        if not opening_names or board.uci_variant != "chess":
++            return
++
++        replay = board.root()
++        opening = opening_names.get(" ".join(replay.fen().split()[:4]))
++        for move in board.move_stack:
++            replay.push(move)
++            found = opening_names.get(" ".join(replay.fen().split()[:4]))
++            if found is not None:
++                opening = found
++
++        if opening is not None and opening != self.last_logged_opening:
++            logger.info(f"Opening: {opening} (game {game_id})")
++            self.last_logged_opening = opening
+ 
+     def configure(self, options: OPTIONS_GO_EGTB_TYPE, game: model.Game | None) -> None:
+         """
+@@ -160,6 +208,8 @@ class EngineWrapper:
+         draw_or_resign_cfg = engine_cfg.draw_or_resign
+         lichess_bot_tbs = engine_cfg.lichess_bot_tbs
+ 
++        self.log_opening_name(board, game.id)
++
+         best_move: MOVE
+         best_move = get_book_move(board, game, polyglot_cfg)
+ 
+diff --git a/lib/lichess.py b/lib/lichess.py
+index 891a771..353f872 100644
+--- a/lib/lichess.py
++++ b/lib/lichess.py
+@@ -148,7 +148,8 @@ class Lichess:
+         self.challenge_rate_limit_backoff = seconds(60)
+ 
+         # Confirm that the OAuth token has the proper permission to play on lichess
+-        token_response = cast(TOKEN_TESTS_TYPE, self.api_post("token_test", data=token))
++        token_response = cast(TOKEN_TESTS_TYPE, self.api_post("token_test", data=token,
++                                                             headers={"Content-Type": "text/plain"}))
+         token_info = token_response.get(token)
+ 
+         if not token_info:
+@@ -269,7 +270,8 @@ class Lichess:
+         logging.getLogger("backoff").setLevel(self.logging_level)
+         path_template = self.get_path_template(endpoint_name)
+         url = urljoin(self.baseUrl, path_template.format(*template_args))
+-        response = self.session.post(url, data=data, headers=headers, params=params, json=payload, timeout=2)
++        timeout = 15 if endpoint_name == "token_test" else 2
++        response = self.session.post(url, data=data, headers=headers, params=params, json=payload, timeout=timeout)
+ 
+         if endpoint_name == "challenge":
+             return self.handle_challenge(response)
+diff --git a/lib/lichess_bot.py b/lib/lichess_bot.py
+index 63ab211..ab35a15 100644
+--- a/lib/lichess_bot.py
++++ b/lib/lichess_bot.py
+@@ -39,6 +39,7 @@ from collections.abc import Iterator, MutableSequence
+ from http.client import RemoteDisconnected
+ from queue import Empty
+ from multiprocessing.pool import Pool
++from multiprocessing.managers import SyncManager
+ from collections import Counter
+ from typing import TypedDict, cast, TypeAlias
+ from types import FrameType
+@@ -256,7 +257,9 @@ def start(li: lichess.Lichess, user_profile: UserProfileType, config: Configurat
+     :param one_game: Whether the bot should play only one game. Only used in `test_bot/test_bot.py` to test lichess-bot.
+     """
+     logger.info(f"You're now connected to {config.url} and awaiting challenges.")
+-    manager = multiprocessing.Manager()
++    # Windows workers share the authenticated queues over loopback.
++    manager = SyncManager(address=("127.0.0.1", 0) if os.name == "nt" else None)
++    manager.start()
+     challenge_queue: MULTIPROCESSING_LIST_TYPE = manager.list()
+     control_queue: CONTROL_QUEUE_TYPE = manager.Queue()
+     control_stream = multiprocessing.Process(target=watch_control_stream, args=(control_queue, li))

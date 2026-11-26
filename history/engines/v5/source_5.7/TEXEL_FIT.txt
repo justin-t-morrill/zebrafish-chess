@@ -1,0 +1,3 @@
+Base: Engine 5.0
+Fit: C:\Users\Justin\Desktop\Chess_2\refactored_chess\tuning\texel_runs\5.0_native_selfplay_all\fit.txt
+Candidate: 5.0_native_selfplay_all

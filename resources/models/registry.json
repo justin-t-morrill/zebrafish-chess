@@ -1,0 +1,133 @@
+{
+  "performance_elo_v1_research": {
+    "local_path": "local/models/player_ratings/releases/performance_elo_v1_research",
+    "files": {
+      "calibration.json": {
+        "bytes": 5375,
+        "sha256": "9e89326b0f52c0bca256b549bf43ed877bd503bac1738208ecf05bbbcc14197d"
+      },
+      "MANIFEST.json": {
+        "bytes": 837,
+        "sha256": "c51e2b76d8785cce825e0e53fc91e90453f1ab386f0d41c5f597fb0fed1c4ddc"
+      },
+      "metadata.json": {
+        "bytes": 5766,
+        "sha256": "90d45ef68b579f5e26597f0a6bbf74550ed6f5df82f46f21066c902e0e856ae1"
+      },
+      "model.cbm": {
+        "bytes": 3053592,
+        "sha256": "adcb24ddf37e0e0e59bf30112b23e867acbb1a95dc735b5d4c34cd3871850328"
+      }
+    }
+  },
+  "performance_elo_v1_standard": {
+    "local_path": "local/models/player_ratings/releases/performance_elo_v1_standard",
+    "files": {
+      "calibration.json": {
+        "bytes": 4954,
+        "sha256": "50ae79414b2b43965429dbcc2db5ff952256d7954da5d10b6d4d083e1e0a9bd0"
+      },
+      "MANIFEST.json": {
+        "bytes": 1033,
+        "sha256": "256594d06910d2acae3a6739a42999fdd4abe3d2079bf01091e6f196244592d6"
+      },
+      "metadata.json": {
+        "bytes": 3056,
+        "sha256": "914392762fe7cdb0208b9324f5962ac757420af144a498556fbdbfb7feb495cd"
+      },
+      "model.cbm": {
+        "bytes": 3047296,
+        "sha256": "5138ba0040f579a23fe84bd4e02e896bb8db4814af931ca65aa3f9a4271a0210"
+      },
+      "uncertainty.cbm": {
+        "bytes": 426032,
+        "sha256": "b0df487faa5a96c3033e618bef8e6838bc67d52ce8786f4bb4a66059c963dfab"
+      },
+      "uncertainty.json": {
+        "bytes": 1333,
+        "sha256": "ab91794a41ce0086152d47164d76a1496ae172137a35ad0c414d11b68f1505fa"
+      }
+    }
+  },
+  "performance_elo_v2_standard": {
+    "local_path": "local/models/player_ratings/releases/performance_elo_v2_standard",
+    "files": {
+      "audit.json": {
+        "bytes": 3950,
+        "sha256": "86a585cb42350c567c4760fa88ca6676094979043cef184f08036ca7db219e44"
+      },
+      "calibration.json": {
+        "bytes": 5041,
+        "sha256": "f97337a9124716c729e83e2c9dc9e0ab845224858c8294172c615a3f4339a6de"
+      },
+      "MANIFEST.json": {
+        "bytes": 1113,
+        "sha256": "89a7d76c926af636853ab3f757067da948d5571f1daf3233ad7e4e9350e08097"
+      },
+      "metadata.json": {
+        "bytes": 3235,
+        "sha256": "07bbb6d6fecae32b69cbec7b2c5553801735f42baa000351017262a16a6b3a53"
+      },
+      "model.cbm": {
+        "bytes": 3043752,
+        "sha256": "860545986ef96550cf3b2a486f3fdac10e6b373131cb0ef6737d7bfca2981d29"
+      },
+      "uncertainty.cbm": {
+        "bytes": 425480,
+        "sha256": "e690ae21fdb21a795f95e444dfb1ba797dcd9ceea7afa2611547edf3019d50dd"
+      },
+      "uncertainty.json": {
+        "bytes": 1267,
+        "sha256": "80d314bf1b6f5b07b092474cd72b212677662bad596bd99ba89b8fc5304ecc3e"
+      }
+    }
+  },
+  "performance_elo_v4_hybrid": {
+    "local_path": "local/models/player_ratings/releases/performance_elo_v4_hybrid",
+    "files": {
+      "compatibility_intervals.json": {
+        "bytes": 3749,
+        "sha256": "79ace629063f40f9864e4656abb85a097a869b4a7b728811b3d1697ee192c833"
+      }
+    }
+  },
+  "performance_elo_v4_hybrid_asymmetric": {
+    "local_path": "local/models/player_ratings/releases/performance_elo_v4_hybrid_asymmetric",
+    "files": {
+      "compatibility_intervals.json": {
+        "bytes": 5476,
+        "sha256": "2a81f606f45004018495d4e2906b73c106203c4cc56ec94198df8c4e68360d32"
+      }
+    }
+  },
+  "performance_elo_v4_hybrid_calibrated": {
+    "local_path": "local/models/player_ratings/releases/performance_elo_v4_hybrid_calibrated",
+    "files": {
+      "compatibility_intervals.json": {
+        "bytes": 5476,
+        "sha256": "b1986b419716ab14b9b4cd2ba6f0501b0eb73b9f47a4495c28d01e12197275bc"
+      }
+    }
+  },
+  "ratingnet_natural_v1": {
+    "local_path": "local/models/player_ratings/releases/ratingnet_natural_v1",
+    "files": {
+      "clock_validation.npz": {
+        "bytes": 83142,
+        "sha256": "92cfad3cfd36970e9f442789254b12704738ed18ad299664625dcf2d00b73eb2"
+      },
+      "metadata.json": {
+        "bytes": 3252,
+        "sha256": "4794b5ffb85785ed92feae27f6dd7d32a786357766bd01468a209b8fa66705ec"
+      },
+      "ratingnet.pt": {
+        "bytes": 3067767,
+        "sha256": "39c01fb219a3d299bea50868916924b894d81cdca37f846be7b387156e856f7b"
+      },
+      "VALIDATION.md": {
+        "bytes": 3470,
+        "sha256": "220e4e23d751cebc26b21dc1e7e9b129496a775f611daf23d9e89230cbb845f4"
+      }
+    }
+  }
+}

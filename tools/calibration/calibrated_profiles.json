@@ -1,0 +1,17 @@
+{
+  "engine": "Current",
+  "method": "rating-dependent perception states plus MultiPV softmax",
+  "calibrated_at": "2026-09-10",
+  "range": {"minimum": 400, "maximum_reduced": 2800, "maximum_mode": "full 16-thread engine"},
+  "conditions": {"seconds_per_move": 0.1, "threads": 1, "hash_mb": 64, "book": false, "games_per_final_point": 40, "opening_suite": "openings/suites/8moves_v3.epd"},
+  "validation": [
+    {"slider": 400, "estimated_elo": 385}, {"slider": 600, "estimated_elo": 522},
+    {"slider": 800, "estimated_elo": 860}, {"slider": 1000, "estimated_elo": 1101},
+    {"slider": 1200, "estimated_elo": 1259}, {"slider": 1500, "estimated_elo": 1500},
+    {"slider": 1800, "estimated_elo": 1835}, {"slider": 2100, "estimated_elo": 2074},
+    {"slider": 2400, "estimated_elo": 2400}, {"slider": 2600, "estimated_elo": 2556},
+    {"slider": 2800, "estimated_elo": 2609, "note": "high variance; previous 60-game samples of deterministic one-thread play were near 2780"}
+  ],
+  "guardrails": ["Mate-in-one recognition probability rises with rating.", "Avoiding an opponent mate in one is probabilistic below expert ratings.", "No centipawn-loss cutoff is applied."],
+  "notes": ["Beginner ratings are chained through adjacent profiles because Stockfish UCI_Elo bottoms out near 1320.", "Short stochastic matches have at least roughly 100 Elo uncertainty.", "Ratings can shift across clocks, hardware, and opponent pools."]
+}

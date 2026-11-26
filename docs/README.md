@@ -10,20 +10,24 @@ are collected or linked here.
   stability tracking, and future work.
 - [Evaluation tuning history](tuning-history.md): dataset design, experiments,
   parameter fits, and historical commands.
-- [Elo history and calibration](../engines/ELO_HISTORY.md): accepted releases,
+- [Elo history and calibration](../history/ELO_HISTORY.md): accepted releases,
   rating estimates, opponents, and test conditions. This remains the canonical
   record beside the version history.
 
 ## Setup and usage
 
-- [Current engine](../engine/current/README.md)
+- [Separate launchers and version tests](launchers.md)
+- [Repository migration status](migration.md)
+- [What belongs in Git](source-control.md)
+
+- [Current engine](../engine/README.md)
 - [Game reviewer](../analysis/game_review/README.md)
-- [Tournament tools](../testing/tools/README.md)
-- [Puzzle diagnostics](../testing/puzzles/lichess/README.md)
-- [Evaluation and search tuning](../training/tuning/README.md)
-- [NNUE training](../training/nnue/README.md)
-- [Opening data](../openings/data/lichess/README.md)
+- [Tournament tools](../tools/matches/README.md)
+- [Puzzle diagnostics](../tools/puzzles/lichess/README.md)
+- [Evaluation and search tuning](../research/evaluation_tuning/README.md)
+- [NNUE training](../research/nnue/README.md)
+- [Opening data](../third_party/openings/lichess/README.md)
 - [Syzygy downloads](../endgames/syzygy/README.md)
 
 Historical release READMEs remain with their source snapshots under
-`engines/versions/`. Third-party notices and licenses remain with their assets.
+`history/engines/`. Third-party notices and licenses remain with their assets.

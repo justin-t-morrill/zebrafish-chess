@@ -1,0 +1,50 @@
+--- a/chess_engine.c
++++ b/chess_engine.c
+@@ -2621,7 +2621,7 @@
+             best_pv[0] = best_move;
+             best_pv_length = 1;
+             int completed_root_moves = 0;
+-            bool incumbent_completed = false;
++            bool incumbent_full_depth = false;
+             int incumbent_score = -SEARCH_INF;
+ 
+             for (int i = 0; i < legal.count; ++i) {
+@@ -2634,6 +2634,7 @@
+                 make_move_with_undo(&work, root[i].move, &undo);
+                 int child_depth = depth - 1;
+                 int score;
++                bool full_depth = true;
+                 if (!i) {
+                     score = -negamax(&work, child_depth, -beta, -alpha,
+                                      1, &ctx, true, false, 0, true);
+@@ -2645,6 +2646,7 @@
+                         reduction = depth >= 7 && i >= 12 ? 2 : 1;
+                     score = -negamax(&work, child_depth - reduction, -alpha - 1, -alpha,
+                                      1, &ctx, true, false, 0, true);
++                    full_depth = !reduction || score > alpha;
+                     if (!ctx.stopped && reduction && score > alpha)
+                         score = -negamax(&work, child_depth, -alpha - 1, -alpha,
+                                          1, &ctx, true, false, 0, true);
+@@ -2661,7 +2663,7 @@
+                 ++completed_root_moves;
+                 root[i].current_score = score;
+                 if (root[i].move == result.move) {
+-                    incumbent_completed = true;
++                    incumbent_full_depth = full_depth;
+                     incumbent_score = score;
+                 }
+                 if (score > best_score) {
+@@ -2684,8 +2686,11 @@
+                  * depth. This prevents a timeout return value from becoming a
+                  * move and avoids comparing a depth-N score merely against the
+                  * incumbent's older depth-(N-1) score. */
+-                if (completed_root_moves > 0 && incumbent_completed &&
+-                    best_move != result.move &&
++                /* The challenger must beat the window's lower edge; otherwise
++                 * both scores can be upper bounds. A reduced fail-low gives no
++                 * full-depth comparison for the incumbent either. */
++                if (completed_root_moves > 0 && incumbent_full_depth &&
++                    best_move != result.move && best_score > window_alpha &&
+                     best_score > incumbent_score) {
+                     partial_upgrade_available = true;
+                     partial_upgrade_move = best_move;

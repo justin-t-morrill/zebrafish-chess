@@ -1,0 +1,164 @@
+--- a/chess_engine.c
++++ b/chess_engine.c
+@@ -1696,6 +1696,35 @@
+     *value = (int16_t)next;
+ }
+ 
++/* Direct and discovered checks after a non-castling move. The attacking
++ * piece sets lose the departure square and gain the final piece at its
++ * destination. En passant also uncovers a third square. */
++static bool noncastling_gives_check(const Position *p, Move move) {
++    Color us = p->side_to_move;
++    Color them = opposite(us);
++    int king = p->king_sq[them];
++    int from = MOVE_FROM(move), to = MOVE_TO(move);
++    uint64_t leave = ~square_bit(from), arrive = square_bit(to);
++    uint64_t occ = (p->occupied_all & leave) | arrive;
++    MoveFlag flag = MOVE_FLAG(move);
++    if (flag == MOVE_EN_PASSANT)
++        occ &= ~square_bit(to + (us == WHITE ? -8 : 8));
++    const uint64_t *pieces = p->pieces[us];
++    int type = flag_is_promotion(flag) ? piece_type(promoted_piece(us, flag)) :
++                                         piece_type(p->board[from]);
++    uint64_t pawns = (pieces[0] & leave) | (type == 1 ? arrive : 0);
++    uint64_t knights = (pieces[1] & leave) | (type == 2 ? arrive : 0);
++    uint64_t kings = (pieces[5] & leave) | (type == 6 ? arrive : 0);
++    if ((pawns & pawn_attacks_bb[them][king]) || (knights & knight_attacks_bb[king]) ||
++        (kings & king_attacks_bb[king])) return true;
++    uint64_t diagonal = ((pieces[2] | pieces[4]) & leave) |
++                        (type == 3 || type == 5 ? arrive : 0);
++    uint64_t straight = ((pieces[3] | pieces[4]) & leave) |
++                        (type == 4 || type == 5 ? arrive : 0);
++    return (diagonal & bishop_attacks_ray(king, occ)) ||
++           (straight & rook_attacks_ray(king, occ));
++}
++
+ static int quiescence(Position *p, int alpha, int beta,
+                       int ply, SearchContext *ctx, bool null_branch) {
+     ++ctx->stats.qnodes;
+@@ -1755,7 +1784,7 @@
+             } else if (see < 0) {
+                 /* The ordering pass already found the exchange result.  A
+                  * losing capture only needs its check status before pruning. */
+-                (void)static_exchange_eval(p, m, &gives_check);
++                gives_check = noncastling_gives_check(p, m);
+             }
+             if (see < 0 && !gives_check) {
+                 ++ctx->stats.see_prunes;
+@@ -1765,21 +1794,18 @@
+         /* Non-check nodes already contain tactical moves only. Check nodes
+          * contain every legal evasion, including required quiet responses. */
+ 
+-        /* First identify captures whose best plausible immediate gain still
+-         * cannot reach alpha. We make the move before pruning solely to retain
+-         * every checking capture; non-check candidates avoid recursive qsearch. */
++        /* Keep checking captures even when their immediate gain misses alpha. */
+         bool delta_candidate = !in_check &&
+             !flag_is_promotion(MOVE_FLAG(m)) &&
+             alpha < MATE_SCORE - MAX_SEARCH_PLY &&
+             stand_pat + qsearch_capture_value(p, m) +
+                 SPSA_DELTA_MARGIN < alpha;
++        if (delta_candidate && !noncastling_gives_check(p, m)) {
++            ++ctx->stats.delta_prunes;
++            continue;
++        }
+         Undo undo;
+         make_move_with_undo(p, m, &undo);
+-        if (delta_candidate && !side_in_check(p, p->side_to_move)) {
+-            unmake_move(p, m, &undo);
+-            ++ctx->stats.delta_prunes;
+-            continue;
+-        }
+         int score = -quiescence(p, -beta, -alpha, ply + 1, ctx, null_branch);
+         unmake_move(p, m, &undo);
+         if (ctx->stopped) return 0;
+@@ -1908,6 +1934,7 @@
+             return 0;
+     }
+ }
++
+ 
+ static int negamax(Position *p, int depth, int alpha, int beta,
+                    int ply, SearchContext *ctx, bool allow_null,
+@@ -2160,8 +2187,6 @@
+                       move_flag == MOVE_QUEEN_CASTLE;
+         int quiet_history = quiet
+             ? ctx->history[p->side_to_move][MOVE_FROM(m)][MOVE_TO(m)] : 0;
+-        make_move_with_undo(p, m, &undo);
+-        bool gives_check = side_in_check(p, p->side_to_move);
+         /* At shallow scout nodes, sufficiently late low-history quiet moves
+          * are unlikely to beat moves already searched. Improving positions
+          * receive a materially larger allowance. Checks, castling, hash and
+@@ -2172,23 +2197,24 @@
+         bool lmp_prune = !excluded_move && !null_branch && scout_node &&
+                          depth <= 3 && info.check_count == 0 &&
+                          alpha > -MATE_SCORE + MAX_SEARCH_PLY &&
+-                         quiet && !castle && !gives_check &&
++                         quiet && !castle &&
+                          m != hash_move && m != killer_one &&
+                          m != killer_two && quiet_history < SPSA_LMP_HISTORY &&
+                          lmp_material_safe && i + 1 > lmp_limit;
+-        if (lmp_prune) {
+-            unmake_move(p, m, &undo);
++        if (lmp_prune && !noncastling_gives_check(p, m)) {
+             ++ctx->stats.lmp_prunes;
+             continue;
+         }
++        make_move_with_undo(p, m, &undo);
+         int score;
+         int extension = singular_hash_move && m == hash_move ? 1 : 0;
+         int child_depth = depth - 1 + extension;
+         /* Reduce only late, quiet, non-checking moves in non-check nodes. A
+          * move that improves alpha is immediately verified at full depth. */
+-        bool reduce = depth >= 3 && i >= 3 && quiet && !castle && !gives_check &&
++        bool reduce = depth >= 3 && i >= 3 && quiet && !castle &&
+                       info.check_count == 0 && m != hash_move &&
+-                      m != killer_one && m != killer_two;
++                      m != killer_one && m != killer_two && !lmp_prune &&
++                      !side_in_check(p, p->side_to_move);
+         int reduction = 0;
+         if (reduce) {
+             bool improving_adjusted = false;
+--- a/nnue.c
++++ b/nnue.c
+@@ -282,17 +282,10 @@
+     return x * x;
+ }
+ 
+-static int nnue_evaluate(const Position *position) {
++static int nnue_evaluate_ready(const Position *position) {
+ #ifdef RUNTIME_BREAKDOWN
+     uint64_t profile_start = profile_cycle_clock();
+ #endif
+-    Position refreshed;
+-    if (position->nnue_generation != nnue_network_generation) {
+-        refreshed = *position;
+-        nnue_accumulator_refresh(&refreshed);
+-        position = &refreshed;
+-    }
+-
+     Color us = position->side_to_move;
+     Color them = opposite(us);
+     int head = nnue_heads == 1 ? 0 : (bitboard_popcount(position->occupied_all) - 1) / 8;
+@@ -338,3 +331,21 @@
+ #endif
+     return result;
+ }
++
++/* Keep the rare full-position refresh off the normal evaluation stack. */
++#if defined(_MSC_VER)
++__declspec(noinline)
++#elif defined(__GNUC__) || defined(__clang__)
++__attribute__((noinline))
++#endif
++static int nnue_evaluate_refreshed(const Position *position) {
++    Position refreshed = *position;
++    nnue_accumulator_refresh(&refreshed);
++    return nnue_evaluate_ready(&refreshed);
++}
++
++static int nnue_evaluate(const Position *position) {
++    if (position->nnue_generation != nnue_network_generation)
++        return nnue_evaluate_refreshed(position);
++    return nnue_evaluate_ready(position);
++}

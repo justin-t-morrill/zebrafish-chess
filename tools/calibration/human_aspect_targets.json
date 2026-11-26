@@ -1,0 +1,580 @@
+{
+  "schema": 1,
+  "source": "C:\\Users\\Justin\\Desktop\\Chess_2\\analysis\\elo_estimator\\data\\move_features_100k.csv",
+  "definitions": "Matches analysis/game_review/reviewer/rating_diagnostics.py",
+  "anchors": [
+    400,
+    600,
+    800,
+    1000,
+    1200,
+    1500,
+    1800,
+    2100,
+    2400,
+    2600,
+    2800
+  ],
+  "aspects": {
+    "tactical": [
+      {
+        "rating": 400,
+        "decisions": 0,
+        "mean_loss": null,
+        "importance_weighted_loss": null,
+        "error_rate": null,
+        "blunder_rate": null,
+        "fitted_mean_loss": 0.05490717034697535,
+        "curve_source": "low-rating extrapolation"
+      },
+      {
+        "rating": 600,
+        "decisions": 0,
+        "mean_loss": null,
+        "importance_weighted_loss": null,
+        "error_rate": null,
+        "blunder_rate": null,
+        "fitted_mean_loss": 0.048376708953171685,
+        "curve_source": "low-rating extrapolation"
+      },
+      {
+        "rating": 800,
+        "decisions": 2215,
+        "mean_loss": 0.04184624755936802,
+        "importance_weighted_loss": 0.09299420741865307,
+        "error_rate": 0.18239277652370203,
+        "blunder_rate": 0.08081264108352144,
+        "fitted_mean_loss": 0.04184624755936802,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1000,
+        "decisions": 8619,
+        "mean_loss": 0.035315786165564356,
+        "importance_weighted_loss": 0.0790896526944038,
+        "error_rate": 0.16452024596820977,
+        "blunder_rate": 0.0650887573964497,
+        "fitted_mean_loss": 0.035315786165564356,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1200,
+        "decisions": 10386,
+        "mean_loss": 0.030448001377816253,
+        "importance_weighted_loss": 0.06909254944206722,
+        "error_rate": 0.134315424610052,
+        "blunder_rate": 0.05295590217600616,
+        "fitted_mean_loss": 0.030448001377816253,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1500,
+        "decisions": 12507,
+        "mean_loss": 0.025645392045014807,
+        "importance_weighted_loss": 0.057605628299210974,
+        "error_rate": 0.10929879267610139,
+        "blunder_rate": 0.03893819461101783,
+        "fitted_mean_loss": 0.025645392045014807,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1800,
+        "decisions": 13132,
+        "mean_loss": 0.023574926249999958,
+        "importance_weighted_loss": 0.05363985955223454,
+        "error_rate": 0.10021321961620469,
+        "blunder_rate": 0.03411513859275053,
+        "fitted_mean_loss": 0.023574926249999958,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2100,
+        "decisions": 13716,
+        "mean_loss": 0.018550581884295706,
+        "importance_weighted_loss": 0.04268869628209786,
+        "error_rate": 0.07677165354330709,
+        "blunder_rate": 0.02442403032954214,
+        "fitted_mean_loss": 0.018550581884295706,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2400,
+        "decisions": 12831,
+        "mean_loss": 0.015329419519445093,
+        "importance_weighted_loss": 0.035340229162945,
+        "error_rate": 0.060790273556231005,
+        "blunder_rate": 0.017925337074273243,
+        "fitted_mean_loss": 0.015329419519445093,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2600,
+        "decisions": 11857,
+        "mean_loss": 0.012034468780720248,
+        "importance_weighted_loss": 0.02759724755843747,
+        "error_rate": 0.04385595007168761,
+        "blunder_rate": 0.011301340980011808,
+        "fitted_mean_loss": 0.012034468780720248,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2800,
+        "decisions": 2215,
+        "mean_loss": 0.010740510999097064,
+        "importance_weighted_loss": 0.025202522488457488,
+        "error_rate": 0.03611738148984198,
+        "blunder_rate": 0.008126410835214447,
+        "fitted_mean_loss": 0.010740510999097064,
+        "curve_source": "measured"
+      }
+    ],
+    "positional": [
+      {
+        "rating": 400,
+        "decisions": 0,
+        "mean_loss": null,
+        "importance_weighted_loss": null,
+        "error_rate": null,
+        "blunder_rate": null,
+        "fitted_mean_loss": 0.07226639693153447,
+        "curve_source": "low-rating extrapolation"
+      },
+      {
+        "rating": 600,
+        "decisions": 0,
+        "mean_loss": null,
+        "importance_weighted_loss": null,
+        "error_rate": null,
+        "blunder_rate": null,
+        "fitted_mean_loss": 0.06482039827119515,
+        "curve_source": "low-rating extrapolation"
+      },
+      {
+        "rating": 800,
+        "decisions": 4569,
+        "mean_loss": 0.057374399610855824,
+        "importance_weighted_loss": 0.12331049802427602,
+        "error_rate": 0.267892317793828,
+        "blunder_rate": 0.10024075289997811,
+        "fitted_mean_loss": 0.057374399610855824,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1000,
+        "decisions": 18976,
+        "mean_loss": 0.0499284009505165,
+        "importance_weighted_loss": 0.10839121139876673,
+        "error_rate": 0.22475758853288363,
+        "blunder_rate": 0.07657040472175379,
+        "fitted_mean_loss": 0.0499284009505165,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1200,
+        "decisions": 25014,
+        "mean_loss": 0.041701317807027856,
+        "importance_weighted_loss": 0.09218584226056002,
+        "error_rate": 0.1796993683537219,
+        "blunder_rate": 0.05856720236667466,
+        "fitted_mean_loss": 0.041701317807027856,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1500,
+        "decisions": 33498,
+        "mean_loss": 0.03569632499459645,
+        "importance_weighted_loss": 0.0801435121460736,
+        "error_rate": 0.14529225625410472,
+        "blunder_rate": 0.042480148068541404,
+        "fitted_mean_loss": 0.03569632499459645,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1800,
+        "decisions": 38214,
+        "mean_loss": 0.03081678656311818,
+        "importance_weighted_loss": 0.06943809278915222,
+        "error_rate": 0.11561207934264929,
+        "blunder_rate": 0.03142827236091485,
+        "fitted_mean_loss": 0.03081678656311818,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2100,
+        "decisions": 42623,
+        "mean_loss": 0.02545923813631139,
+        "importance_weighted_loss": 0.0582642513101897,
+        "error_rate": 0.08957605048917251,
+        "blunder_rate": 0.022006897684348825,
+        "fitted_mean_loss": 0.02545923813631139,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2400,
+        "decisions": 37897,
+        "mean_loss": 0.021525822763463986,
+        "importance_weighted_loss": 0.04906780923511959,
+        "error_rate": 0.07055967490830409,
+        "blunder_rate": 0.016017098978810988,
+        "fitted_mean_loss": 0.021525822763463986,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2600,
+        "decisions": 34542,
+        "mean_loss": 0.018458536797898186,
+        "importance_weighted_loss": 0.04193505825855248,
+        "error_rate": 0.05607666029760871,
+        "blunder_rate": 0.013346071449250188,
+        "fitted_mean_loss": 0.018458536797898186,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2800,
+        "decisions": 6282,
+        "mean_loss": 0.01681986868354027,
+        "importance_weighted_loss": 0.03829965425462759,
+        "error_rate": 0.04520853231454951,
+        "blunder_rate": 0.011302133078637377,
+        "fitted_mean_loss": 0.01681986868354027,
+        "curve_source": "measured"
+      }
+    ],
+    "defensive": [
+      {
+        "rating": 400,
+        "decisions": 0,
+        "mean_loss": null,
+        "importance_weighted_loss": null,
+        "error_rate": null,
+        "blunder_rate": null,
+        "fitted_mean_loss": 0.04262649896788248,
+        "curve_source": "low-rating extrapolation"
+      },
+      {
+        "rating": 600,
+        "decisions": 0,
+        "mean_loss": null,
+        "importance_weighted_loss": null,
+        "error_rate": null,
+        "blunder_rate": null,
+        "fitted_mean_loss": 0.04230371957977671,
+        "curve_source": "low-rating extrapolation"
+      },
+      {
+        "rating": 800,
+        "decisions": 7612,
+        "mean_loss": 0.04198094019167094,
+        "importance_weighted_loss": 0.0868859271593026,
+        "error_rate": 0.21584340514976352,
+        "blunder_rate": 0.06699947451392538,
+        "fitted_mean_loss": 0.04198094019167094,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1000,
+        "decisions": 25749,
+        "mean_loss": 0.041658160803565165,
+        "importance_weighted_loss": 0.08628266721436316,
+        "error_rate": 0.2087459707173094,
+        "blunder_rate": 0.06776962212124743,
+        "fitted_mean_loss": 0.041658160803565165,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1200,
+        "decisions": 26389,
+        "mean_loss": 0.03970941499685501,
+        "importance_weighted_loss": 0.0836513787576774,
+        "error_rate": 0.1948918109818485,
+        "blunder_rate": 0.06256394709917011,
+        "fitted_mean_loss": 0.03970941499685501,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1500,
+        "decisions": 29976,
+        "mean_loss": 0.037525974472344445,
+        "importance_weighted_loss": 0.07961852308299262,
+        "error_rate": 0.1808780357619429,
+        "blunder_rate": 0.057312516680010674,
+        "fitted_mean_loss": 0.037525974472344445,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1800,
+        "decisions": 28997,
+        "mean_loss": 0.035622521066248254,
+        "importance_weighted_loss": 0.07592012947431655,
+        "error_rate": 0.16805186743456219,
+        "blunder_rate": 0.054971203917646656,
+        "fitted_mean_loss": 0.035622521066248254,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2100,
+        "decisions": 27732,
+        "mean_loss": 0.03322724570802691,
+        "importance_weighted_loss": 0.07060632967184195,
+        "error_rate": 0.15754363190538007,
+        "blunder_rate": 0.04950959180729843,
+        "fitted_mean_loss": 0.03322724570802691,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2400,
+        "decisions": 20839,
+        "mean_loss": 0.030226388029176068,
+        "importance_weighted_loss": 0.06403253000807278,
+        "error_rate": 0.14026584768942849,
+        "blunder_rate": 0.044243965641345556,
+        "fitted_mean_loss": 0.030226388029176068,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2600,
+        "decisions": 17575,
+        "mean_loss": 0.028421258297468017,
+        "importance_weighted_loss": 0.06021104917199112,
+        "error_rate": 0.12950213371266003,
+        "blunder_rate": 0.041650071123755336,
+        "fitted_mean_loss": 0.028421258297468017,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2800,
+        "decisions": 2529,
+        "mean_loss": 0.026084299555950992,
+        "importance_weighted_loss": 0.05419773409016746,
+        "error_rate": 0.11506524317912219,
+        "blunder_rate": 0.03440094899169632,
+        "fitted_mean_loss": 0.026084299555950992,
+        "curve_source": "measured"
+      }
+    ],
+    "conversion": [
+      {
+        "rating": 400,
+        "decisions": 0,
+        "mean_loss": null,
+        "importance_weighted_loss": null,
+        "error_rate": null,
+        "blunder_rate": null,
+        "fitted_mean_loss": 0.0763202215017795,
+        "curve_source": "low-rating extrapolation"
+      },
+      {
+        "rating": 600,
+        "decisions": 0,
+        "mean_loss": null,
+        "importance_weighted_loss": null,
+        "error_rate": null,
+        "blunder_rate": null,
+        "fitted_mean_loss": 0.06800335542582195,
+        "curve_source": "low-rating extrapolation"
+      },
+      {
+        "rating": 800,
+        "decisions": 6634,
+        "mean_loss": 0.05968648934986438,
+        "importance_weighted_loss": 0.12628551020669337,
+        "error_rate": 0.21419957793186614,
+        "blunder_rate": 0.11501356647573108,
+        "fitted_mean_loss": 0.05968648934986438,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1000,
+        "decisions": 26436,
+        "mean_loss": 0.051369623273906824,
+        "importance_weighted_loss": 0.10958599364264783,
+        "error_rate": 0.19515055227719777,
+        "blunder_rate": 0.09324406112876381,
+        "fitted_mean_loss": 0.051369623273906824,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1200,
+        "decisions": 26967,
+        "mean_loss": 0.04812672265350243,
+        "importance_weighted_loss": 0.103432778386895,
+        "error_rate": 0.18604219972559052,
+        "blunder_rate": 0.08651314569659213,
+        "fitted_mean_loss": 0.04812672265350243,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1500,
+        "decisions": 30464,
+        "mean_loss": 0.041861046349428485,
+        "importance_weighted_loss": 0.09013162594808524,
+        "error_rate": 0.167640493697479,
+        "blunder_rate": 0.07366071428571429,
+        "fitted_mean_loss": 0.041861046349428485,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1800,
+        "decisions": 29645,
+        "mean_loss": 0.03919215984962045,
+        "importance_weighted_loss": 0.08521043883112346,
+        "error_rate": 0.1561140158542756,
+        "blunder_rate": 0.06665542249957834,
+        "fitted_mean_loss": 0.03919215984962045,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2100,
+        "decisions": 26742,
+        "mean_loss": 0.03302409500504837,
+        "importance_weighted_loss": 0.07057023341833403,
+        "error_rate": 0.14049061401540647,
+        "blunder_rate": 0.05422182334903897,
+        "fitted_mean_loss": 0.03302409500504837,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2400,
+        "decisions": 20562,
+        "mean_loss": 0.02997529881650616,
+        "importance_weighted_loss": 0.06400867669468611,
+        "error_rate": 0.12352883960704211,
+        "blunder_rate": 0.046396264954770935,
+        "fitted_mean_loss": 0.02997529881650616,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2600,
+        "decisions": 17076,
+        "mean_loss": 0.02595246656699458,
+        "importance_weighted_loss": 0.05447348895116221,
+        "error_rate": 0.10593815881939564,
+        "blunder_rate": 0.03952916373858047,
+        "fitted_mean_loss": 0.02595246656699458,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2800,
+        "decisions": 3534,
+        "mean_loss": 0.02322406917883419,
+        "importance_weighted_loss": 0.04795698291835218,
+        "error_rate": 0.09054895302773061,
+        "blunder_rate": 0.03084323712507074,
+        "fitted_mean_loss": 0.02322406917883419,
+        "curve_source": "measured"
+      }
+    ],
+    "consistency": [
+      {
+        "rating": 400,
+        "decisions": 0,
+        "mean_loss": null,
+        "importance_weighted_loss": null,
+        "error_rate": null,
+        "blunder_rate": null,
+        "fitted_mean_loss": 0.06037316798366766,
+        "curve_source": "low-rating extrapolation"
+      },
+      {
+        "rating": 600,
+        "decisions": 0,
+        "mean_loss": null,
+        "importance_weighted_loss": null,
+        "error_rate": null,
+        "blunder_rate": null,
+        "fitted_mean_loss": 0.0556348045636835,
+        "curve_source": "low-rating extrapolation"
+      },
+      {
+        "rating": 800,
+        "decisions": 21030,
+        "mean_loss": 0.05089644114369934,
+        "importance_weighted_loss": 0.10787168745378316,
+        "error_rate": 0.2231098430813124,
+        "blunder_rate": 0.09082263433190679,
+        "fitted_mean_loss": 0.05089644114369934,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1000,
+        "decisions": 79780,
+        "mean_loss": 0.04615807772371518,
+        "importance_weighted_loss": 0.09848599987610712,
+        "error_rate": 0.20327149661569316,
+        "blunder_rate": 0.07801453998495864,
+        "fitted_mean_loss": 0.04615807772371518,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1200,
+        "decisions": 88756,
+        "mean_loss": 0.041744499392536535,
+        "importance_weighted_loss": 0.09036324130883139,
+        "error_rate": 0.18083284510342962,
+        "blunder_rate": 0.06758979674613547,
+        "fitted_mean_loss": 0.041744499392536535,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1500,
+        "decisions": 106445,
+        "mean_loss": 0.036794926391544795,
+        "importance_weighted_loss": 0.08020607509817873,
+        "error_rate": 0.15748038893325192,
+        "blunder_rate": 0.055164639015453994,
+        "fitted_mean_loss": 0.036794926391544795,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 1800,
+        "decisions": 109988,
+        "mean_loss": 0.033476528669836934,
+        "importance_weighted_loss": 0.07351188645125023,
+        "error_rate": 0.13851511073935338,
+        "blunder_rate": 0.04745063097792487,
+        "fitted_mean_loss": 0.033476528669836934,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2100,
+        "decisions": 110813,
+        "mean_loss": 0.02837372162841007,
+        "importance_weighted_loss": 0.06239483867715906,
+        "error_rate": 0.11728768285309485,
+        "blunder_rate": 0.03696317219098842,
+        "fitted_mean_loss": 0.02837372162841007,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2400,
+        "decisions": 92129,
+        "mean_loss": 0.024516663390745562,
+        "importance_weighted_loss": 0.05387547406362179,
+        "error_rate": 0.09678819915553191,
+        "blunder_rate": 0.02944783944252081,
+        "fitted_mean_loss": 0.024516663390745562,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2600,
+        "decisions": 81050,
+        "mean_loss": 0.02125793224037016,
+        "importance_weighted_loss": 0.046442194117150726,
+        "error_rate": 0.08071560764959901,
+        "blunder_rate": 0.024700801974090067,
+        "fitted_mean_loss": 0.02125793224037016,
+        "curve_source": "measured"
+      },
+      {
+        "rating": 2800,
+        "decisions": 14560,
+        "mean_loss": 0.019058633309615377,
+        "importance_weighted_loss": 0.04141264165432653,
+        "error_rate": 0.06696428571428571,
+        "blunder_rate": 0.019574175824175824,
+        "fitted_mean_loss": 0.019058633309615377,
+        "curve_source": "measured"
+      }
+    ]
+  }
+}

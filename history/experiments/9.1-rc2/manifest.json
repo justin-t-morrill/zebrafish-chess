@@ -1,0 +1,26 @@
+{
+  "candidate": "9.1-rc2",
+  "match_build": "lean",
+  "opponent": "trained",
+  "baseline_package": "9.1-rc1",
+  "match": "newnet-sprt",
+  "WDL": [
+    261,
+    301,
+    189
+  ],
+  "llr": 2.960873934142983,
+  "match_sha256": "1674e5200b28231bb206fd55ff3c5352d0b928a3c2044b2a1d2b87b84df6a15a",
+  "files": {
+    "9.1-rc2.exe": "ea60a00b3196a042efadf1b02fe74052151942da074759d4633628cae9f345fa",
+    "nnue-material.bin": "a45185364368524ff565a7d31e5b997553057dba6aea32985c72669b55a430c6"
+  },
+  "fixed_depth_equivalence": 10,
+  "verification": "44805 positions; exact enumeration and accumulator rebuilds passed; specials 65 73 73 1149 36",
+  "blitz_match": {
+    "folder": "rc2-blitz-sprt",
+    "clock": "180+1",
+    "games": 1700,
+    "opening_sha256": "456e9e993fc4f121f98fa549e6de4689c8c5d39a435e5d0aed4d94affbf5ae8d"
+  }
+}

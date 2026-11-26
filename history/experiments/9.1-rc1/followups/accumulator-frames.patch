@@ -1,0 +1,330 @@
+--- a/board_logic.c
++++ b/board_logic.c
+@@ -703,13 +703,14 @@
+ 
+     Piece placed = flag_is_promotion(flag) ? promoted_piece(us, flag) : undo->moving;
+     int nnue_capture_square = flag == MOVE_EN_PASSANT ? to + (us == WHITE ? -8 : 8) : to;
++    bool restore_frame = p->nnue_frames && p->nnue_frame_depth < NNUE_FRAME_COUNT;
+     nnue_accumulator_move(p, placed, to, undo->moving, from, undo->captured, nnue_capture_square, true);
+-    if (flag == MOVE_KING_CASTLE) {
++    if (!restore_frame && flag == MOVE_KING_CASTLE) {
+         int rook_from = us == WHITE ? 7 : 63, rook_to = us == WHITE ? 5 : 61;
+         Piece rook = us == WHITE ? WR : BR;
+         nnue_accumulator_remove(p, rook, rook_to);
+         nnue_accumulator_add(p, rook, rook_from);
+-    } else if (flag == MOVE_QUEEN_CASTLE) {
++    } else if (!restore_frame && flag == MOVE_QUEEN_CASTLE) {
+         int rook_from = us == WHITE ? 0 : 56, rook_to = us == WHITE ? 3 : 59;
+         Piece rook = us == WHITE ? WR : BR;
+         nnue_accumulator_remove(p, rook, rook_to);
+--- a/chess_engine.c
++++ b/chess_engine.c
+@@ -422,7 +422,8 @@
+     }
+     if (nnue_enabled &&
+         (p->nnue_generation != rebuilt.nnue_generation ||
+-         memcmp(p->nnue_accumulator, rebuilt.nnue_accumulator,
++         memcmp(p->nnue_frames ? p->nnue_frames[nnue_frame_index(p)] :
++                p->nnue_accumulator, rebuilt.nnue_accumulator,
+                 sizeof p->nnue_accumulator) != 0)) {
+         fprintf(stderr, "NNUE accumulator mismatch after %s\n", where);
+         abort();
+@@ -1696,6 +1697,35 @@
+     *value = (int16_t)next;
+ }
+ 
++/* Direct and discovered checks after a non-castling move. The attacking
++ * piece sets lose the departure square and gain the final piece at its
++ * destination. En passant also uncovers a third square. */
++static bool noncastling_gives_check(const Position *p, Move move) {
++    Color us = p->side_to_move;
++    Color them = opposite(us);
++    int king = p->king_sq[them];
++    int from = MOVE_FROM(move), to = MOVE_TO(move);
++    uint64_t leave = ~square_bit(from), arrive = square_bit(to);
++    uint64_t occ = (p->occupied_all & leave) | arrive;
++    MoveFlag flag = MOVE_FLAG(move);
++    if (flag == MOVE_EN_PASSANT)
++        occ &= ~square_bit(to + (us == WHITE ? -8 : 8));
++    const uint64_t *pieces = p->pieces[us];
++    int type = flag_is_promotion(flag) ? piece_type(promoted_piece(us, flag)) :
++                                         piece_type(p->board[from]);
++    uint64_t pawns = (pieces[0] & leave) | (type == 1 ? arrive : 0);
++    uint64_t knights = (pieces[1] & leave) | (type == 2 ? arrive : 0);
++    uint64_t kings = (pieces[5] & leave) | (type == 6 ? arrive : 0);
++    if ((pawns & pawn_attacks_bb[them][king]) || (knights & knight_attacks_bb[king]) ||
++        (kings & king_attacks_bb[king])) return true;
++    uint64_t diagonal = ((pieces[2] | pieces[4]) & leave) |
++                        (type == 3 || type == 5 ? arrive : 0);
++    uint64_t straight = ((pieces[3] | pieces[4]) & leave) |
++                        (type == 4 || type == 5 ? arrive : 0);
++    return (diagonal & bishop_attacks_ray(king, occ)) ||
++           (straight & rook_attacks_ray(king, occ));
++}
++
+ static int quiescence(Position *p, int alpha, int beta,
+                       int ply, SearchContext *ctx, bool null_branch) {
+     ++ctx->stats.qnodes;
+@@ -1755,7 +1785,7 @@
+             } else if (see < 0) {
+                 /* The ordering pass already found the exchange result.  A
+                  * losing capture only needs its check status before pruning. */
+-                (void)static_exchange_eval(p, m, &gives_check);
++                gives_check = noncastling_gives_check(p, m);
+             }
+             if (see < 0 && !gives_check) {
+                 ++ctx->stats.see_prunes;
+@@ -1765,21 +1795,18 @@
+         /* Non-check nodes already contain tactical moves only. Check nodes
+          * contain every legal evasion, including required quiet responses. */
+ 
+-        /* First identify captures whose best plausible immediate gain still
+-         * cannot reach alpha. We make the move before pruning solely to retain
+-         * every checking capture; non-check candidates avoid recursive qsearch. */
++        /* Keep checking captures even when their immediate gain misses alpha. */
+         bool delta_candidate = !in_check &&
+             !flag_is_promotion(MOVE_FLAG(m)) &&
+             alpha < MATE_SCORE - MAX_SEARCH_PLY &&
+             stand_pat + qsearch_capture_value(p, m) +
+                 SPSA_DELTA_MARGIN < alpha;
++        if (delta_candidate && !noncastling_gives_check(p, m)) {
++            ++ctx->stats.delta_prunes;
++            continue;
++        }
+         Undo undo;
+         make_move_with_undo(p, m, &undo);
+-        if (delta_candidate && !side_in_check(p, p->side_to_move)) {
+-            unmake_move(p, m, &undo);
+-            ++ctx->stats.delta_prunes;
+-            continue;
+-        }
+         int score = -quiescence(p, -beta, -alpha, ply + 1, ctx, null_branch);
+         unmake_move(p, m, &undo);
+         if (ctx->stopped) return 0;
+@@ -1908,6 +1935,7 @@
+             return 0;
+     }
+ }
++
+ 
+ static int negamax(Position *p, int depth, int alpha, int beta,
+                    int ply, SearchContext *ctx, bool allow_null,
+@@ -2160,8 +2188,6 @@
+                       move_flag == MOVE_QUEEN_CASTLE;
+         int quiet_history = quiet
+             ? ctx->history[p->side_to_move][MOVE_FROM(m)][MOVE_TO(m)] : 0;
+-        make_move_with_undo(p, m, &undo);
+-        bool gives_check = side_in_check(p, p->side_to_move);
+         /* At shallow scout nodes, sufficiently late low-history quiet moves
+          * are unlikely to beat moves already searched. Improving positions
+          * receive a materially larger allowance. Checks, castling, hash and
+@@ -2172,23 +2198,24 @@
+         bool lmp_prune = !excluded_move && !null_branch && scout_node &&
+                          depth <= 3 && info.check_count == 0 &&
+                          alpha > -MATE_SCORE + MAX_SEARCH_PLY &&
+-                         quiet && !castle && !gives_check &&
++                         quiet && !castle &&
+                          m != hash_move && m != killer_one &&
+                          m != killer_two && quiet_history < SPSA_LMP_HISTORY &&
+                          lmp_material_safe && i + 1 > lmp_limit;
+-        if (lmp_prune) {
+-            unmake_move(p, m, &undo);
++        if (lmp_prune && !noncastling_gives_check(p, m)) {
+             ++ctx->stats.lmp_prunes;
+             continue;
+         }
++        make_move_with_undo(p, m, &undo);
+         int score;
+         int extension = singular_hash_move && m == hash_move ? 1 : 0;
+         int child_depth = depth - 1 + extension;
+         /* Reduce only late, quiet, non-checking moves in non-check nodes. A
+          * move that improves alpha is immediately verified at full depth. */
+-        bool reduce = depth >= 3 && i >= 3 && quiet && !castle && !gives_check &&
++        bool reduce = depth >= 3 && i >= 3 && quiet && !castle &&
+                       info.check_count == 0 && m != hash_move &&
+-                      m != killer_one && m != killer_two;
++                      m != killer_one && m != killer_two && !lmp_prune &&
++                      !side_in_check(p, p->side_to_move);
+         int reduction = 0;
+         if (reduce) {
+             bool improving_adjusted = false;
+@@ -2499,6 +2526,7 @@
+     (void)tt_ensure_initialized();
+ 
+     Position work = *p;
++    nnue_start_search_frames(&work);
+     MoveList legal;
+     generate_legal_moves(&work, &legal);
+     if (restrict_root) {
+--- a/chess_types.c
++++ b/chess_types.c
+@@ -23,7 +23,7 @@
+  * a new executable; ENGINE_VERSION changes only when a tested experiment is
+  * accepted. */
+ #define ENGINE_VERSION "9.0"
+-#define ENGINE_BUILD_NAME "Zebrafish 9.1-rc1"
++#define ENGINE_BUILD_NAME "Zebrafish 9.1 accumulator frames"
+ #define ENGINE_BUILD_ID "9.1-rc1"
+ 
+ typedef uint8_t Piece;
+@@ -107,8 +107,12 @@
+     int pesto_phase;
+     uint8_t piece_count[2][7];
+ #define NNUE_MAX_HIDDEN 512
++#define NNUE_FRAME_COUNT 130
+     int16_t nnue_accumulator[2][NNUE_MAX_HIDDEN];
+     uint32_t nnue_generation;
++    /* A root worker owns these frames. Public positions use their inline accumulators. */
++    int16_t (*nnue_frames)[2][NNUE_MAX_HIDDEN];
++    int nnue_frame_depth;
+ #define MAX_POSITION_HISTORY 4097
+     uint64_t position_history[MAX_POSITION_HISTORY];
+     int history_count;
+--- a/nnue.c
++++ b/nnue.c
+@@ -188,7 +188,12 @@
+     return true;
+ }
+ 
++static int nnue_frame_index(const Position *p) {
++    return p->nnue_frame_depth < NNUE_FRAME_COUNT ? p->nnue_frame_depth : NNUE_FRAME_COUNT-1;
++}
+ static void nnue_accumulator_refresh(Position *position) {
++    position->nnue_frames = NULL;
++    position->nnue_frame_depth = 0;
+     if (!nnue_enabled) {
+         position->nnue_generation = 0;
+         return;
+@@ -216,6 +221,15 @@
+         nnue_accumulator_refresh(position);
+ }
+ 
++static void nnue_start_search_frames(Position *p) {
++    static _Thread_local int16_t frames[NNUE_FRAME_COUNT][2][NNUE_MAX_HIDDEN];
++    if (!nnue_enabled || nnue_input_buckets != 1) return;
++    nnue_accumulator_ensure(p);
++    memcpy(frames[0], p->nnue_accumulator, sizeof p->nnue_accumulator);
++    p->nnue_frames = frames;
++    p->nnue_frame_depth = 0;
++}
++
+ static void nnue_accumulator_update(Position *position, Piece piece, int square,
+                                     int direction) {
+     if (!nnue_enabled || position->nnue_generation != nnue_network_generation ||
+@@ -224,11 +238,13 @@
+ #ifdef RUNTIME_BREAKDOWN
+     uint64_t profile_start = profile_cycle_clock();
+ #endif
++    int16_t (*acc)[NNUE_MAX_HIDDEN] = position->nnue_frames ?
++        position->nnue_frames[nnue_frame_index(position)] : position->nnue_accumulator;
+     for (Color perspective = WHITE; perspective <= BLACK; ++perspective) {
+         int feature = nnue_feature(position, piece, square, perspective);
+         for (int i = 0; i < nnue_hidden; ++i)
+-            position->nnue_accumulator[perspective][i] = (int16_t)(
+-                position->nnue_accumulator[perspective][i] +
++            acc[perspective][i] = (int16_t)(
++                acc[perspective][i] +
+                 direction * nnue_network.feature_weights[feature][i]);
+     }
+ #ifdef RUNTIME_BREAKDOWN
+@@ -251,21 +267,31 @@
+                                   Piece added, int to, Piece captured,
+                                   int capture_square, bool undo) {
+     if (!nnue_enabled || p->nnue_generation != nnue_network_generation) return;
++    int16_t (*source)[NNUE_MAX_HIDDEN] = p->nnue_accumulator;
++    int16_t (*dest)[NNUE_MAX_HIDDEN] = source;
++    if (p->nnue_frames) {
++        source = p->nnue_frames[nnue_frame_index(p)];
++        bool restored = undo && p->nnue_frame_depth < NNUE_FRAME_COUNT;
++        p->nnue_frame_depth += undo ? -1 : 1;
++        if (restored) return;
++        dest = p->nnue_frames[nnue_frame_index(p)];
++    }
+ #ifdef RUNTIME_BREAKDOWN
+     uint64_t profile_start = profile_cycle_clock();
+ #endif
+     for (Color side = WHITE; side <= BLACK; ++side) {
+-        int16_t *acc = p->nnue_accumulator[side];
++        int16_t *acc = dest[side];
++        const int16_t *parent = source[side];
+         const int16_t *sub = nnue_network.feature_weights[nnue_feature(p, removed, from, side)];
+         const int16_t *add = nnue_network.feature_weights[nnue_feature(p, added, to, side)];
+         if (!captured) {
+-            for (int i = 0; i < nnue_hidden; ++i) acc[i] = (int16_t)(acc[i] + add[i] - sub[i]);
++            for (int i = 0; i < nnue_hidden; ++i) acc[i] = (int16_t)(parent[i] + add[i] - sub[i]);
+         } else {
+             const int16_t *cap = nnue_network.feature_weights[nnue_feature(p, captured, capture_square, side)];
+             if (undo) {
+-                for (int i = 0; i < nnue_hidden; ++i) acc[i] = (int16_t)(acc[i] + add[i] - sub[i] + cap[i]);
++                for (int i = 0; i < nnue_hidden; ++i) acc[i] = (int16_t)(parent[i] + add[i] - sub[i] + cap[i]);
+             } else {
+-                for (int i = 0; i < nnue_hidden; ++i) acc[i] = (int16_t)(acc[i] + add[i] - sub[i] - cap[i]);
++                for (int i = 0; i < nnue_hidden; ++i) acc[i] = (int16_t)(parent[i] + add[i] - sub[i] - cap[i]);
+             }
+         }
+     }
+@@ -282,17 +308,13 @@
+     return x * x;
+ }
+ 
+-static int nnue_evaluate(const Position *position) {
++static int nnue_evaluate_ready(const Position *position) {
+ #ifdef RUNTIME_BREAKDOWN
+     uint64_t profile_start = profile_cycle_clock();
+ #endif
+-    Position refreshed;
+-    if (position->nnue_generation != nnue_network_generation) {
+-        refreshed = *position;
+-        nnue_accumulator_refresh(&refreshed);
+-        position = &refreshed;
+-    }
+-
++    const int16_t (*accum)[NNUE_MAX_HIDDEN] = position->nnue_frames ?
++        (const int16_t (*)[NNUE_MAX_HIDDEN])position->nnue_frames[nnue_frame_index(position)] :
++        position->nnue_accumulator;
+     Color us = position->side_to_move;
+     Color them = opposite(us);
+     int head = nnue_heads == 1 ? 0 : (bitboard_popcount(position->occupied_all) - 1) / 8;
+@@ -303,7 +325,7 @@
+     if (nnue_packed_output) {
+         __m256i sum = _mm256_setzero_si256();
+         for (int side = 0; side < 2; ++side) {
+-            const int16_t *acc = position->nnue_accumulator[side ? them : us];
++            const int16_t *acc = accum[side ? them : us];
+             const int16_t *weights = output_weights + side * nnue_hidden;
+             for (int i = 0; i < nnue_hidden; i += 16) {
+                 __m256i a = _mm256_loadu_si256((const __m256i *)(acc + i));
+@@ -320,9 +342,9 @@
+ #endif
+     {
+         for (int i = 0; i < nnue_hidden; ++i) {
+-            output += (int64_t)nnue_screlu(position->nnue_accumulator[us][i]) *
++            output += (int64_t)nnue_screlu(accum[us][i]) *
+                       output_weights[i];
+-            output += (int64_t)nnue_screlu(position->nnue_accumulator[them][i]) *
++            output += (int64_t)nnue_screlu(accum[them][i]) *
+                       output_weights[nnue_hidden + i];
+         }
+     }
+@@ -338,3 +360,21 @@
+ #endif
+     return result;
+ }
++
++/* Keep the rare full-position refresh off the normal evaluation stack. */
++#if defined(_MSC_VER)
++__declspec(noinline)
++#elif defined(__GNUC__) || defined(__clang__)
++__attribute__((noinline))
++#endif
++static int nnue_evaluate_refreshed(const Position *position) {
++    Position refreshed = *position;
++    nnue_accumulator_refresh(&refreshed);
++    return nnue_evaluate_ready(&refreshed);
++}
++
++static int nnue_evaluate(const Position *position) {
++    if (position->nnue_generation != nnue_network_generation)
++        return nnue_evaluate_refreshed(position);
++    return nnue_evaluate_ready(position);
++}

@@ -1,0 +1,34 @@
+{
+  "candidate": {
+    "path": "engines/experiments/9.1-rc1/9.1-rc1.exe",
+    "sha256": "4d8fe7900812b92104f18b944a8de19419c750f418c82da26183675f12f6f675"
+  },
+  "network": {
+    "path": "engines/experiments/9.1-rc1/nnue-material.bin",
+    "sha256": "a45185364368524ff565a7d31e5b997553057dba6aea32985c72669b55a430c6"
+  },
+  "openings": {
+    "path": "openings/suites/8moves_v3.epd",
+    "sha256": "4278740134be69d7633bdaaca81fde09f264d5a3a4c14a0d32206f50f958c5ea"
+  },
+  "cute": {
+    "path": "testing/tools/cutechess/cutechess-1.5.1-win64/cutechess-cli.exe",
+    "sha256": "8889f9582dc688c567704cf083f6025baf77f791cde903698c70b3420caf5d7e"
+  },
+  "blackmarlin-4.0-popcnt-avx2.exe": {
+    "path": "testing/tools/ccrl_engines/blackmarlin-4.0-popcnt-avx2.exe",
+    "sha256": "694747e5bb6fa3a0a924be73a170bcb9026846b2ad250057c31c2953d8e4a128"
+  },
+  "peacekeeper-1.60.exe": {
+    "path": "testing/tools/ccrl_engines/peacekeeper-1.60.exe",
+    "sha256": "8cea431754ea6272277c4d92c91667d5518666337a501d6ac5c60026de9b5b87"
+  },
+  "PeSTO_bmi2.exe": {
+    "path": "testing/tools/ccrl_engines/pesto-2.210/PeSTO_bmi2.exe",
+    "sha256": "509b8516147d7d2823ad01f6bc718a0e2787f80a1068395323035c2f71188a65"
+  },
+  "jackal-1.0.0-x86-64-v3.exe": {
+    "path": "testing/tools/ccrl_engines/jackal-1.0.0-x86-64-v3.exe",
+    "sha256": "6e37ae01052345a86c4723a8fe235e3e5fbad11681d95e8bbc2a23de0420d205"
+  }
+}

@@ -1,22 +1,4 @@
+param([string]$OutputDirectory = "")
 $ErrorActionPreference = "Stop"
-$gcc = (Get-Command gcc.exe -ErrorAction Stop).Source
-$source = $PSScriptRoot
-$root = Split-Path -Parent (Split-Path -Parent $source)
-$fathom = Join-Path $root "endgames\fathom"
-$fathomObject = Join-Path $fathom "tbprobe.o"
-
-& $gcc -std=c11 -O3 -march=native -DNDEBUG -Wall -Wextra -pedantic `
-    "-I$fathom" -c (Join-Path $fathom "tbprobe.c") -o $fathomObject
-if ($LASTEXITCODE -ne 0) { throw "Fathom compilation failed." }
-
-& $gcc -std=c11 -O3 -march=native -flto -DNDEBUG -Wall -Wextra -pedantic `
-    "-I$fathom" (Join-Path $source "chess.c") $fathomObject `
-    -o (Join-Path $source "chess.exe") -lgdiplus -lgdi32 -luser32
-if ($LASTEXITCODE -ne 0) { throw "Text engine compilation failed." }
-
-& $gcc -std=c11 -O3 -march=native -flto -DNDEBUG -DCHESS_GUI_DEFAULT `
-    -Wall -Wextra -pedantic "-I$fathom" (Join-Path $source "chess.c") `
-    $fathomObject -o (Join-Path $source "chess_gui.exe") `
-    -lgdiplus -lgdi32 -luser32
-if ($LASTEXITCODE -ne 0) { throw "GUI engine compilation failed." }
-Write-Host "Built current text and GUI engines in $source"
+& (Join-Path $PSScriptRoot "..\build.ps1") -OutputDirectory $OutputDirectory
+exit $LASTEXITCODE

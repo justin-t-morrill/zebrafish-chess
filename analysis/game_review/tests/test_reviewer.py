@@ -132,6 +132,25 @@ class StabilityTests(unittest.TestCase):
                       engine.process.stdin.getvalue())
         self.assertEqual(result.final.nodes, 5000)
 
+    def test_uci_multipv_parses_ranked_lines(self) -> None:
+        engine = object.__new__(UciEngine)
+        engine._multipv = 1
+        engine.process = SimpleNamespace(
+            stdin=io.StringIO(),
+            stdout=iter([
+                "readyok\n",
+                "info depth 5 multipv 1 score cp 31 nodes 3000 pv e2e4 e7e5\n",
+                "info depth 5 multipv 2 score cp 20 nodes 2800 pv d2d4 d7d5\n",
+                "info depth 5 multipv 3 score cp 12 nodes 2600 pv c2c4 e7e5\n",
+                "bestmove e2e4\n",
+            ]),
+        )
+        result = engine.analyze("test fen", nodes=9000, multipv=3)
+        self.assertIn("setoption name MultiPV value 3", engine.process.stdin.getvalue())
+        self.assertEqual([line.rank for line in result.lines], [1, 2, 3])
+        self.assertEqual([line.pv[0] for line in result.lines],
+                         ["e2e4", "d2d4", "c2c4"])
+        self.assertEqual(result.final.best_move, "e2e4")
 
 class PersistenceTests(unittest.TestCase):
     def test_json_round_trip_and_pgn_export(self) -> None:

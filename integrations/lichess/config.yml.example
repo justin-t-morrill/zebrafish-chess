@@ -1,0 +1,62 @@
+token: "PASTE_LICHESS_BOT_TOKEN_HERE"
+url: "https://lichess.org/"
+
+engine:
+  dir: "../../build/current"
+  name: "chess.exe"
+  protocol: "uci"
+  ponder: false
+  debug: true
+  working_dir: "../../build/current"
+  engine_options:
+    uci:
+  uci_options:
+    Move Overhead: 500
+  draw_or_resign:
+    resign_enabled: false
+    offer_draw_enabled: false
+
+challenge:
+  concurrency: 1
+  games_reserved_for_humans: 0
+  sort_by: "best"
+  preference: "bot"
+  accept_bot: true
+  only_bot: true
+  min_increment: 0
+  max_increment: 10
+  min_base: 30
+  max_base: 900
+  variants:
+    - standard
+  time_controls:
+    - blitz
+  modes:
+    - rated
+
+correspondence: {}
+
+matchmaking:
+  allow_matchmaking: true
+  allow_during_games: false
+  challenge_timeout: 2
+  challenge_variant: "standard"
+  challenge_initial_time:
+    - 180
+  challenge_increment:
+    - 2
+  opponent_rating_difference: 800
+  rating_preference: "none"
+  challenge_mode: "rated"
+  challenge_filter: "fine"
+
+greeting:
+  hello: "Good luck, have fun!"
+  goodbye: "Thanks for the game!"
+
+pgn_directory: "./games"
+pgn_file_grouping: "game"
+abort_time: 20
+move_overhead: 1500
+rate_limiting_delay: 0
+max_takebacks_accepted: 0

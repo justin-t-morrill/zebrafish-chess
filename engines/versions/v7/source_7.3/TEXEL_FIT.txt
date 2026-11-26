@@ -1,3 +1,0 @@
-Base: Engine 6.1_pawn_details
-Fit: C:\Users\Justin\Desktop\Chess_2\refactored_chess\tuning\texel_runs\6.1_pawn_details_texel\fit.txt
-Candidate: 6.1_pawn_details_texel_v2

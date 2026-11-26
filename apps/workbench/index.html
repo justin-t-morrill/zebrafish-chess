@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="zebrafish-token" content="__TOKEN__"><title>Zebrafish · Version testing</title><link rel="stylesheet" href="/style.css"></head>
+<body><header><a class="brand" href="/test">Zebrafish <span>Development</span></a><nav><a href="/test">New test</a><a href="/live">Live tests</a><a href="/results">Results</a></nav></header>
+<main><div class="intro"><p class="eyebrow">LOCAL ENGINE WORKSPACE</p><h1 id="title">Version testing</h1><p id="subtitle">Compare candidates while keeping your playing engine available.</p></div>
+<p id="notice" role="status" hidden></p>
+<section id="test-panel" class="panel" hidden><h2>Start a comparison</h2><p>The selected engines, networks and opening book are copied into a new run before it starts.</p>
+<form id="test-form"><div class="grid"><label>Candidate<select name="engine_a" required></select></label><label>Baseline<select name="engine_b" required></select></label>
+<label>Test method<select name="kind"><option value="sprt">SPRT · sequential comparison</option><option value="fixed">Fixed number of games</option></select></label>
+<label>Time control<input name="time_control" value="1+0.1" required><small>Seconds + increment; for example, 180+1.</small></label>
+<label>Maximum games<input name="games" type="number" value="100" min="2" max="100000" step="2" required></label>
+<label>Parallel games<input name="concurrency" type="number" value="1" min="1" max="32" required></label>
+<label>Threads per engine<input name="threads" type="number" value="1" min="1" max="16" required></label></div>
+<p class="muted">SPRT uses the existing H0 = 0 / H1 = +10 Elo configuration. A run reaching its cap can remain inconclusive. Comparisons use paired opening colors.</p>
+<button type="submit" id="start">Start test</button></form><p>Build a new candidate with <strong>Zebrafish-Build.cmd</strong>. Installed numbered versions are available too.</p></section>
+<section class="panel"><h2 id="runs-title">Recorded runs</h2><div id="runs" class="runs"></div></section>
+<section id="detail-panel" class="panel" hidden><div class="row"><h2 id="detail-title">Run</h2><div class="controls"><button id="pause" class="secondary">Pause after paired batch</button><button id="resume" class="secondary">Resume saved schedule</button><button id="stop" class="secondary">Stop immediately</button></div></div><p id="detail-summary"></p><p class="muted">Pause finishes the current paired batch. Stop ends active games immediately. Resume retains finished games and continues missing colors first.</p><div id="boards" class="boards" aria-label="Live match boards"></div><div id="artifacts" class="artifacts"></div><pre id="log" aria-label="Test log"></pre></section>
+<section id="history-panel" class="panel" hidden><h2>Existing test library</h2><p>These earlier PGNs remain in their original locations. Download one to replay or review it in the main app.</p><button id="open-reports" class="secondary">Open existing strength reports</button><p class="muted">Opens the original local report address, preserving its browser game log.</p><div id="history" class="history"></div></section>
+<footer>The main app, bot and test workers run independently. Closing this tab does not stop a test.</footer></main><script src="/app.js" defer></script></body></html>

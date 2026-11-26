@@ -1,0 +1,3 @@
+Base: Engine 2.2
+Fit: C:\Users\Justin\Desktop\Chess_2\refactored_chess\tuning\texel_runs\2.2_texel_eval_spsa_all_positions\fit_l2_0p00003.txt
+Candidate: 2.2_eval_texel_l2_3e5, accepted as Engine 2.3

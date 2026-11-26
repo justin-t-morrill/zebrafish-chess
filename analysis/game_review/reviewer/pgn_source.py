@@ -1,52 +1,10 @@
-"""Small dependency-free PGN container reader.
-
-This intentionally preserves movetext instead of interpreting SAN. Legal move
-reconstruction will be supplied by the engine bridge after the active CPU-heavy
-tournament is complete.
-"""
-
-from __future__ import annotations
-
-import re
-from dataclasses import dataclass
+"""Compatibility import for zebrafish.review.pgn_source."""
+import importlib
 from pathlib import Path
-
-
-TAG_RE = re.compile(r'^\[([A-Za-z0-9_]+)\s+"((?:\\.|[^"\\])*)"\]\s*$')
-
-
-@dataclass(slots=True)
-class PgnGame:
-    headers: dict[str, str]
-    movetext: str
-
-
-def read_pgn_games(path: str | Path) -> list[PgnGame]:
-    text = Path(path).read_text(encoding="utf-8-sig", errors="replace")
-    games: list[PgnGame] = []
-    headers: dict[str, str] = {}
-    movetext: list[str] = []
-
-    def finish() -> None:
-        nonlocal headers, movetext
-        if headers or any(line.strip() for line in movetext):
-            games.append(PgnGame(dict(headers), "\n".join(movetext).strip()))
-        headers = {}
-        movetext = []
-
-    in_movetext = False
-    for line in text.splitlines():
-        match = TAG_RE.match(line.strip())
-        if match:
-            if in_movetext and (headers or movetext):
-                finish()
-            key, escaped = match.groups()
-            headers[key] = escaped.replace(r'\"', '"').replace(r'\\', '\\')
-            in_movetext = False
-        else:
-            if line.strip() or headers:
-                movetext.append(line)
-                if line.strip():
-                    in_movetext = True
-    finish()
-    return games
+import runpy
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "src"))
+if __name__ == "__main__":
+    runpy.run_module("zebrafish.review.pgn_source", run_name="__main__")
+else:
+    sys.modules[__name__] = importlib.import_module("zebrafish.review.pgn_source")

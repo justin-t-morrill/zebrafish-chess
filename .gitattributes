@@ -1,0 +1,10 @@
+# Double-click launchers need Windows line endings on checkout.
+*.cmd text eol=crlf
+
+# Preserve exact inputs for recorded hashes and reproducible historical builds.
+history/** -text -whitespace
+resources/calibrated/** -text -whitespace
+third_party/fathom/** -text -whitespace
+
+# Unified-diff context lines intentionally contain a leading space.
+*.patch -text -whitespace

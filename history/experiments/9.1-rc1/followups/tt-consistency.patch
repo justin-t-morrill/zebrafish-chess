@@ -1,0 +1,64 @@
+--- a/chess_engine.c
++++ b/chess_engine.c
+@@ -49,11 +49,9 @@
+ static int tt_hash_mb = TT_DEFAULT_MB;
+ static uint16_t tt_generation;
+ 
+-/* All non-key fields fit in one atomic word. Writers invalidate the key,
+- * publish this word, and publish the key last. Readers verify the key both
+- * before and after loading data, so a racing replacement is ignored rather
+- * than consumed as a torn entry. This is intentionally ready for a shared
+- * Lazy-SMP table without putting a mutex on the search hot path. */
++/* Store the position hash XORed with its packed record. A probe reconstructs
++ * the hash from both words, so overlapping replacements normally produce a
++ * cache miss. The full 64-bit position hash is retained for verification. */
+ static uint64_t tt_pack_data(Move move, int score, int depth, TTFlag flag,
+                              uint16_t generation) {
+     if (depth < 0) depth = 0;
+@@ -76,12 +74,10 @@
+ 
+ static bool tt_read_entry(const TTEntry *entry, uint64_t wanted,
+                           TTRecord *record) {
+-    uint64_t first = atomic_load_explicit(&entry->key, memory_order_acquire);
+-    if (first != wanted) return false;
++    uint64_t signature = atomic_load_explicit(&entry->key, memory_order_acquire);
+     uint64_t data = atomic_load_explicit(&entry->data, memory_order_relaxed);
+-    uint64_t second = atomic_load_explicit(&entry->key, memory_order_acquire);
+-    if (first != second || second != wanted) return false;
+-    tt_unpack_data(second, data, record);
++    if (!data || (signature ^ data) != wanted) return false;
++    tt_unpack_data(wanted, data, record);
+     return record->generation != 0;
+ }
+ 
+@@ -206,16 +202,16 @@
+             target = entry;
+             break;
+         }
+-        uint64_t occupied_key = atomic_load_explicit(&entry->key,
++        uint64_t signature = atomic_load_explicit(&entry->key,
+                                                       memory_order_acquire);
+         uint64_t occupied_data = atomic_load_explicit(&entry->data,
+                                                        memory_order_relaxed);
+-        if (occupied_key == 0 || occupied_data == 0) {
++        if (occupied_data == 0) {
+             target = entry;
+             break;
+         }
+         TTRecord candidate;
+-        tt_unpack_data(occupied_key, occupied_data, &candidate);
++        tt_unpack_data(signature ^ occupied_data, occupied_data, &candidate);
+         int age = (uint16_t)(tt_generation - candidate.generation);
+         if (age > 255) age = 255;
+         int value = candidate.depth + (candidate.flag == TT_EXACT ? 4 : 0) -
+@@ -229,9 +225,8 @@
+ 
+     uint64_t data = tt_pack_data(best_move, score_to_tt(score, ply), depth,
+                                  flag, tt_generation);
+-    atomic_store_explicit(&target->key, 0, memory_order_release);
+     atomic_store_explicit(&target->data, data, memory_order_relaxed);
+-    atomic_store_explicit(&target->key, key, memory_order_release);
++    atomic_store_explicit(&target->key, key ^ data, memory_order_release);
+ }
+ 
+ static const int pesto_mg_value[6] = { 82, 347, 361, 474, 1033, 0 };

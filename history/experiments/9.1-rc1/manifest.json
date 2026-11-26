@@ -1,0 +1,29 @@
+{
+  "candidate": "Zebrafish 9.1-rc1",
+  "baseline": "frozen 9.0",
+  "match_build": "trained",
+  "short_match_build_sha256": "e7e70323f599985147f3c9c3af24d8ac323c313f78671205620491261678cdf7",
+  "files": {
+    "9.1-rc1.exe": "4d8fe7900812b92104f18b944a8de19419c750f418c82da26183675f12f6f675",
+    "nnue-material.bin": "a45185364368524ff565a7d31e5b997553057dba6aea32985c72669b55a430c6"
+  },
+  "training": {
+    "initial": "minimal-chess-768x256-lichessfull5ep-wdl000-40",
+    "dataset": "mixed-full-shuffled.data",
+    "batches_per_superbatch": 1536,
+    "superbatches": 40,
+    "batch_size": 16384,
+    "initial_lr": 0.00035,
+    "cosine_final_lr": 1.75e-05,
+    "output_heads": 4,
+    "checkpoint": "long-four-40"
+  },
+  "qualification": "Same search with tablebases off. The release candidate also separates tablebase-eligible rule-50 keys, clears the TT after tablebase-option changes and tracks fused NNUE updates in profiling builds. Multi-threaded fixed-node analysis also partitions one aggregate budget among workers. The time-controlled matches have no fixed-node cap.",
+  "speed_match": {
+    "candidate": "lean",
+    "baseline": "trained",
+    "clock": "1+0.1",
+    "executable_sha256": "1674e5200b28231bb206fd55ff3c5352d0b928a3c2044b2a1d2b87b84df6a15a",
+    "opening_sha256": "cd12b4a1452e752ea94a3b9f76a430bbb29c641bfa81ec44954177384bec0220"
+  }
+}

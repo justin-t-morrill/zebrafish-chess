@@ -1,0 +1,97 @@
+<div id="zebrafish-boards">
+  <style>
+    #zebrafish-boards {color:var(--foreground);font-family:system-ui,sans-serif}
+    #zebrafish-boards header {display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-bottom:.55rem}
+    #zebrafish-boards .stamp {color:var(--muted-foreground);font-variant-numeric:tabular-nums}
+    #zebrafish-boards .grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));gap:1.1rem .65rem}
+    #zebrafish-boards .grid.focus {grid-template-columns:minmax(0,360px)}
+    #zebrafish-boards article {min-width:0}
+    #zebrafish-boards .title {display:flex;justify-content:space-between;align-items:baseline;gap:.35rem;flex-wrap:wrap}
+    #zebrafish-boards button {font:inherit;color:inherit;cursor:pointer}
+    #zebrafish-boards .board {display:block;line-height:0;border:0;padding:0;background:transparent;width:100%;margin:.25rem 0}
+    #zebrafish-boards .board:focus-visible {outline:2px solid var(--ring);outline-offset:2px}
+    #zebrafish-boards .board svg {display:block;width:100%;height:auto}
+    #zebrafish-boards .evaluation {display:flex;justify-content:space-between;align-items:baseline;gap:.25rem;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+    #zebrafish-boards .evaluation span:first-child,#zebrafish-boards .turn {color:var(--muted-foreground)}
+    #zebrafish-boards .symbol-bank {position:absolute;width:0;height:0;overflow:hidden}
+  </style>
+  <svg class="symbol-bank" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>__CHESS_PIECE_SYMBOLS__</defs></svg>
+  <header><span class="stamp text-small"></span><button type="button" class="btn overview" hidden>All boards</button></header>
+  <div class="grid"></div>
+  <script type="application/json" class="snapshot">__MATCH_DATA__</script>
+  <script>
+  (() => {
+    const root = document.getElementById('zebrafish-boards');
+    const grid = root.querySelector('.grid'), stamp = root.querySelector('.stamp'), back = root.querySelector('.overview');
+    const files = 'abcdefgh', ns = 'http://www.w3.org/2000/svg';
+    let feed = JSON.parse(root.querySelector('.snapshot').textContent), focus = null;
+    const make = (tag, cls, words) => { const e = document.createElement(tag); e.className = cls; if (words != null) e.textContent = words; return e; };
+    const svg = (tag, at) => {const e = document.createElementNS(ns,tag); for (const [k,v] of Object.entries(at)) e.setAttribute(k,v); return e;};
+    function score(e) {
+      if (!e) return '—';
+      const bound = e.bound === 'lowerbound' ? '≥' : e.bound === 'upperbound' ? '≤' : '';
+      const sign = e.value < 0 ? '−' : e.value > 0 ? '+' : '';
+      return bound + sign + (e.kind === 'mate' ? 'M' + Math.abs(e.value) : (Math.abs(e.value)/100).toFixed(2));
+    }
+    function position(fen, prev, id) {
+      const image = svg('svg',{viewBox:'0 0 360 360',role:'img','aria-label':'Game '+id+' position, White at the bottom. '+fen});
+      const ranks = fen.split(' ')[0].split('/');
+      for (let y=0;y<8;y++) {
+        const pieces=Array.from(ranks[y]).flatMap(c => /[1-8]/.test(c)?Array(Number(c)).fill(''): [c]);
+        for(let x=0;x<8;x++) {
+          const sq=files[x]+(8-y), last=prev.slice(0,2)===sq||prev.slice(2,4)===sq, dark=(x+y)%2;
+          image.append(svg('rect',{x:x*45,y:y*45,width:45,height:45,fill:last?(dark?'#c3a353':'#f0d47a'):(dark?'#73918a':'#e7e9de')}));
+          const p=pieces[x];
+          if(p) image.append(svg('use',{href:'#zf-'+(p===p.toUpperCase()?'w':'b')+p.toUpperCase(),x:x*45,y:y*45,width:45,height:45}));
+        }
+      }
+      return image;
+    }
+    root.renderPosition = position;
+    function render() {
+      const boards=feed?.boards||[];
+      const activeGame = document.activeElement?.dataset.game;
+      if (focus!==null && !boards.some(g=>g?.id===focus)) focus=null;
+      back.hidden=focus===null; grid.classList.toggle('focus',focus!==null);
+      grid.replaceChildren();
+      if (!boards.length) {stamp.textContent='Waiting for the first recorded positions.';return;}
+      const t=new Date(feed.asof);stamp.textContent='Positions at '+t.toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit',second:'2-digit'})+' ET';
+      boards.forEach((g,i)=>{
+        if (focus!==null && g?.id!==focus) return;
+        const card=make('article','');
+        if(!g){card.append(make('span','turn text-small','Board '+(i+1)+' · idle'));grid.append(card);return;}
+        const title=make('div','title');
+        title.append(make('strong','','Game '+g.id),make('span','turn text-small',g.status==='playing'?(g.fen.split(' ')[1]==='w'?'White to move':'Black to move'):g.status));
+        const btn=make('button','board');btn.type='button';btn.setAttribute('aria-label',(focus===null?'Enlarge':'Close enlarged view of')+' game '+g.id);
+        btn.dataset.game=String(g.id);
+        const previous = g.last[g.fen.split(' ')[1]==='w'?'black':'white']?.uci || '';
+        btn.append(position(g.fen,previous,g.id));
+        if(document.getElementById('review-dialog')) {
+          btn.setAttribute('aria-label','Review game '+g.id);
+          btn.onclick=()=>root.dispatchEvent(new CustomEvent('zebrafish:review',{detail:g}));
+        } else {
+          btn.onclick=()=>{focus=focus===null?g.id:null;render();};
+        }
+        card.append(title,btn);
+        for(const [side,short] of [['white','W'],['black','B']]){
+          const move=g.last[side], row=make('div','evaluation text-small');
+          const name=g[side]==='lean'?'RC2':'9.1';
+          row.append(make('span','',short+' · '+name),make('span','',move?move.move+'  '+score(move.eval):'No move yet'));
+          if(move?.eval?.depth!=null) row.title='Depth '+move.eval.depth;
+          card.append(row);
+        }
+        grid.append(card);
+      });
+      if (activeGame) grid.querySelector('button[data-game="'+activeGame+'"]')?.focus({preventScroll:true});
+    }
+    function accept(state) {
+      const next=state?.modelContent?.boardFeed;
+      if(next && Array.isArray(next.boards)){feed=next;render();}
+    }
+    back.onclick=()=>{focus=null;render();};
+    root.addEventListener('zebrafish:boards', e=>{feed=e.detail;render();});
+    window.addEventListener('openai:set_globals', e=>accept(e.detail?.globals?.widgetState));
+    render();accept(window.openai?.widgetState);
+  })();
+  </script>
+</div>
